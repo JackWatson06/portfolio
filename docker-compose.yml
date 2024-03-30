@@ -9,8 +9,8 @@ services:
     build:
       context: .
       dockerfile: node.Dockerfile
-    entrypoint: [ "tail" ]
-    command: [ "-f", "/dev/null" ]
+    ports:
+      - $NEXT_PORT:3000
     volumes:
       - .:/srv/portfolio
     depends_on:
