@@ -1,0 +1,36 @@
+name: Pull Request Flow
+run-name: ${{ github.actor }} started to test and lint the ${{ github.ref}} branch.
+
+on:
+  pull_request:
+    branches:
+      - development
+      - main
+
+## https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - uses: actions/checkout@v4
+
+      - name: Configure Node.js v20
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: lts/iron
+
+      - name: Cache npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test      

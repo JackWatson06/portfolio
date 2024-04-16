@@ -1,0 +1,52 @@
+name: portfolio
+
+volumes:
+  data:
+
+services:
+  node:
+    container_name: portfolio_node
+    build:
+      context: .
+      dockerfile: node.Dockerfile
+    ports:
+      - $NEXT_PORT:3000
+    volumes:
+      - .:/srv/portfolio
+    depends_on:
+      mongo:
+        condition: service_healthy
+        restart: true
+
+  mongo:
+    container_name: portfolio_mongo
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=${DATABASE}
+      - MONGO_INITDB_ROOT_USERNAME=${DATABASE_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_PASSWORD}
+    restart: always
+    volumes:
+      - data:/data/db
+    expose:
+      - 27017
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--username",
+          "$DATABASE_USERNAME",
+          "--password",
+          "$DATABASE_PASSWORD",
+          "--authenticationDatabase",
+          "admin",
+          "--quiet",
+          "localhost/$DATABASE",
+          "--eval",
+          "'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
