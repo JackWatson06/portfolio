@@ -1,5 +1,5 @@
 name: Pull Request Flow
-run-name: ${{ github.actor }} began the Pull Request Flow to test and lint the ${{ github.ref}} branch.
+run-name: ${{ github.actor }} started to test and lint the ${{ github.ref}} branch.
 
 on:
   pull_request:

@@ -1,5 +1,5 @@
 name: Format Flow
-run-name: ${{ github.actor }} initiated the Format Flow on the ${{ github.ref }} branch
+run-name: ${{ github.actor }} started to format the ${{ github.ref }} branch
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
 
 ## https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
 jobs:
-  format:
+  test_and_lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
