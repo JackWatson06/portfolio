@@ -7,7 +7,6 @@ on:
       - development
       - main
 
-## https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
 jobs:
   format:
     runs-on: ubuntu-latest
