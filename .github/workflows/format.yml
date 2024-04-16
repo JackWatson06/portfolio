@@ -8,6 +8,7 @@ on:
       - main
 
 permissions:
+  actions: write
   contents: write
 
 ## https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
