@@ -42,6 +42,7 @@ jobs:
 
       - name: Commit files
         if: steps.git-check.outputs.modified == 'true'
+        id: commit-files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -49,7 +50,7 @@ jobs:
 
       - uses: ad-m/github-push-action@master  
         name: Push changes
-        if: success()
+        if: ${{steps.commit-files.outcome != 'skipped'}}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
