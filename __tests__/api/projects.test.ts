@@ -23,6 +23,6 @@ describe("Projects", () => {
 
     const response_body = await response.json();
     expect(response.status).toBe(200);
-    expect(response_body).toEqual({ testing: { } })
+    expect(response_body).toEqual({ testing: {} });
   });
 });

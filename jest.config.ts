@@ -8,8 +8,8 @@ import type { Config } from "jest";
 const config: Config = {
   coverageProvider: "v8",
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
-  }
+    "^@/(.*)$": "<rootDir>/$1",
+  },
 };
 
 export default config;

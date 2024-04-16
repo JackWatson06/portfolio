@@ -38,28 +38,34 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## Develompent
 
 ### Testing
+
 We have two seperate testing environments. Both environments use Jest for testing. We have API tests
-and page tests. The API tests use the _node_ environment and the page tests use the _jsdom_ 
+and page tests. The API tests use the _node_ environment and the page tests use the _jsdom_
 environment. After you complete a feature you should add tests to either section.
 
 #### Running the Tests
+
 To run the API tests run the following command:
+
 ```
 bin/npm run test:api
 ```
 
 The page tests:
+
 ```
 bin/npm run test:page
 ```
 
 All tests:
+
 ```
 bin/npm run test
 ```
 
 Additinoaly you can either watch the page or API tests for changes by appending watch to the end
 of either the API or page test command:
+
 ```
 bin/npm run test:api:watch
 ```

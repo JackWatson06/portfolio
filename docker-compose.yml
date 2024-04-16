@@ -44,7 +44,7 @@ services:
           "--quiet",
           "localhost/$DATABASE",
           "--eval",
-          "'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'"
+          "'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'",
         ]
       interval: 10s
       timeout: 10s
