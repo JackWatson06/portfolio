@@ -50,7 +50,7 @@ jobs:
 
       - uses: ad-m/github-push-action@master  
         name: Push changes
-        if: ${{steps.commit-files.outcome != 'skipped'}}
+        if: ${{steps.commit-files.outcome == 'success'}}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
