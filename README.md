@@ -38,8 +38,10 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## Develompent
 
 ### Workflow
+
 We use Github Actions to handle deployment of the application, testing, linting, and formatting.
 Use the below steps to make changes to the application.
+
 1. Branch off the _development_ branch with a new feature branch.
 2. Make your changes to the application.
 3. Push to your feature branch with your changes.
