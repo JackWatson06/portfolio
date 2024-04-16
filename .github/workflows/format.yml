@@ -13,7 +13,7 @@ permissions:
 
 ## https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
 jobs:
-  test_and_lint:
+  format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
