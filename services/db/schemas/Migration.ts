@@ -1,4 +1,4 @@
 export interface Migration {
-    name: string,
-    file_created_at: Date
+  name: string;
+  file_created_at: Date;
 }

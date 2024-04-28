@@ -4,23 +4,26 @@ import { test, describe } from "@jest/globals";
 
 test("Migrations throw error on date format that is to long.", () => {
   const create_migration = () => {
-    new Migration('2024050560701_testing_this', './');
-  }
+    new Migration("2024050560701_testing_this", "./");
+  };
 
   expect(create_migration).toThrow(Error);
 });
 
 test("Migrations throw errro on date format that includes non-numbers.", () => {
   const create_migration = () => {
-    new Migration('202d0505a070_testing_this', './');
-  }
+    new Migration("202d0505a070_testing_this", "./");
+  };
 
   expect(create_migration).toThrow(Error);
 });
 
 test("Migrations have correct time format.", () => {
-  const migration = new Migration('202404162020_testing_this', './202404162020_testing_this');
-  expect(migration.date).toEqual(new Date('2024-04-16T20:20')); 
+  const migration = new Migration(
+    "202404162020_testing_this",
+    "./202404162020_testing_this",
+  );
+  expect(migration.date).toEqual(new Date("2024-04-16T20:20"));
 });
 
 test("We run the correct migrations when we set a specific state.", () => {

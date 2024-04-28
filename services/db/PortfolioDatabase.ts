@@ -5,8 +5,8 @@ import { type Migration } from "./schemas/Migration";
 import { Collection } from "mongodb";
 
 export class PortfolioDatabase implements MongoDBDatabase {
-    constructor(
-        public projects: Collection<Project>,
-        public migrations: Collection<Migration>
-    ) {};
+  constructor(
+    public projects: Collection<Project>,
+    public migrations: Collection<Migration>,
+  ) {}
 }

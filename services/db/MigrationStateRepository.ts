@@ -36,14 +36,14 @@ export class MigrationStateRepository {
   public async save(migration_state: MigrationState): Promise<void> {
     const ran_migrations = migration_state.newly_ran_migrations;
 
-    if(ran_migrations.length != 0) {
+    if (ran_migrations.length != 0) {
       const migration_documents: MigrationDocument[] = ran_migrations.map(
         (migration: Migration) => ({
           name: migration.id,
           file_created_at: migration.date,
         }),
       );
-  
+
       await this.db.migrations.insertMany(migration_documents);
     }
   }

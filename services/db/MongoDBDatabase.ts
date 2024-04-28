@@ -1,2 +1,1 @@
-
-export interface MongoDBDatabase { }
+export interface MongoDBDatabase {}
