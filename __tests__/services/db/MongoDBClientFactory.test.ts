@@ -12,7 +12,9 @@ expand(
   }),
 );
 
-const environment_setting_dictionary = new EnvironmentSettingDictionary(process.env);
+const environment_setting_dictionary = new EnvironmentSettingDictionary(
+  process.env,
+);
 
 const portfolio_database_factory = new PortfolioDatabaseFactory(
   environment_setting_dictionary.database,
