@@ -1,11 +1,10 @@
 import { MongoDBConnection } from "@/services/db/MongoDBConnection";
-import { EnvironmentSettingDictionary } from "@/services/settings/EnvironmentSettingDictionary";
 import { PortfolioDatabaseFactory } from "@/services/db/PortfolioDatabaseFactory";
 import { PortfolioDatabase } from "@/services/db/PortfolioDatabase";
+import { EnvironmentSettingDictionary } from "@/services/settings/EnvironmentSettingDictionary";
 
 import { config } from "dotenv";
 import { expand } from "dotenv-expand";
-import { test } from "@jest/globals";
 
 expand(
   config({
@@ -13,9 +12,8 @@ expand(
   }),
 );
 
-const environment_setting_dictionary = new EnvironmentSettingDictionary(
-  process.env,
-);
+const environment_setting_dictionary = new EnvironmentSettingDictionary(process.env);
+
 const portfolio_database_factory = new PortfolioDatabaseFactory(
   environment_setting_dictionary.database,
 );
