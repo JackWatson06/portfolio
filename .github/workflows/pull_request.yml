@@ -59,12 +59,13 @@ jobs:
       - name:  Load docker images
         run: |
           docker image load --input /tmp/portfolio.tar
+          docker image ls
 
       - name: Start docker containers
         run: bin/start
           
       - name: Wait for tests
-        run: exit $(docker container wait)
+        run: exit $(docker container wait portfolio_node)
 
       - if: always()
         name: Print test output
