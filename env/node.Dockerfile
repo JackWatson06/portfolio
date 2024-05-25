@@ -2,8 +2,8 @@ FROM node:20-alpine AS base
 ARG USER=1000
 ARG GROUP=1000
 
-USER $USER:$GROUP
 RUN sudo chown -R $USER:$GROUP /.npm
+USER $USER:$GROUP
 WORKDIR /srv/portfolio
 
 FROM base AS development
