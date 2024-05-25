@@ -53,9 +53,10 @@ jobs:
         run: |
           cd env
           docker image build -f node.Dockerfile -t portfolio_node ..
-          docker compose pull mongo
+          docker compose --env-file ../.env.local pull mongo
           docker image save -o /tmp/docker_images mongo portfolio_node
 
+          ls -al /tmp/
           ls -al /tmp/docker_images
           
       - name:  Load docker images
