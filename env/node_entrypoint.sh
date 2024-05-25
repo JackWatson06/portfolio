@@ -2,6 +2,6 @@
 
 test -d node_modules || npm ci
 
-echo "$@"
+ls -al
 
 npm run "$@"
