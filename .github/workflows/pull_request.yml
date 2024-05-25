@@ -52,7 +52,7 @@ jobs:
         if: steps.cache-images.outputs.cache-hit != 'true'
         run: |
           cd env
-          docker image build -f node.Dockerfile -t portfolio_node ..
+          docker image build -f node.Dockerfile -t portfolio_node --build-arg USER=$(id -u) --build-arg GROUP=$(id -u) .. 
           docker compose --env-file ../.env.local pull mongo
           docker image save -o /tmp/portfolio.tar mongo portfolio_node
           
