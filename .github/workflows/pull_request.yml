@@ -58,7 +58,7 @@ jobs:
           
       - name:  Load docker images
         run: |
-          docker image load --input /tmp/docker_images/portfolio.tar
+          docker image load --input /tmp/portfolio.tar
 
       - name: Start docker containers
         run: bin/start
