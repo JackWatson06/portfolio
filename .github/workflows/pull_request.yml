@@ -45,7 +45,7 @@ jobs:
         id: cache-images
         uses: actions/cache@v3
         with:
-          path: /tmp/docker_images
+          path: /tmp/portfolio.tar
           key: ${{ runner.os }}-${{ hashFiles('env') }}-docker-images
 
       - name: Pull and build images
@@ -54,7 +54,7 @@ jobs:
           cd env
           docker image build -f node.Dockerfile -t portfolio_node ..
           docker compose --env-file ../.env.local pull mongo
-          docker image save -o /tmp/docker_images/portfolio.tar mongo portfolio_node
+          docker image save -o /tmp/portfolio.tar mongo portfolio_node
           
       - name:  Load docker images
         run: |
