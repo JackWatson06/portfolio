@@ -6,6 +6,7 @@ volumes:
 services:
   node:
     container_name: portfolio_node
+    image: portfolio_node
     build:
       context: ..
       dockerfile: env/node.Dockerfile
