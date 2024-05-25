@@ -52,9 +52,9 @@ jobs:
         if: steps.cache-images.outputs.cache-hit != 'true'
         run: |
           cd env
-          docker image build -f node.Dockerfile -t portfolio_node .
+          docker image build -f node.Dockerfile -t portfolio_node ..
           docker compose pull mongo
-          docker image save -o /tmp/docker-images mongo portfolio_node
+          docker image save -o /tmp/docker_images mongo portfolio_node
           
       - name:  Load docker images
         run: |
