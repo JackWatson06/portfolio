@@ -3,6 +3,7 @@ ARG USER=1000
 ARG GROUP=1000
 
 USER $USER:$GROUP
+RUN sudo chown -R $USER:$GROUP /.npm
 WORKDIR /srv/portfolio
 
 FROM base AS development
