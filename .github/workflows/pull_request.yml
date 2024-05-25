@@ -57,7 +57,7 @@ jobs:
           docker image save -o /tmp/docker_images mongo portfolio_node
 
           ls -al /tmp/
-          ls -al /tmp/docker_images
+          ls -al /tmp/docker_images/
           
       - name:  Load docker images
         run: |
