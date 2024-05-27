@@ -8,12 +8,11 @@ on:
       - main
 
 jobs:
-  test_and_lint:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      
       - uses: actions/checkout@v4
-
+      
       - name: Configure Node.js v20
         uses: actions/setup-node@v4.0.2
         with:
@@ -26,10 +25,51 @@ jobs:
           key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
 
-      - name: Run linter
+      - name: Run lint
         run: npm run lint
 
-      - name: Run tests
-        run: npm run test      
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          echo '${{ secrets.TEST_ENV }}' > .env.local
+          ls -al
+
+      - name: Cache docker images
+        id: cache-images
+        uses: actions/cache@v3
+        with:
+          path: /tmp/portfolio.tar
+          key: ${{ runner.os }}-${{ hashFiles('env') }}-docker-images
+
+      - name: Pull and build images
+        if: steps.cache-images.outputs.cache-hit != 'true'
+        run: |
+          cd env
+          docker image build -f node.Dockerfile -t portfolio_node --build-arg USER=$(id -u) --build-arg GROUP=$(id -u) .. 
+          docker compose --env-file ../.env.local pull mongo
+          docker image save -o /tmp/portfolio.tar mongo portfolio_node
+          
+      - name:  Load docker images
+        run: |
+          docker image load --input /tmp/portfolio.tar
+
+      - name: Start docker containers
+        run: bin/start
+          
+      - name: Wait for tests
+        run: exit $(docker container wait portfolio_node)
+
+      - if: always()
+        name: Print test output
+        run: docker container logs portfolio_node 
+
+      - if: always()
+        name: Stop docker containers
+        run: bin/down

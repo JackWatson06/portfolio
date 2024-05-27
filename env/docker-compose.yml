@@ -6,13 +6,17 @@ volumes:
 services:
   node:
     container_name: portfolio_node
+    image: portfolio_node
     build:
-      context: .
-      dockerfile: node.Dockerfile
+      context: ..
+      dockerfile: env/node.Dockerfile
+      target: ${NODE_ENV}
+      tags:
+        - portfolio_node
     ports:
       - $NEXT_PORT:3000
     volumes:
-      - .:/srv/portfolio
+      - ..:/srv/portfolio
     depends_on:
       mongo:
         condition: service_healthy
