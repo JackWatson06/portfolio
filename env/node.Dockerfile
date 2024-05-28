@@ -2,8 +2,11 @@ FROM node:20-alpine AS base
 ARG USER=1000
 ARG GROUP=1000
 
+RUN echo $GROUP
+RUN echo $USER 
 RUN test 1000 != $GROUP && addgroup -g $GROUP node_local; \
-  test 1000 != $USER && adduser -u $USER -G $(getent group $GROUP | awk -F: '{print $1}') -D node_local
+  test 1000 != $USER && adduser -u $USER -G $(getent group $GROUP | awk -F: '{print $1}') -D node_local; \
+  exit 0
 
 USER $USER:$GROUP
 WORKDIR /srv/portfolio
