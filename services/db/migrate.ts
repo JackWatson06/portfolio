@@ -9,7 +9,7 @@ import { MigrationStateRepository } from "./MigrationStateRepository";
 
 expand(
   config({
-    path: [".env.test", ".env.local"],
+    path: [".env"],
   }),
 );
 

@@ -6,7 +6,7 @@ import { test } from "@jest/globals";
 
 expand(
   config({
-    path: [".env.test", ".env.local"],
+    path: [".env"],
   }),
 );
 

@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd env
-docker compose --env-file ../.env.local up -d
+docker compose --env-file ../.env up -d

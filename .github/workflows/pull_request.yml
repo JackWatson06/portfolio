@@ -38,7 +38,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo '${{ secrets.TEST_ENV }}' > .env.local
+          echo '${{ secrets.TEST_ENV }}' > .env
           ls -al
 
       - name: Cache docker images
@@ -53,7 +53,7 @@ jobs:
         run: |
           cd env
           docker image build -f node.Dockerfile -t portfolio_node --build-arg USER=$(id -u) --build-arg GROUP=$(id -u) .. 
-          docker compose --env-file ../.env.local pull mongo
+          docker compose --env-file ../.env pull mongo
           docker image save -o /tmp/portfolio.tar mongo portfolio_node
           
       - name:  Load docker images

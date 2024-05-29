@@ -8,7 +8,7 @@ import { expand } from "dotenv-expand";
 
 expand(
   config({
-    path: [".env.test", ".env.local"],
+    path: [".env"],
   }),
 );
 
