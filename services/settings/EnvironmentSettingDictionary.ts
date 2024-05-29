@@ -12,11 +12,11 @@ export class EnvironmentSettingDictionary implements SettingDictionary {
     console.log(environment_settings_key_value);
     this.database = this.findEnvironmentSetting(
       environment_settings_key_value,
-      "DATABASE",
+      "MONGODB_DATABASE",
     );
     this.database_connection_string = this.findEnvironmentSetting(
       environment_settings_key_value,
-      "DATABASE_CONNECTION_STRING",
+      "MONGODB_URI",
     );
   }
 
