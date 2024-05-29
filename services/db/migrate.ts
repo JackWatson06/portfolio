@@ -13,6 +13,7 @@ expand(
   }),
 );
 
+console.log(process.env);
 const environment_setting_dictionary = new EnvironmentSettingDictionary(
   process.env,
 );

@@ -9,6 +9,7 @@ export class EnvironmentSettingDictionary implements SettingDictionary {
   readonly database_connection_string: string;
 
   constructor(environment_settings_key_value: EnvironmentSettings) {
+    console.log(environment_settings_key_value);
     this.database = this.findEnvironmentSetting(
       environment_settings_key_value,
       "DATABASE",
