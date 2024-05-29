@@ -1,4 +1,5 @@
 # Jack's Portfolio
+
 This is a [Next.js](https://nextjs.org/) project to host my portfolio!
 
 ## Develompent
@@ -55,13 +56,16 @@ applications. Since we have a serverless infastructure we have to leverage other
 document storage or database support.
 
 ### Services
+
 - Database: [Mongo DB Atlas](https://www.mongodb.com/products/platform/atlas-database)
 - Document Storage: [Vercel Blob Storage](https://vercel.com/docs/storage/vercel-blob)
 
 ## ToDo
+
 - Remove Inter font, a custom Google Font
   [`next/font`](https://nextjs.org/docs/basic-features/font-optimization).
 
 ## Resources
+
 - [Next.js Deployment Documentation](https://nextjs.org/docs/deployment)
 - [Next.js Documentation](https://nextjs.org/docs)
