@@ -1,11 +1,10 @@
 name: Format Flow
-run-name: ${{ github.actor }} started to format the ${{ github.ref }} branch
+run-name: ${{ github.actor }} started to format the ${{ github.ref_name }} branch
 
 on:
   push:
     branches:
       - development
-      - main
 
 permissions:
   actions: write
@@ -13,7 +12,7 @@ permissions:
 
 ## https://peterevans.dev/posts/github-actions-how-to-automate-code-formatting-in-pull-requests/
 jobs:
-  test_and_lint:
+  format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,8 +29,7 @@ jobs:
           key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
-        run: |
-          npm ci
+        run: npm ci
 
       - name: Run Prettier
         run: npx prettier . --write
