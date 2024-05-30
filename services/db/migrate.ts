@@ -1,9 +1,9 @@
 import { MigrationStateRepository } from "./MigrationStateRepository";
-import portfolio_service_locator from '../setup';
+import portfolio_service_locator from "../setup";
 
 function parseDirectoryParam(command_line_arguments: string[]) {
-  if(command_line_arguments.length != 3) {
-    return `${__dirname}/migrations`
+  if (command_line_arguments.length != 3) {
+    return `${__dirname}/migrations`;
   }
 
   return command_line_arguments[2];
@@ -21,7 +21,10 @@ function parseDirectoryParam(command_line_arguments: string[]) {
 
   const db = mongo_connection.db;
   const migrations_directory = parseDirectoryParam(process.argv);
-  const migration_repository = new MigrationStateRepository(db, migrations_directory);
+  const migration_repository = new MigrationStateRepository(
+    db,
+    migrations_directory,
+  );
   const migration_state = await migration_repository.find();
 
   try {

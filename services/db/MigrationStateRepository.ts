@@ -6,12 +6,15 @@ import { Migration as MigrationDocument } from "./schemas/Migration";
 import { readdir, access } from "fs/promises";
 
 export class MigrationStateRepository {
-  constructor(private db: PortfolioDatabase, private migrations_directory: string) {}
+  constructor(
+    private db: PortfolioDatabase,
+    private migrations_directory: string,
+  ) {}
 
   public async find(): Promise<MigrationState> {
-    try  {
+    try {
       await access(this.migrations_directory);
-    }catch (error) {
+    } catch (error) {
       return new MigrationState([]);
     }
 

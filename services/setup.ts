@@ -10,7 +10,9 @@ import { expand } from "dotenv-expand";
 import { PortfolioServiceLocator } from "./PortfolioServiceLocator";
 import { PortfolioLogger } from "./logging/PortfolioLogger";
 
-function buildMongoConnection(environment_settings_dictionary: EnvironmentSettingDictionary) {
+function buildMongoConnection(
+  environment_settings_dictionary: EnvironmentSettingDictionary,
+) {
   const portfolio_database_factory = new PortfolioDatabaseFactory(
     environment_settings_dictionary.database,
   );
@@ -24,8 +26,8 @@ function buildLocalFileSystem() {
   return new LocalFileSystem();
 }
 
-function buildPortfolioLogger(){
-  return new PortfolioLogger('portfolio');
+function buildPortfolioLogger() {
+  return new PortfolioLogger("portfolio");
 }
 
 expand(
@@ -41,7 +43,7 @@ const environment_settings_dictionary = new EnvironmentSettingDictionary(
 const portfolio_service_locator = new PortfolioServiceLocator(
   buildMongoConnection(environment_settings_dictionary),
   buildLocalFileSystem(),
-  buildPortfolioLogger()
+  buildPortfolioLogger(),
 );
 
 export default portfolio_service_locator;
