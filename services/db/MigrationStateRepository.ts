@@ -3,20 +3,24 @@ import { MigrationState } from "./MigrationState";
 import { Migration } from "./Migration";
 import { Migration as MigrationDocument } from "./schemas/Migration";
 
-import { readdir } from "fs/promises";
-
-const MIGRATIONS_DIRECTORY = __dirname + "/migrations/";
+import { readdir, access } from "fs/promises";
 
 export class MigrationStateRepository {
-  constructor(private db: PortfolioDatabase) {}
+  constructor(private db: PortfolioDatabase, private migrations_directory: string) {}
 
   public async find(): Promise<MigrationState> {
-    const migrations_file_names = await readdir(MIGRATIONS_DIRECTORY);
+    try  {
+      await access(this.migrations_directory);
+    }catch (error) {
+      return new MigrationState([]);
+    }
+
+    const migrations_file_names = await readdir(this.migrations_directory);
 
     const migrations = migrations_file_names.map((migration_file_name) => {
       return new Migration(
         migration_file_name,
-        `${MIGRATIONS_DIRECTORY}${migration_file_name}`,
+        `${this.migrations_directory}${migration_file_name}`,
       );
     });
 

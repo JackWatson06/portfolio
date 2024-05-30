@@ -1,5 +1,5 @@
 name: Pull Request Flow
-run-name: ${{ github.actor }} started to test and lint the ${{ github.ref}} branch.
+run-name: ${{ github.actor }} started to test and lint the ${{ github.base_ref }} branch.
 
 on:
   pull_request:
@@ -25,8 +25,7 @@ jobs:
           key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
-        run: |
-          npm ci
+        run: npm ci
 
       - name: Run lint
         run: npm run lint
@@ -37,9 +36,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Create .env file
-        run: |
-          echo '${{ secrets.TEST_ENV }}' > .env
-          ls -al
+        run: echo '${{ secrets.TEST_ENV }}' > .env
 
       - name: Cache docker images
         id: cache-images
@@ -57,8 +54,7 @@ jobs:
           docker image save -o /tmp/portfolio.tar mongo portfolio_node
           
       - name:  Load docker images
-        run: |
-          docker image load --input /tmp/portfolio.tar
+        run: docker image load --input /tmp/portfolio.tar
 
       - name: Start docker containers
         run: bin/start

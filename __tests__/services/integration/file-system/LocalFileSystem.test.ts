@@ -5,7 +5,7 @@ import { LocalFileSystem } from "@/services/file-system/LocalFileSystem";
 
 const local_file_system = new LocalFileSystem();
 const FILE_SYSTEM_MODULE_PATH = normalize(
-  `${__dirname}/../../../services/file-system`,
+  `${__dirname}/../../../../services/file-system`,
 );
 const LOCAL_FILE_STORAGE_PATH = `${FILE_SYSTEM_MODULE_PATH}/files`;
 

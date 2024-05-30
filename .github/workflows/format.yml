@@ -1,5 +1,5 @@
 name: Format Flow
-run-name: ${{ github.actor }} started to format the ${{ github.ref }} branch
+run-name: ${{ github.actor }} started to format the ${{ github.ref_name }} branch
 
 on:
   push:
@@ -29,8 +29,7 @@ jobs:
           key: ${{ runner.os }}-cache-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
-        run: |
-          npm ci
+        run: npm ci
 
       - name: Run Prettier
         run: npx prettier . --write

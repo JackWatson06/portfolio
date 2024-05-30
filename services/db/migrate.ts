@@ -1,30 +1,16 @@
-import { EnvironmentSettingDictionary } from "../settings/EnvironmentSettingDictionary";
-import { MongoDBConnection } from "./MongoDBConnection";
-import { PortfolioDatabase } from "./PortfolioDatabase";
-import { PortfolioDatabaseFactory } from "./PortfolioDatabaseFactory";
-
-import { config } from "dotenv";
-import { expand } from "dotenv-expand";
 import { MigrationStateRepository } from "./MigrationStateRepository";
+import portfolio_service_locator from '../setup';
 
-expand(
-  config({
-    path: [".env"],
-  }),
-);
+function parseDirectoryParam(command_line_arguments: string[]) {
+  if(command_line_arguments.length != 3) {
+    return `${__dirname}/migrations`
+  }
 
-const environment_setting_dictionary = new EnvironmentSettingDictionary(
-  process.env,
-);
-const portfolio_database_factory = new PortfolioDatabaseFactory(
-  environment_setting_dictionary.database,
-);
-const mongo_connection = new MongoDBConnection<PortfolioDatabase>(
-  environment_setting_dictionary.database_connection_string,
-  portfolio_database_factory,
-);
+  return command_line_arguments[2];
+}
 
 (async () => {
+  const mongo_connection = portfolio_service_locator.mongo_connection;
   await mongo_connection.connect();
 
   if (!mongo_connection.connected()) {
@@ -34,7 +20,8 @@ const mongo_connection = new MongoDBConnection<PortfolioDatabase>(
   }
 
   const db = mongo_connection.db;
-  const migration_repository = new MigrationStateRepository(db);
+  const migrations_directory = parseDirectoryParam(process.argv);
+  const migration_repository = new MigrationStateRepository(db, migrations_directory);
   const migration_state = await migration_repository.find();
 
   try {
