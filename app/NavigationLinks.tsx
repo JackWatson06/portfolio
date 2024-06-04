@@ -51,7 +51,7 @@ export default function NavigationOptions() {
       <div className="flex h-full items-end text-center md:h-auto">
         {routed_navigation_links.map((routed_navigation_link) => {
           return (
-            <Link href={routed_navigation_link.link} className={`basis-1/3 ${routed_navigation_link.active && "text-lime-800"}`}>
+            <Link key={routed_navigation_link.link} href={routed_navigation_link.link} className={`basis-1/3 ${routed_navigation_link.active && "text-lime-800"}`}>
               {routed_navigation_link.name}
             </Link>
           );
@@ -60,7 +60,7 @@ export default function NavigationOptions() {
       <div className="flex items-end text-center">
         {routed_navigation_links.map((routed_navigation_link) => {
           return (
-            <div className="flex basis-1/3 justify-center">
+            <div key={routed_navigation_link.link} className="flex basis-1/3 justify-center">
               {routed_navigation_link.active && (
                 <div className="w-20 border-b border-lime-800 md:border-b-2 xl:w-24"></div>
               )}
