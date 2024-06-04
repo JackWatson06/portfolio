@@ -12,9 +12,15 @@
     "test:api:watch": "jest --config jest.api.config.ts --watchAll",
     "test:pages": "jest --config jest.pages.config.ts",
     "test:pages:watch": "jest --config jest.pages.config.ts --watchAll",
-    "test": "jest --config jest.pages.config.ts && jest --config jest.api.config.ts"
+    "test:services": "jest --config jest.services.config.ts",
+    "test:services:watch": "jest --config jest.services.config.ts --watchAll",
+    "test": "jest --config jest.api.config.ts && jest --config jest.pages.config.ts && jest --config jest.services.config.ts"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-brands-svg-icons": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "dotenv-expand": "^11.0.6",
     "mongodb": "^6.5.0",
     "next": "14.1.4",
@@ -36,7 +42,8 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",
-    "prettier": "3.2.5",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.6.1",
     "tailwindcss": "^3.3.0",
     "tsx": "^4.7.3",
     "typescript": "^5"
