@@ -1,4 +1,3 @@
-
 export default function Projects() {
-    return <p>Projects Page</p>
+  return <p>Projects Page</p>;
 }

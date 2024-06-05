@@ -62,7 +62,7 @@ export default function NavigationOptions() {
                 {routed_navigation_link.name}
               </Link>
               {routed_navigation_link.active && (
-                <div className="w-20 border-b m-auto border-lime-800 md:border-b-2 xl:w-24"></div>
+                <div className="m-auto w-20 border-b border-lime-800 md:border-b-2 xl:w-24"></div>
               )}
             </div>
           );
