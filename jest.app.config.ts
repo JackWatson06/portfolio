@@ -12,5 +12,5 @@ const createJestConfig = nextJest({
 export default createJestConfig({
   ...jestConfig,
   testEnvironment: "jsdom",
-  testPathIgnorePatterns: ["__tests__/api/", "__tests__/services/"],
+  testMatch: ["**/__tests__/app/**/*.[jt]s?(x)"]
 });

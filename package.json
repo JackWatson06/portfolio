@@ -8,13 +8,11 @@
     "start": "npm run migrate && next start",
     "lint": "next lint",
     "migrate": "tsx services/db/migrate.ts",
-    "test:api": "jest --config jest.api.config.ts",
-    "test:api:watch": "jest --config jest.api.config.ts --watchAll",
-    "test:pages": "jest --config jest.pages.config.ts",
-    "test:pages:watch": "jest --config jest.pages.config.ts --watchAll",
-    "test:services": "jest --config jest.services.config.ts",
-    "test:services:watch": "jest --config jest.services.config.ts --watchAll",
-    "test": "jest --config jest.api.config.ts && jest --config jest.pages.config.ts && jest --config jest.services.config.ts"
+    "test:app": "jest --config jest.app.config.ts",
+    "test:app:watch": "jest --config jest.app.config.ts --watchAll",
+    "test:backend": "jest --config jest.backend.config.ts",
+    "test:backend:watch": "jest --config jest.backend.config.ts --watchAll",
+    "test": "npm run test:app; npm run test:backend"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",

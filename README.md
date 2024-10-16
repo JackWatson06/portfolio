@@ -18,22 +18,22 @@ Use the below steps to make changes to the application.
 
 ### Testing
 
-We have two seperate testing environments. Both environments use Jest for testing. We have API tests
-and page tests. The API tests use the _node_ environment and the page tests use the _jsdom_
-environment. After you complete a feature you should add tests to either section.
+We have two seperate testing environments. Both environments use Jest for testing. We have backend 
+tests and app tests. The backend tests use the _node_ environment and the app tests use the _jsdom_
+environment. While developing a feature write tests alongside the feature code.
 
 #### Running the Tests
 
-Run API functional tests and service tests:
+Run backend integration and unit tests:
 
 ```
-bin/npm run test:api
+bin/npm run test:backend
 ```
 
-Run UI tests:
+Run Next.JS app integration and unit tests:
 
 ```
-bin/npm run test:page
+bin/npm run test:app
 ```
 
 Run all tests:
@@ -42,11 +42,17 @@ Run all tests:
 bin/npm run test
 ```
 
-Additinoaly you can either watch the page or API tests for changes by appending watch to the end
-onf either the API or page test command:
+Additionally you can either watch the app or backend tests for changes by appending watch to the end
+of either the backend or app test command:
 
 ```
-bin/npm run test:api:watch
+bin/npm run test:app:watch
+```
+
+If you want to run a specific test file you can use the following command.
+
+```
+bin/npm run test:app:watch {test_file_path}
 ```
 
 ## Deploying

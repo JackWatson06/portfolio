@@ -3,7 +3,7 @@ import portfolio_service_locator from "../setup";
 
 function parseDirectoryParam(command_line_arguments: string[]) {
   if (command_line_arguments.length != 3) {
-    return `${__dirname}/migrations`;
+    return `${__dirname}/migrations/`;
   }
 
   return command_line_arguments[2];
