@@ -8,8 +8,8 @@
     "start": "npm run migrate && next start",
     "lint": "next lint",
     "migrate": "tsx services/db/migrate.ts",
-    "test:app": "jest --config jest.app.config.ts",
-    "test:app:watch": "jest --config jest.app.config.ts --watchAll",
+    "test:client": "jest --config jest.client.config.ts",
+    "test:client:watch": "jest --config jest.client.config.ts --watchAll",
     "test:backend": "jest --config jest.backend.config.ts",
     "test:backend:watch": "jest --config jest.backend.config.ts --watchAll",
     "test": "npm run test:app; npm run test:backend"
@@ -20,11 +20,13 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "dotenv-expand": "^11.0.6",
+    "jose": "^5.9.4",
     "mongodb": "^6.5.0",
     "next": "14.1.4",
     "pino": "^9.0.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.2",

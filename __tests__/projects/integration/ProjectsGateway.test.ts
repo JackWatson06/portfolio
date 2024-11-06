@@ -1,9 +1,9 @@
+import { buildMongoConnection } from "@/__tests__/setup";
 import { ProjectsGateway } from "@/projects/ProjectsGateway";
 import { PortfolioDatabase } from "@/services/db/PortfolioDatabase";
-import portfolio_service_locator from "@/services/setup";
 import { test } from "@jest/globals";
 
-const mongo_connection = portfolio_service_locator.mongo_connection;
+const mongo_connection = buildMongoConnection();
 let db: PortfolioDatabase;
 
 beforeEach(async () => {
@@ -33,11 +33,11 @@ test("we can insert data into the projects collection.", async () => {
     media: [
       {
         mime_type: "image/png",
-        file_url: "https://testing.com/picture_one",
+        url: "https://testing.com/picture_one",
       },
       {
         mime_type: "image/png",
-        file_url: "https://testing.com/picture_two",
+        url: "https://testing.com/picture_two",
       },
     ],
     links: [
@@ -71,7 +71,7 @@ test("we can find a project by the slug.", async () => {
     media: [
       {
         mime_type: "image/png",
-        file_url: "https://testing.com/picture_one",
+        url: "https://testing.com/picture_one",
       },
     ],
     links: [],
@@ -94,7 +94,7 @@ test("we can not find private projects on public search.", async () => {
     media: [
       {
         mime_type: "image/png",
-        file_url: "https://testing.com/picture_one",
+        url: "https://testing.com/picture_one",
       },
     ],
     links: [],
@@ -118,7 +118,7 @@ test("we can get a list of projects.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -133,7 +133,7 @@ test("we can get a list of projects.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -158,7 +158,7 @@ test("we only fetch the projects with specific tags.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -173,7 +173,7 @@ test("we only fetch the projects with specific tags.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -188,7 +188,7 @@ test("we only fetch the projects with specific tags.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -216,7 +216,7 @@ test("we can get a list of public projects.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -231,7 +231,7 @@ test("we can get a list of public projects.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -256,7 +256,7 @@ test("we only fetch the public projects with specific tags.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -271,7 +271,7 @@ test("we only fetch the public projects with specific tags.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -286,7 +286,7 @@ test("we only fetch the public projects with specific tags.", async () => {
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -313,7 +313,7 @@ test("we can update a project.", async () => {
     media: [
       {
         mime_type: "image/png",
-        file_url: "https://testing.com/picture_one",
+        url: "https://testing.com/picture_one",
       },
     ],
     links: [],
@@ -341,7 +341,7 @@ test("we can not fetch a deleted project while searching by slug.", async () => 
     media: [
       {
         mime_type: "image/png",
-        file_url: "https://testing.com/picture_one",
+        url: "https://testing.com/picture_one",
       },
     ],
     links: [],
@@ -366,7 +366,7 @@ test("we can not fetch a deleted project while searching for all projects.", asy
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -382,7 +382,7 @@ test("we can not fetch a deleted project while searching for all projects.", asy
       media: [
         {
           mime_type: "image/png",
-          file_url: "https://testing.com/picture_one",
+          url: "https://testing.com/picture_one",
         },
       ],
       links: [],
@@ -406,7 +406,7 @@ test("we can remove a project.", async () => {
     media: [
       {
         mime_type: "image/png",
-        file_url: "https://testing.com/picture_one",
+        url: "https://testing.com/picture_one",
       },
     ],
     links: [],
