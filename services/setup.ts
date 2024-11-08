@@ -1,4 +1,4 @@
-import { AuthTransactionScript } from "../auth/AuthTransactionScript";
+import { AuthTransactionScript } from "@/auth/AuthTransactionScript";
 import { PortfolioServiceLocator } from "./PortfolioServiceLocator";
 import { MongoDBConnection } from "./db/MongoDBConnection";
 import { PortfolioDatabase } from "./db/PortfolioDatabase";
@@ -7,11 +7,11 @@ import { LocalFileSystem } from "./file-system/LocalFileSystem";
 import { PortfolioLogger } from "./logging/PortfolioLogger";
 import { EnvironmentSettingDictionary } from "./settings/EnvironmentSettingDictionary";
 
-import { JWTSessionAlgorithm } from "../auth/JWTSessionAlgorithm";
-import { PortfolioHashingAlgorithm } from "../auth/PortfolioHashingAlgorithm";
-import { ProjectValidator } from "../projects/ProjectValidator";
-import { ProjectsGateway } from "../projects/ProjectsGateway";
-import { ProjectsTransactionScript } from "../projects/ProjectsTransactionScript";
+import { JWTSessionAlgorithm } from "@/auth/JWTSessionAlgorithm";
+import { PortfolioHashingAlgorithm } from "@/auth/PortfolioHashingAlgorithm";
+import { ProjectValidator } from "@/projects/ProjectValidator";
+import { ProjectsGateway } from "@/projects/ProjectsGateway";
+import { ProjectsTransactionScript } from "@/projects/ProjectsTransactionScript";
 import { config } from "dotenv";
 import { expand } from "dotenv-expand";
 import { Collection } from "mongodb";
