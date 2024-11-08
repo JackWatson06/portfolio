@@ -12,7 +12,7 @@
     "test:client:watch": "jest --config jest.client.config.ts --watchAll",
     "test:backend": "jest --config jest.backend.config.ts",
     "test:backend:watch": "jest --config jest.backend.config.ts --watchAll",
-    "test": "npm run test:app; npm run test:backend"
+    "test": "npm run test:client; npm run test:backend"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",

@@ -1,7 +1,7 @@
 import {
   createRoutedNavigationOptions,
   type NavigationLink,
-} from "../../app/NavigationLinks";
+} from "@/app/NavigationLinks";
 
 import { expect, test } from "@jest/globals";
 
