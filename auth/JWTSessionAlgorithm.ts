@@ -9,7 +9,6 @@ export class JWTSessionAlgorithm implements SessionAlgorithm {
   } 
   
   create(expiration_date: number): Promise<string> {
-    console.log(expiration_date);
     return new SignJWT({ 'urn:example:claim': true })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()

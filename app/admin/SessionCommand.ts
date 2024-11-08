@@ -35,7 +35,6 @@ export async function createSession(prev_state: any, form_data: FormData): Promi
   }
 
   const auth_service_response = await auth_service.login(result.data.password)
-  console.log(auth_service_response)
   if (auth_service_response.code == ScriptResult.INVALID) {
     return {
       errors: ["Invalid password"],
