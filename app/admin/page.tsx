@@ -7,7 +7,7 @@ const initial_form_state = {
   errors: []
 }
 
-export default async function Login() {
+export default function Login() {
   const [state, formAction] = useFormState(createSession, initial_form_state)
  
   return <form action={formAction}>
