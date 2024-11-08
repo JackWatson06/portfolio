@@ -1,7 +1,7 @@
 "use server";
 
-import { ScriptResult } from "@/auth/TransactionScriptResult";
-import { init, portfolio_service_locator } from "@/services/setup";
+import { ScriptResult } from "../../auth/TransactionScriptResult";
+import { init, portfolio_service_locator } from "../../services/setup";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
