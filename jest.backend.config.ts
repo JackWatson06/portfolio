@@ -12,5 +12,5 @@ const createJestConfig = nextJest({
 export default createJestConfig({
   ...jestConfig,
   testEnvironment: "node",
-  testPathIgnorePatterns: ["__tests__/pages/", "__tests__/api/"],
+  testPathIgnorePatterns: ["__tests__/app-client/"],
 });

@@ -1,12 +1,12 @@
 import { PortfolioDatabase } from "@/services/db/PortfolioDatabase";
-import portfolio_service_locator from "@/services/setup";
+import { buildMongoConnection } from "../../../setup";
 
 import { exec as execSync } from "child_process";
 import { promisify } from "util";
 
 const exec = promisify(execSync);
 
-const mongo_connection = portfolio_service_locator.mongo_connection;
+const mongo_connection = buildMongoConnection();
 let db: PortfolioDatabase;
 
 beforeEach(async () => {

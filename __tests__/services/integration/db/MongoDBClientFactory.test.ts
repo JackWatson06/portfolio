@@ -1,6 +1,6 @@
-import portfolio_service_locator from "@/services/setup";
+import { buildMongoConnection } from "../../../setup";
 
-const mongo_connection = portfolio_service_locator.mongo_connection;
+const mongo_connection = buildMongoConnection();
 
 test("We can connect to the MongoDB client.", async () => {
   await mongo_connection.connect();

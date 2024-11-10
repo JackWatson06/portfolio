@@ -1,16 +1,41 @@
+import { config } from "dotenv";
+import { expand } from "dotenv-expand";
+import { EnvironmentSettingDictionary } from "../settings/EnvironmentSettingDictionary";
 import { MigrationStateRepository } from "./MigrationStateRepository";
-import portfolio_service_locator from "../setup";
+import { MongoDBConnection } from "./MongoDBConnection";
+import { PortfolioDatabase } from "./PortfolioDatabase";
+import { PortfolioDatabaseFactory } from "./PortfolioDatabaseFactory";
 
 function parseDirectoryParam(command_line_arguments: string[]) {
   if (command_line_arguments.length != 3) {
-    return `${__dirname}/migrations`;
+    return `${__dirname}/migrations/`;
   }
 
   return command_line_arguments[2];
 }
 
+function buildMongoConnection() {
+  expand(
+    config({
+      path: [".env"],
+    }),
+  );
+
+  const environment_settings_dictionary = new EnvironmentSettingDictionary(
+    process.env,
+  );
+
+  const portfolio_database_factory = new PortfolioDatabaseFactory(
+    environment_settings_dictionary.database,
+  );
+  return new MongoDBConnection<PortfolioDatabase>(
+    environment_settings_dictionary.database_connection_string,
+    portfolio_database_factory,
+  );
+}
+
 (async () => {
-  const mongo_connection = portfolio_service_locator.mongo_connection;
+  const mongo_connection = buildMongoConnection();
   await mongo_connection.connect();
 
   if (!mongo_connection.connected()) {
