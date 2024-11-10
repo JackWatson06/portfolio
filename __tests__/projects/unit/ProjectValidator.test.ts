@@ -14,7 +14,7 @@ test("we must have at least one picture.", async () => {
     media: [
       {
         mime_type: "video/mp4",
-        file_url: "https://testing.com/video_one",
+        url: "https://testing.com/video_one",
       },
     ],
     links: createLinks(),
@@ -38,7 +38,7 @@ test("media must have valid mime types.", async () => {
       ...createMediaElements(),
       {
         mime_type: "mp5",
-        file_url: "https://testing.com/video_two",
+        url: "https://testing.com/video_two",
       },
     ],
     links: createLinks(),
