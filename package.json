@@ -15,10 +15,18 @@
     "test": "npm run test:client; npm run test:backend"
   },
   "dependencies": {
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^15.0.2",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "autoprefixer": "^10.0.1",
+    "daisyui": "^4.12.14",
     "dotenv-expand": "^11.0.6",
     "jose": "^5.9.4",
     "mongodb": "^6.5.0",
@@ -26,16 +34,12 @@
     "pino": "^9.0.0",
     "react": "^18",
     "react-dom": "^18",
+    "tailwindcss": "^3.3.0",
+    "tsx": "^4.7.3",
+    "typescript": "^5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.4.2",
-    "@testing-library/react": "^15.0.2",
-    "@types/jest": "^29.5.12",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
     "eslint-config-prettier": "^9.1.0",
@@ -43,9 +47,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",
     "prettier": "^3.2.5",
-    "prettier-plugin-tailwindcss": "^0.6.1",
-    "tailwindcss": "^3.3.0",
-    "tsx": "^4.7.3",
-    "typescript": "^5"
+    "prettier-plugin-tailwindcss": "^0.6.1"
   }
 }
