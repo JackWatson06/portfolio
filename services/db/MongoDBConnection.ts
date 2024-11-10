@@ -22,7 +22,7 @@ export class MongoDBConnection<Schema extends MongoDBDatabase> {
     this.client = new MongoClient(database_connection_string, {
       serverApi: {
         version: ServerApiVersion.v1,
-        strict: true,
+        strict: false,
         deprecationErrors: true,
       },
     });

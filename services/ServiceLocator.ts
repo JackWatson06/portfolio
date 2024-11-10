@@ -1,10 +1,7 @@
-import { MongoDBConnection } from "./db/MongoDBConnection";
-import { PortfolioDatabase } from "./db/PortfolioDatabase";
-import { LocalFileSystem } from "./file-system/LocalFileSystem";
-import { Logger } from "./logging/Logger";
+import { TransactionScript as AuthTransactionScript } from "@/auth/TransactionScript";
+import { TransactionScript as ProjectsTransactionScript } from "@/projects/TransactionScript";
 
 export interface ServiceLocator {
-  mongo_connection: MongoDBConnection<PortfolioDatabase>;
-  local_file_system: LocalFileSystem;
-  logger: Logger;
+  readonly auth: AuthTransactionScript;
+  readonly project: ProjectsTransactionScript;
 }

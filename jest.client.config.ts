@@ -1,5 +1,5 @@
 /**
- * Configuration file specifically for testing API endpoints.
+ * Configuration file specifically for testing page rendering on the frontend.
  */
 
 import jestConfig from "./jest.config";
@@ -11,6 +11,6 @@ const createJestConfig = nextJest({
 
 export default createJestConfig({
   ...jestConfig,
-  testEnvironment: "node",
-  testPathIgnorePatterns: ["__tests__/pages/"],
+  testEnvironment: "jsdom",
+  testMatch: ["**/__tests__/app-client/**/*.[jt]s?(x)"],
 });
