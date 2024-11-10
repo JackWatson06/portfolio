@@ -24,7 +24,7 @@ class TestTransactionScript implements TransactionScript {
         code: ScriptResult.SUCCESS,
         token: "testing",
         expires: 10_000,
-        secure: false
+        secure: false,
       });
     });
   }
@@ -56,7 +56,7 @@ jest.mock("next/headers", mockCookiesFactory);
 jest.mock("next/navigation", mockRedirectFactory);
 
 const redirect_mock = redirect as unknown as jest.Mock;
-const cookie_mock = cookies as jest.Mock
+const cookie_mock = cookies as jest.Mock;
 
 function mockAuthScript(auth_script: TransactionScript) {
   if (portfolio_service_locator != null) {
@@ -71,7 +71,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await free();
-  jest.unmock('@/services/setup')
+  jest.unmock("@/services/setup");
 });
 
 test("we set a session for logging in the user.", async () => {
@@ -117,15 +117,15 @@ test("we return an error with an invalid form.", async () => {
 
 test("we get error when the service locator does not get initialized.", async () => {
   jest.mock("@/services/setup", () => ({
-    portfolio_service_locator: null
+    portfolio_service_locator: null,
   }));
 
   const response = await createSession({}, new FormData());
 
   expect(response.errors.length).toBe(1);
-})
+});
 
-test('we set expected JWT cookie options.', async () => {
+test("we set expected JWT cookie options.", async () => {
   const cookies_set_mock = jest.fn();
   const cookies_mock = {
     set: cookies_set_mock,
@@ -140,6 +140,6 @@ test('we set expected JWT cookie options.', async () => {
     httpOnly: true,
     secure: false,
     expires: 10_000,
-    path: '/'    
+    path: "/",
   });
 });

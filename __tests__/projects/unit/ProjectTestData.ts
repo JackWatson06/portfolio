@@ -82,10 +82,10 @@ export const TEST_PUBLIC_PROJECT: WithId<Project> = {
       url: "https://github.com/testing",
     },
   ],
-  private: false
+  private: false,
 };
 
 export const TEST_PRIVATE_PROJECT: WithId<Project> = {
   ...TEST_PUBLIC_PROJECT,
-  private: false
+  private: false,
 };

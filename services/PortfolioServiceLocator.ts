@@ -5,6 +5,6 @@ import { ServiceLocator } from "./ServiceLocator";
 export class PortfolioServiceLocator implements ServiceLocator {
   constructor(
     public auth: AuthTransactionScript,
-    public project: ProjectsTransactionScript
+    public project: ProjectsTransactionScript,
   ) {}
 }

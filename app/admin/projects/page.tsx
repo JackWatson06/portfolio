@@ -1,5 +1,3 @@
-
-
 export default async function ProjectAdminListView() {
   return (
     <div>
@@ -7,5 +5,5 @@ export default async function ProjectAdminListView() {
       <p>Project Two!</p>
       <p>Project Three!</p>
     </div>
-  )
+  );
 }

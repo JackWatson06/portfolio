@@ -18,7 +18,7 @@ Use the below steps to make changes to the application.
 
 ### Testing
 
-We have two seperate testing environments. Both environments use Jest for testing. We have backend 
+We have two seperate testing environments. Both environments use Jest for testing. We have backend
 tests and app tests. The backend tests use the _node_ environment and the app tests use the _jsdom_
 environment. While developing a feature write tests alongside the feature code.
 

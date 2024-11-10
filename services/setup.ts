@@ -64,11 +64,11 @@ function buildAuthTransactionScript(
   return new AuthTransactionScript(
     {
       hashed_password: environment_settings_dictionary.admin_password,
-      environment: environment_settings_dictionary.env
+      environment: environment_settings_dictionary.env,
     },
     session_algorithm,
     hasing_algorithm,
-    expires_calculator
+    expires_calculator,
   );
 }
 
@@ -80,13 +80,11 @@ function buildProjectsTransactionScript(projects: Collection<Project>) {
 }
 
 const environment_settings_dictionary = buildEnvironmentSettingsDictionary();
-  const mongo_connection = buildMongoConnection(
-    environment_settings_dictionary,
-  );
+const mongo_connection = buildMongoConnection(environment_settings_dictionary);
 
 export let portfolio_service_locator: PortfolioServiceLocator | null = null;
 export async function init() {
-  if(portfolio_service_locator != null) {
+  if (portfolio_service_locator != null) {
     return;
   }
 

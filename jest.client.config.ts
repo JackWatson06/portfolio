@@ -12,5 +12,5 @@ const createJestConfig = nextJest({
 export default createJestConfig({
   ...jestConfig,
   testEnvironment: "jsdom",
-  testMatch: ["**/__tests__/app-client/**/*.[jt]s?(x)"]
+  testMatch: ["**/__tests__/app-client/**/*.[jt]s?(x)"],
 });

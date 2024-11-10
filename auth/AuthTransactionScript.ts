@@ -9,16 +9,16 @@ import {
 } from "./TransactionScriptResult";
 
 export type AuthSettings = {
-  hashed_password: string,
-  environment: string
-}
+  hashed_password: string;
+  environment: string;
+};
 
 export class AuthTransactionScript implements TransactionScript {
   constructor(
     private settings: AuthSettings,
     private session_algorithm: SessionAlgorithm,
     private hashing_algorithm: HashingAlgorithm,
-    private expires_calculator: ExpiresCalculator
+    private expires_calculator: ExpiresCalculator,
   ) {}
 
   async login(
@@ -37,7 +37,7 @@ export class AuthTransactionScript implements TransactionScript {
       code: ScriptResult.SUCCESS,
       token: await this.session_algorithm.create(expiration_time),
       expires: expiration_time,
-      secure: this.settings.environment != "development"
+      secure: this.settings.environment != "development",
     };
   }
 

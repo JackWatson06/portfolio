@@ -4,8 +4,7 @@ import { CollectionGateway } from "./CollectionGateway";
 
 export class ProjectsGateway implements CollectionGateway {
   public constructor(private projects: Collection<Project>) {}
-  
-  
+
   async insert(project: Project): Promise<void> {
     this.projects.insertOne(project);
   }
@@ -76,13 +75,19 @@ export class ProjectsGateway implements CollectionGateway {
       })
     ).toArray();
   }
-  
-  async update(slug: string, project: MatchKeysAndValues<Project>): Promise<void> {
-    await this.projects.updateOne({
-      slug: slug
-    }, {
-      $set: project
-    });
+
+  async update(
+    slug: string,
+    project: MatchKeysAndValues<Project>,
+  ): Promise<void> {
+    await this.projects.updateOne(
+      {
+        slug: slug,
+      },
+      {
+        $set: project,
+      },
+    );
   }
 
   async delete(slug: string): Promise<void> {

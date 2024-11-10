@@ -30,10 +30,12 @@ export class EnvironmentSettingDictionary implements SettingDictionary {
       environment_settings_key_value,
       "JWT_SECRET",
     );
-    this.expires_offset = Number(this.findEnvironmentSetting(
-      environment_settings_key_value,
-      "EXPIRES_OFFSET",
-    ));
+    this.expires_offset = Number(
+      this.findEnvironmentSetting(
+        environment_settings_key_value,
+        "EXPIRES_OFFSET",
+      ),
+    );
     this.salt = this.findEnvironmentSetting(
       environment_settings_key_value,
       "SALT",

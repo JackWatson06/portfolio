@@ -37,11 +37,11 @@ test("we can create a new authentication token.", async () => {
   const auth_script = new AuthTransactionScript(
     {
       hashed_password: "testing",
-      environment: "production"
+      environment: "production",
     },
     new TestSessionAlgorithm("testing"),
     new TestHashingAlgorithm(),
-    new TestExpiresCalculator()
+    new TestExpiresCalculator(),
   );
 
   const auth_script_result = await auth_script.login("testing");
@@ -52,11 +52,11 @@ test("we get error when login is invalid.", async () => {
   const auth_script = new AuthTransactionScript(
     {
       hashed_password: "testing_invalid",
-      environment: "production"
+      environment: "production",
     },
     new TestSessionAlgorithm("testing"),
     new TestHashingAlgorithm(),
-    new TestExpiresCalculator()
+    new TestExpiresCalculator(),
   );
 
   const auth_script_result = await auth_script.login("testing");
@@ -67,11 +67,11 @@ test("we can validate a token.", async () => {
   const auth_script = new AuthTransactionScript(
     {
       hashed_password: "testing",
-      environment: "production"
+      environment: "production",
     },
     new TestSessionAlgorithm("testing"),
     new TestHashingAlgorithm(),
-    new TestExpiresCalculator()
+    new TestExpiresCalculator(),
   );
 
   const validation_result = await auth_script.validateSession("testing");
@@ -82,11 +82,11 @@ test("we return false when token is invalid.", async () => {
   const auth_script = new AuthTransactionScript(
     {
       hashed_password: "testing",
-      environment: "production"
+      environment: "production",
     },
     new TestSessionAlgorithm("testing"),
     new TestHashingAlgorithm(),
-    new TestExpiresCalculator()
+    new TestExpiresCalculator(),
   );
 
   expect(await auth_script.validateSession("testing_invalid")).toBe(false);

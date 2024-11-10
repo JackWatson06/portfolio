@@ -2,6 +2,6 @@ import { TransactionScript as AuthTransactionScript } from "@/auth/TransactionSc
 import { TransactionScript as ProjectsTransactionScript } from "@/projects/TransactionScript";
 
 export interface ServiceLocator {
-  readonly auth: AuthTransactionScript,
-  readonly project: ProjectsTransactionScript
+  readonly auth: AuthTransactionScript;
+  readonly project: ProjectsTransactionScript;
 }

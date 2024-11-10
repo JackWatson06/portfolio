@@ -1,27 +1,27 @@
 import { SessionAlgorithm } from "./SessionAlgorithm";
-import { SignJWT, jwtVerify } from 'jose'
+import { SignJWT, jwtVerify } from "jose";
 
 export class JWTSessionAlgorithm implements SessionAlgorithm {
-  private JWT_secret: Uint8Array 
-  
+  private JWT_secret: Uint8Array;
+
   constructor(secret: string) {
-    this.JWT_secret = new TextEncoder().encode(secret)
-  } 
-  
+    this.JWT_secret = new TextEncoder().encode(secret);
+  }
+
   create(expiration_date: number): Promise<string> {
-    return new SignJWT({ 'urn:example:claim': true })
-      .setProtectedHeader({ alg: 'HS256' })
+    return new SignJWT({ "urn:example:claim": true })
+      .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime(expiration_date)
-      .sign(this.JWT_secret)
+      .sign(this.JWT_secret);
   }
 
   async validate(token: string): Promise<boolean> {
     try {
       await jwtVerify(token, this.JWT_secret);
-      return true
-    } catch(error) {
-      return false
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 }
