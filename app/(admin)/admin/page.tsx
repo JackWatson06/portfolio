@@ -13,9 +13,8 @@ export default function Login() {
 
   return (
     <div className="flex min-h-svh flex-col justify-center">
-      <form className="m-auto" action={formAction}>
-        <h1>Login</h1>
-
+      <form className="flex flex-col gap-2 m-auto" action={formAction}>
+        <h1 className="text-2xl mb-2">Login</h1>
         <label className="form-control">
           <span className="label-text">Password</span>
           <input
@@ -26,9 +25,11 @@ export default function Login() {
           />
         </label>
         <LoginAlert errors={state.errors} />
-        <button className="btn" type="submit">
-          Login
-        </button>
+        <div className="flex justify-end">
+          <button className="btn" type="submit">
+            Submit
+          </button>
+        </div>
       </form>
     </div>
   );
