@@ -1,5 +1,5 @@
 import { PortfolioDatabase } from "@/services/db/PortfolioDatabase";
-import { buildMongoConnection } from "../../../setup";
+import { buildMongoConnection } from "@/__tests__/seeding/setup";
 
 import { exec as execSync } from "child_process";
 import { promisify } from "util";

@@ -5,33 +5,9 @@ import {
   ScriptResult,
   SuccessfulScriptResult,
 } from "@/auth/TransactionScriptResult";
-import { free, init, portfolio_service_locator } from "@/services/setup";
+import { portfolio_service_locator } from "@/services/setup";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
-class TestTransactionScript implements TransactionScript {
-  login(
-    password: string,
-  ): Promise<SuccessfulScriptResult | InvalidScriptResult> {
-    return new Promise((resolve) => {
-      if (password != "testing") {
-        return resolve({
-          code: ScriptResult.INVALID,
-        });
-      }
-
-      return resolve({
-        code: ScriptResult.SUCCESS,
-        token: "testing",
-        expires: 10_000,
-        secure: false,
-      });
-    });
-  }
-  validateSession(token: string): Promise<boolean> {
-    return new Promise((resolve) => resolve(true));
-  }
-}
 
 function mockCookiesFactory() {
   const cookies_constructor_return = {
@@ -52,27 +28,46 @@ function mockRedirectFactory() {
   };
 }
 
+function mockSetup() {
+  class TestTransactionScript implements TransactionScript {
+    login(
+      password: string,
+    ): Promise<SuccessfulScriptResult | InvalidScriptResult> {
+      return new Promise((resolve) => {
+        if (password != "testing") {
+          return resolve({
+            code: ScriptResult.INVALID,
+          });
+        }
+  
+        return resolve({
+          code: ScriptResult.SUCCESS,
+          token: "testing",
+          expires: 10_000,
+          secure: false,
+        });
+      });
+    }
+    validateSession(token: string): Promise<boolean> {
+      return new Promise((resolve) => resolve(true));
+    }
+  }
+  
+  return {
+    init: () => {},
+    portfolio_service_locator: {
+      auth: new TestTransactionScript()
+    },
+    free: () => {}
+  }
+}
+ 
 jest.mock("next/headers", mockCookiesFactory);
 jest.mock("next/navigation", mockRedirectFactory);
+jest.mock("@/services/setup", mockSetup);
 
 const redirect_mock = redirect as unknown as jest.Mock;
 const cookie_mock = cookies as jest.Mock;
-
-function mockAuthScript(auth_script: TransactionScript) {
-  if (portfolio_service_locator != null) {
-    portfolio_service_locator.auth = new TestTransactionScript();
-  }
-}
-
-beforeEach(async () => {
-  await init();
-  mockAuthScript(new TestTransactionScript());
-});
-
-afterEach(async () => {
-  await free();
-  jest.unmock("@/services/setup");
-});
 
 test("we set a session for logging in the user.", async () => {
   const cookies_set_mock = jest.fn();

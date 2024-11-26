@@ -8,11 +8,15 @@
     "start": "npm run migrate && next start",
     "lint": "next lint",
     "migrate": "tsx services/db/migrate.ts",
-    "test:client": "jest --config jest.client.config.ts",
-    "test:client:watch": "jest --config jest.client.config.ts --watchAll",
-    "test:backend": "jest --config jest.backend.config.ts",
-    "test:backend:watch": "jest --config jest.backend.config.ts --watchAll",
-    "test": "npm run test:client; npm run test:backend"
+    "test:client:unit": "jest --config jest.client.config.ts --testPathPattern=/__tests__/client/unit/",
+    "test:client:int": "jest --config jest.client.config.ts --testPathPattern=/__tests__/client/integration/",
+    "test:server:unit": "jest --config jest.server.config.ts --testPathPattern=/__tests__/server/unit/",
+    "test:server:int": "jest --config jest.server.config.ts --testPathPattern=/__tests__/server/integration/",
+    "test:client:watch": "jest --config jest.client.config.ts --watch",
+    "test:server:watch": "jest --config jest.server.config.ts --watch",
+    "test:unit": "npm run test:client:unit; npm run test:server:unit;",
+    "test:int": "npm run test:client:int; npm run test:server:int;",
+    "test": "npm run test:unit; npm run test:int;"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",

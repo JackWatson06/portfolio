@@ -1,4 +1,4 @@
-import { buildMongoConnection } from "../../../setup";
+import { buildMongoConnection } from "@/__tests__/seeding/setup";
 
 const mongo_connection = buildMongoConnection();
 

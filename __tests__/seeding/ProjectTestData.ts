@@ -32,11 +32,11 @@ export function createMediaElements(): Array<MediaElement> {
   return [
     {
       mime_type: "image/png",
-      file_url: "https://testing.com/picture_one",
+      url: "https://testing.com/picture_one",
     },
     {
       mime_type: "video/mp4",
-      file_url: "https://testing.com/video_one",
+      url: "https://testing.com/video_one",
     },
   ];
 }
@@ -65,11 +65,11 @@ export const TEST_PUBLIC_PROJECT: WithId<Project> = {
   media: [
     {
       mime_type: "image/png",
-      file_url: "https://testing.com/picture_one",
+      url: "https://testing.com/picture_one",
     },
     {
       mime_type: "image/png",
-      file_url: "https://testing.com/picture_two",
+      url: "https://testing.com/picture_two",
     },
   ],
   links: [

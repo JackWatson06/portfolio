@@ -13,7 +13,7 @@ export type CreateSessionResponse = {
 export async function createSession(
   prev_state: any,
   form_data: FormData,
-): Promise<CreateSessionResponse> {
+): Promise<CreateSessionResponse> {  
   await init();
   if (portfolio_service_locator == null) {
     return {

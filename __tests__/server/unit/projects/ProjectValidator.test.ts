@@ -1,5 +1,5 @@
 import { ProjectValidator } from "@/projects/ProjectValidator";
-import { createLinks, createMediaElements } from "./ProjectTestData";
+import { createLinks, createMediaElements } from "@/__tests__/seeding/ProjectTestData";
 
 test("we must have at least one picture.", async () => {
   const validator = new ProjectValidator();

@@ -1,4 +1,4 @@
-import { buildMongoConnection } from "@/__tests__/setup";
+import { buildMongoConnection } from "@/__tests__/seeding/setup";
 import { ProjectsGateway } from "@/projects/ProjectsGateway";
 import { PortfolioDatabase } from "@/services/db/PortfolioDatabase";
 import { test } from "@jest/globals";

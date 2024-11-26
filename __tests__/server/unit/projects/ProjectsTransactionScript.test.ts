@@ -13,7 +13,7 @@ import {
   TEST_PUBLIC_PROJECT,
   createLinkInputs,
   createMediaInputs,
-} from "./ProjectTestData";
+} from "@/__tests__/seeding/ProjectTestData";
 import {
   ScriptResult,
   SlugScriptResult,
