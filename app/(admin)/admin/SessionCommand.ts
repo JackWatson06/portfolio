@@ -6,14 +6,14 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-type Response = {
+export type CreateSessionResponse = {
   errors: string[];
 };
 
 export async function createSession(
   prev_state: any,
   form_data: FormData,
-): Promise<Response> {
+): Promise<CreateSessionResponse> {
   await init();
   if (portfolio_service_locator == null) {
     return {

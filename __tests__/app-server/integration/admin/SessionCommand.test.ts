@@ -1,4 +1,4 @@
-import { createSession } from "@/app/admin/SessionCommand";
+import { createSession } from "@/app/(admin)/admin/SessionCommand";
 import { TransactionScript } from "@/auth/TransactionScript";
 import {
   InvalidScriptResult,
