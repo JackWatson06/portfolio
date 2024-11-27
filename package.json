@@ -17,9 +17,9 @@
     "test:client:watch": "jest --config jest.client.config.ts --watch",
     "test:server:watch": "jest --config jest.server.config.ts --watch",
     "test:edge:watch": "jest --config jest.edge.config.ts --watch",
-    "test:unit": "npm run test:client:unit && npm run test:server:unit && npm run test:edge:unit;",
-    "test:int": "npm run test:client:int && npm run test:server:int && npm run test:edge:int;",
-    "test": "npm run test:unit && npm run test:int;"
+    "test:unit": "npm run test:client:unit && npm run test:server:unit && npm run test:edge:unit",
+    "test:int": "npm run test:client:int && npm run test:server:int && npm run test:edge:int",
+    "test": "npm run test:unit && npm run test:int"
   },
   "dependencies": {
     "@edge-runtime/jest-environment": "^3.0.4",
