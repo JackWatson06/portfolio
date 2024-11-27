@@ -1,4 +1,4 @@
-import { ExpiresDateTimeCalculator } from "@/auth/ExpiresDateTimeCalculator";
+import { ExpiresDateTimeCalculator } from "@/auth/login/ExpiresDateTimeCalculator";
 
 test("we get a future time.", async () => {
   const now = Date.now() + 10_000;

@@ -1,11 +1,4 @@
-import { createSession } from "@/app/(admin)/admin/SessionCommand";
-import { TransactionScript } from "@/auth/TransactionScript";
-import {
-  InvalidScriptResult,
-  ScriptResult,
-  SuccessfulScriptResult,
-} from "@/auth/TransactionScriptResult";
-import { portfolio_service_locator } from "@/services/setup";
+;import { createSession } from "@/app/login/SessionCommand";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -27,44 +20,10 @@ function mockRedirectFactory() {
     redirect: jest.fn(),
   };
 }
-
-function mockSetup() {
-  class TestTransactionScript implements TransactionScript {
-    login(
-      password: string,
-    ): Promise<SuccessfulScriptResult | InvalidScriptResult> {
-      return new Promise((resolve) => {
-        if (password != "testing") {
-          return resolve({
-            code: ScriptResult.INVALID,
-          });
-        }
-  
-        return resolve({
-          code: ScriptResult.SUCCESS,
-          token: "testing",
-          expires: 10_000,
-          secure: false,
-        });
-      });
-    }
-    validateSession(token: string): Promise<boolean> {
-      return new Promise((resolve) => resolve(true));
-    }
-  }
-  
-  return {
-    init: () => {},
-    portfolio_service_locator: {
-      auth: new TestTransactionScript()
-    },
-    free: () => {}
-  }
-}
  
 jest.mock("next/headers", mockCookiesFactory);
 jest.mock("next/navigation", mockRedirectFactory);
-jest.mock("@/services/setup", mockSetup);
+jest.mock("@/services/setup");
 
 const redirect_mock = redirect as unknown as jest.Mock;
 const cookie_mock = cookies as jest.Mock;
@@ -138,3 +97,4 @@ test("we set expected JWT cookie options.", async () => {
     path: "/",
   });
 });
+

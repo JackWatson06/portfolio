@@ -1,6 +1,6 @@
 import { ExpiresCalculator } from "./ExpiresCalculator";
 import { HashingAlgorithm } from "./HashingAlgorithm";
-import { SessionAlgorithm } from "./SessionAlgorithm";
+import { SessionAlgorithm } from "../services/SessionAlgorithm";
 import { TransactionScript } from "./TransactionScript";
 import {
   InvalidScriptResult,
@@ -13,7 +13,7 @@ export type AuthSettings = {
   environment: string;
 };
 
-export class AuthTransactionScript implements TransactionScript {
+export class LoginTransactionScript implements TransactionScript {
   constructor(
     private settings: AuthSettings,
     private session_algorithm: SessionAlgorithm,
@@ -39,9 +39,5 @@ export class AuthTransactionScript implements TransactionScript {
       expires: expiration_time,
       secure: this.settings.environment != "development",
     };
-  }
-
-  validateSession(token: string): Promise<boolean> {
-    return this.session_algorithm.validate(token);
   }
 }

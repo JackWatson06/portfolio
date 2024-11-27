@@ -1,7 +1,7 @@
 "use server";
 
-import { ScriptResult } from "@/auth/TransactionScriptResult";
-import { init, portfolio_service_locator } from "@/services/setup";
+import { ScriptResult } from "@/auth/login/TransactionScriptResult";
+import { init } from "@/services/setup";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -14,14 +14,14 @@ export async function createSession(
   prev_state: any,
   form_data: FormData,
 ): Promise<CreateSessionResponse> {  
-  await init();
+  const portfolio_service_locator = await init();
   if (portfolio_service_locator == null) {
     return {
       errors: ["Server error. Try again later."],
     };
   }
 
-  const auth_service = portfolio_service_locator.auth;
+  const login_service = portfolio_service_locator.login;
 
   const form_schema = z.object({
     password: z.string({ message: "Password required." }),
@@ -37,7 +37,7 @@ export async function createSession(
     };
   }
 
-  const auth_service_response = await auth_service.login(result.data.password);
+  const auth_service_response = await login_service.login(result.data.password);
   if (auth_service_response.code == ScriptResult.INVALID) {
     return {
       errors: ["Invalid password"],

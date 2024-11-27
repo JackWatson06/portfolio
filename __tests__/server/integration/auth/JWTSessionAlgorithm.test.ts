@@ -1,4 +1,4 @@
-import { JWTSessionAlgorithm } from "@/auth/JWTSessionAlgorithm";
+import { JWTSessionAlgorithm } from "@/auth/services/JWTSessionAlgorithm";
 
 test("we can create a new token.", async () => {
   const JWT_session_algo = new JWTSessionAlgorithm(

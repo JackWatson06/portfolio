@@ -1,4 +1,4 @@
-import { PortfolioHashingAlgorithm } from "@/auth/PortfolioHashingAlgorithm";
+import { PortfolioHashingAlgorithm } from "@/auth/login/PortfolioHashingAlgorithm";
 
 test("we get an scrypt hash back from the hashing algorithm.", async () => {
   const portfolio_hashing_algorithm = new PortfolioHashingAlgorithm("testing");

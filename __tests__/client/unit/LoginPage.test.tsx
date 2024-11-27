@@ -1,11 +1,11 @@
 import { useFormState } from "react-dom";
 
-import Login from "@/app/(admin)/admin/page";
+import Login from "@/app/login/page";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import "html-validate/jest";
 
-jest.mock("@/app/(admin)/admin/SessionCommand", () => {
+jest.mock("@/app/login/SessionCommand", () => {
   return {
     createSession: async (prev_state: any, form_data: FormData) => {},
   };
