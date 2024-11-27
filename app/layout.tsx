@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Jack Watson's Portfolio",
-  description: "Showcase of web projects, desktop applications, and video games. Enjoy!",
+  description:
+    "Showcase of web projects, desktop applications, and video games. Enjoy!",
 };
 
 export default function RootLayout({
@@ -13,9 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-100">
-        {children}
-      </body>
+      <body className="min-h-100">{children}</body>
     </html>
   );
 }

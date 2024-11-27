@@ -1,4 +1,4 @@
-;import { createSession } from "@/app/login/SessionCommand";
+import { createSession } from "@/app/login/SessionCommand";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -20,7 +20,7 @@ function mockRedirectFactory() {
     redirect: jest.fn(),
   };
 }
- 
+
 jest.mock("next/headers", mockCookiesFactory);
 jest.mock("next/navigation", mockRedirectFactory);
 jest.mock("@/services/setup");
@@ -97,4 +97,3 @@ test("we set expected JWT cookie options.", async () => {
     path: "/",
   });
 });
-

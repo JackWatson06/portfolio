@@ -18,13 +18,14 @@ jest.mock("react-dom", () => {
   };
 });
 
-
 beforeEach(() => {
-  (useFormState as jest.Mock).mockImplementation(() => [{ errors: [] }, "testing"])
-})
+  (useFormState as jest.Mock).mockImplementation(() => [
+    { errors: [] },
+    "testing",
+  ]);
+});
 
 test("login page has valid HTML.", async () => {
-  
   const { container } = render(<Login />);
 
   expect(container.innerHTML).toHTMLValidate();
@@ -37,16 +38,22 @@ test("login form does not render warnings when we have no errors.", () => {
 });
 
 test("login form does renders warning when we have an error.", () => {
-  (useFormState as jest.Mock).mockImplementation(() => [{ errors: ["testing"] }, "testing"])
-  
+  (useFormState as jest.Mock).mockImplementation(() => [
+    { errors: ["testing"] },
+    "testing",
+  ]);
+
   render(<Login />);
 
   expect(screen.queryByText("testing")).not.toBe(null);
 });
 
 test("login form does renders warnings when we have multiple errors.", () => {
-  (useFormState as jest.Mock).mockImplementation(() => [{ errors: ["testing", 'testing'] }, "testing"])
-  
+  (useFormState as jest.Mock).mockImplementation(() => [
+    { errors: ["testing", "testing"] },
+    "testing",
+  ]);
+
   render(<Login />);
 
   expect(screen.queryByText("testing, testing")).not.toBe(null);

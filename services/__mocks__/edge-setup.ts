@@ -2,7 +2,9 @@ import { PortfolioEdgeServiceLocator } from "../PortfolioEdgeServiceLocator";
 
 function mock_token_transaction_script() {
   return {
-    validate: jest.fn().mockImplementation((token: string) => token == "testing"),
+    validate: jest
+      .fn()
+      .mockImplementation((token: string) => token == "testing"),
   };
 }
 
@@ -17,7 +19,7 @@ export const init = jest.fn().mockImplementation(() => {
   }
 
   portfolio_service_locator = {
-    token: mock_token_transaction_script()
+    token: mock_token_transaction_script(),
   };
   return portfolio_service_locator;
 });

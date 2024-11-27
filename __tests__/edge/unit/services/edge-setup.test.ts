@@ -49,4 +49,4 @@ test("we can free the singleton.", () => {
   const second_service_locator = init();
 
   expect(second_service_locator).not.toBe(service_locator);
-})
+});

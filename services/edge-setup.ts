@@ -8,8 +8,12 @@ function buildEnvironmentSettingsDictionary() {
   return new EnvironmentSettingDictionary(load_from_process());
 }
 
-function buildTokenTransactionScript(environment_settings_dictionary: EnvironmentSettingDictionary) {
-  return new TokenTransactionScript(new JWTSessionAlgorithm(environment_settings_dictionary.jwt_secret));
+function buildTokenTransactionScript(
+  environment_settings_dictionary: EnvironmentSettingDictionary,
+) {
+  return new TokenTransactionScript(
+    new JWTSessionAlgorithm(environment_settings_dictionary.jwt_secret),
+  );
 }
 
 let portfolio_service_locator: PortfolioEdgeServiceLocator | null = null;

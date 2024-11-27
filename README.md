@@ -22,32 +22,37 @@ We have two seperate testing environments. Both environments use Jest for testin
 tests and server tests. The server tests use the _node_ environment and the client tests use the _jsdom_
 environment. While developing a feature write tests alongside the feature code.
 
-*Note* The edge runtime does not catch all edge issues at the current moment. They may have not have
+_Note_ The edge runtime does not catch all edge issues at the current moment. They may have not have
 a complete implementation for jest.
 
 #### Running the Tests
 
 Run client tests:
+
 ```bash
 bin/npm run test:client:[unit|int]
 ```
 
 Run server tests:
+
 ```bash
 bin/npm run test:server:[unit|int]
 ```
 
 Watch a specific client test:
+
 ```bash
 bin/npm run test:client:watch -- {file_path}
 ```
 
 Watch a specific server test:
+
 ```bash
 bin/npm run test:server:watch -- {file_path}
 ```
 
 Run entire testing suite:
+
 ```bash
 bin/npm run test
 ```

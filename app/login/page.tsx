@@ -13,8 +13,8 @@ export default function Login() {
 
   return (
     <div className="flex min-h-svh flex-col justify-center">
-      <form className="flex flex-col gap-2 m-auto" action={formAction}>
-        <h1 className="text-2xl mb-2">Login</h1>
+      <form className="m-auto flex flex-col gap-2" action={formAction}>
+        <h1 className="mb-2 text-2xl">Login</h1>
         <label className="form-control">
           <span className="label-text">Password</span>
           <input

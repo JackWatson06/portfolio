@@ -11,9 +11,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   if (
     pathname.startsWith("/admin") &&
     (session_cookie == undefined ||
-      !(await portfolio_service_locator.token.validate(
-        session_cookie.value,
-      )))
+      !(await portfolio_service_locator.token.validate(session_cookie.value)))
   ) {
     return NextResponse.redirect(new URL("/login", request.nextUrl));
   }

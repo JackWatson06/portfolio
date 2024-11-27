@@ -30,8 +30,8 @@ function mock_portfolio_transaction_script() {
     findAll: jest.fn(),
     findAllPublic: jest.fn(),
     update: jest.fn(),
-    delete: jest.fn()
-  }
+    delete: jest.fn(),
+  };
 }
 
 let portfolio_service_locator: PortfolioServiceLocator | null = null;
@@ -42,7 +42,7 @@ export const init = jest.fn().mockImplementation(() => {
 
   portfolio_service_locator = {
     login: mock_login_transaction_script(),
-    project: mock_portfolio_transaction_script()
+    project: mock_portfolio_transaction_script(),
   };
   return portfolio_service_locator;
 });
