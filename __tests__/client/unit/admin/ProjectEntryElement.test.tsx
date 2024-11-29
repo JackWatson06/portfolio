@@ -9,7 +9,7 @@ expect.extend(toHaveNoViolations)
 
 const project_entry_view: ProjectListElementView = {
   name: "gandalf",
-  thumbnail_media: "https://localhost:8080/assets/images/pic-of-gandalf.png",
+  thumbnail_media: "/assets/images/pic-of-gandalf.png",
   thumbnail_media_description: "Picture of Gandalf holding a staff.",
   private: true,
   tags: ["c++", "web", "tailwind"],
@@ -66,7 +66,7 @@ test("we display the thumbnail image for the project.", () => {
 
   expect(screen.queryByRole("img", {
     name: "Picture of Gandalf holding a staff."
-  })).toHaveAttribute('src', 'https://gandalf.com/pic-of-gandalf');
+  })).toHaveAttribute('src');
 });
 
 test("thumbnail image has correct src.", () => {
