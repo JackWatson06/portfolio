@@ -1,10 +1,32 @@
 
+
+export type MediaFileView = {
+  url: string,
+  mime_type: string,
+  description: string
+}
+
+export type LinkView = {
+  type: string,
+  url: string,
+  live: string
+}
+
+export type ThumbnailView = {
+  url: string,
+  description: string
+}
+
 export type ProjectListElementView = {
-  name: string,
-  thumbnail_media: string,
-  thumbnail_media_description: string,
+  title: string,
+  created_at: string,
+  updated_at: string,
+  thumbnail_media: ThumbnailView,
   private: boolean,
-  tags: string[]
+  tags: string[],
+  edit_link: string,
+  media_files: MediaFileView[],
+  links: LinkView[]
 }
 export type ProjectListView = ProjectListElementView[] 
 

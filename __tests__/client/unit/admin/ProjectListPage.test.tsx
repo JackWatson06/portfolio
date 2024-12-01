@@ -4,6 +4,9 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import "html-validate/jest";
 import { fetchProjectListView } from "@/app/admin/projects/queries"
+import { axe, toHaveNoViolations } from "jest-axe";
+
+expect.extend(toHaveNoViolations)
 
 jest.mock("@/app/admin/projects/queries")
 
