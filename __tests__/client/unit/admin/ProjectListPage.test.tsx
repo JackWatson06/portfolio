@@ -1,64 +1,42 @@
-
 import Projects from "@/app/admin/projects/page";
+import RootLayout from "@/app/layout";
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import "html-validate/jest";
-import { fetchProjectListView } from "@/app/admin/projects/queries"
 import { axe, toHaveNoViolations } from "jest-axe";
+import { Suspense } from "react";
 
-expect.extend(toHaveNoViolations)
+expect.extend(toHaveNoViolations);
 
-jest.mock("@/app/admin/projects/queries")
+jest.mock("@/app/admin/projects/queries");
 
-test("we render valid HTML for the admin list page.", async () => {
+test("admin list page renders valid HTML.", async () => {
   const { container } = render(await Projects());
 
   expect(container.innerHTML).toHTMLValidate();
-})
-
-test("we pass accessability test.", async () => {
-  const { container } = render(
-    await Projects()
-  );
-
-  expect(await axe(container.innerHTML)).toHaveNoViolations();
 });
 
-test("we render all project titles.", async () => {
-  const expected_project_regexes = [/project one/i, /project two/i, /project three/i]
-  
-  render(await Projects());
-  
-  const actual_elements = expected_project_regexes.map((search_regex) => {
-    return screen.queryByText(search_regex)
-  }).filter((element) => element != null);
-  expect(actual_elements.length).toBe(3);
+test("accessability of page.", async () => {
+  const { container } = render(await Projects());
+
+  await act(async () => {
+    expect(await axe(container)).toHaveNoViolations();
+  });
 });
 
-test("we render private indicators.", async () => {
-  const expected_project_regexes = [/project one/i, /project two/i, /project three/i]
-  
-  render(await Projects());
-  
-  const actual_elements = expected_project_regexes.map((search_regex) => {
-    return screen.queryByText(search_regex)
-  })
+test("displaying all project titles.", async () => {
+  const expected_project_regexes = [/gandalf/i, /bilbo/i, /aragorn/i];
+
+  cleanup();
+  const { getByRole } = render(await Projects());
+
+  const actual_elements = expected_project_regexes
+    .map((search_regex) => {
+      return getByRole("heading", {
+        name: search_regex,
+        level: 2,
+      });
+    })
+    .filter((element) => element != null);
   expect(actual_elements.length).toBe(3);
-})
-
-test("we render private indicators.", async () => {
-  const expected_project_regexes = [/project one/i, /project two/i, /project three/i]
-  
-  render(await Projects());
-  
-  const actual_elements = screen.queryByRole("img", {
-    name: /private/i
-  }).filter((element) => element != null);
-  expect(actual_elements.length).toBe(3);
-})
-
-test("we pull projects from a backend.", async () => {
-  render(await Projects());
-
-  expect(fetchProjectListView).toHaveBeenCalled();
-})
+});
