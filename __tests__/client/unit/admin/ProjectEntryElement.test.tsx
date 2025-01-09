@@ -1,7 +1,12 @@
 import ProjectListElement from "@/app/admin/projects/ProjectEntryElement";
 import { ProjectListElementView } from "@/app/admin/projects/queries";
 import "@testing-library/jest-dom";
-import { BoundFunction, ByRoleMatcher, ByRoleOptions, GetByRole, QueryByRole, render, within } from "@testing-library/react";
+import {
+  ByRoleMatcher,
+  ByRoleOptions,
+  render,
+  within,
+} from "@testing-library/react";
 import "html-validate/jest";
 
 const project_entry_view: ProjectListElementView = {
@@ -14,6 +19,7 @@ const project_entry_view: ProjectListElementView = {
   },
   private: true,
   tags: ["c++", "web", "tailwind"],
+  view_link: "/projects/gandalf/edit",
   edit_link: "/admin/projects/gandalf/edit",
   media_files: [
     {
@@ -56,13 +62,17 @@ const project_entry_view: ProjectListElementView = {
   ],
 };
 
-
-type RenderGetByRole = (role: ByRoleMatcher, options?: ByRoleOptions | undefined) => HTMLElement;
-function getSectionByHeader(header: RegExp, getByRole: RenderGetByRole): HTMLElement {
+type RenderGetByRole = (
+  role: ByRoleMatcher,
+  options?: ByRoleOptions | undefined,
+) => HTMLElement;
+function getSectionByHeader(
+  header: RegExp,
+  getByRole: RenderGetByRole,
+): HTMLElement {
   const closest_section = getByRole("heading", {
-      name: header,
-    })
-    .closest("section");
+    name: header,
+  }).closest("section");
 
   if (closest_section == null) {
     throw new Error("Header not nested within a section tag.");
@@ -80,9 +90,11 @@ test("project list element has valid HTML.", () => {
 });
 
 test("rendering the name of the project.", () => {
-  const { queryByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { queryByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
-  expect(queryByRole("heading", { name: /gandalf/i })).not.toBe(null);
+  expect(queryByRole("heading", { name: /^gandalf/i })).not.toBe(null);
 });
 
 test("marking a project as public.", () => {
@@ -99,7 +111,9 @@ test("marking a project as public.", () => {
 });
 
 test("marking a project as private.", () => {
-  const { queryByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { queryByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   expect(queryByRole("status")).toHaveTextContent(/private/i);
 });
@@ -107,7 +121,9 @@ test("marking a project as private.", () => {
 test.each([[/^c\+\+$/i], [/^web$/i], [/^tailwind$/i]])(
   "displaying the tag. Tag: %s",
   (query: RegExp) => {
-    const { getByRole } = render(<ProjectListElement project={project_entry_view} />);
+    const { getByRole } = render(
+      <ProjectListElement project={project_entry_view} />,
+    );
 
     const tag_section_element = getSectionByHeader(/tags/i, getByRole);
     expect(within(tag_section_element).queryByText(query)).toBeInTheDocument();
@@ -115,7 +131,9 @@ test.each([[/^c\+\+$/i], [/^web$/i], [/^tailwind$/i]])(
 );
 
 test("displaying the thumbnail image for the project.", () => {
-  const { queryByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { queryByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   expect(
     queryByRole("img", {
@@ -125,7 +143,9 @@ test("displaying the thumbnail image for the project.", () => {
 });
 
 test("displaying the correct link for editing a project.", () => {
-  const { queryByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { queryByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   expect(
     queryByRole("link", {
@@ -139,14 +159,18 @@ test.each(
     return [media_file.url];
   }),
 )("displaying the URL for a media element. URL: %s", (url: string) => {
-  const { getByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { getByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   const media_section_element = getSectionByHeader(/media\ files/i, getByRole);
   expect(within(media_section_element).queryByText(url)).toBeInTheDocument();
 });
 
 test("displaying the mime type for a media element.", () => {
-  const { getByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { getByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   const media_section_element = getSectionByHeader(/media\ files/i, getByRole);
   expect(
@@ -155,7 +179,9 @@ test("displaying the mime type for a media element.", () => {
 });
 
 test("displaying the description for a media element.", () => {
-  const { getByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { getByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   const media_section_element = getSectionByHeader(/media\ files/i, getByRole);
   expect(
@@ -170,23 +196,29 @@ test.each(
     return [link.url];
   }),
 )("displaying the URL for a link. URL: %s", (url: string) => {
-  const { getByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { getByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   const link_section_element = getSectionByHeader(/links/i, getByRole);
   expect(within(link_section_element).queryByText(url)).toBeInTheDocument();
 });
 
 test("displaying the type for a link.", () => {
-  const { getByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { getByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   const link_section_element = getSectionByHeader(/links/i, getByRole);
   expect(
-    within(link_section_element).queryByText(/^live$/i),
+    within(link_section_element).queryByText("live"),
   ).toBeInTheDocument();
 });
 
 test("displaying the live status for a link.", () => {
-  const { getByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { getByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   const link_section_element = getSectionByHeader(/links/i, getByRole);
   expect(
@@ -195,7 +227,9 @@ test("displaying the live status for a link.", () => {
 });
 
 test("displaying the created at date.", () => {
-  const { getByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { getByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   const timestamp_section = getSectionByHeader(/timestamps/i, getByRole);
   expect(
@@ -204,7 +238,9 @@ test("displaying the created at date.", () => {
 });
 
 test("displaying the last edited date.", () => {
-  const { getByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { getByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   const timestamp_section = getSectionByHeader(/timestamps/i, getByRole);
   expect(
@@ -212,22 +248,38 @@ test("displaying the last edited date.", () => {
   ).toBeInTheDocument();
 });
 
-test('displaying the delete button.', () => {
-  const { queryByRole } = render(<ProjectListElement project={project_entry_view} />);
+test("displaying the delete button.", () => {
+  const { queryByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   expect(
-    queryByRole('button', {
-      name: /delete gandalf/i
-    })
+    queryByRole("button", {
+      name: /delete gandalf/i,
+    }),
   ).toBeInTheDocument();
-})
+});
 
 test("displaying the edit link.", () => {
-  const { queryByRole } = render(<ProjectListElement project={project_entry_view} />);
+  const { queryByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
 
   expect(
-    queryByRole('link', {
-      name: /edit gandalf/i
-    })
+    queryByRole("link", {
+      name: /edit gandalf/i,
+    }),
+  ).toBeInTheDocument();
+});
+
+test("displaying the view link.", () => {
+  const { queryByRole } = render(
+    <ProjectListElement project={project_entry_view} />,
+  );
+
+  expect(
+    queryByRole("link", {
+      name: /view gandalf/i,
+    }),
   ).toBeInTheDocument();
 });

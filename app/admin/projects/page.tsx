@@ -5,8 +5,8 @@ export default async function Projects() {
   const projects = await fetchProjectListView();
 
   return (
-    <main>
-      <ul>
+    <main className="container mx-auto">
+      <ul className="space-y-10">
         {projects.map((project_entry_view) => {
           return (
             <ProjectListElement

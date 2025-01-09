@@ -11,6 +11,7 @@ const mock_project_list: ProjectListView = [
     },
     private: true,
     tags: ["c++", "web", "tailwind"],
+    view_link: "/projects/gandalf/",
     edit_link: "/admin/projects/gandalf/edit",
     media_files: [
       {
@@ -62,6 +63,7 @@ const mock_project_list: ProjectListView = [
     },
     private: true,
     tags: ["c++", "web", "tailwind"],
+    view_link: "/projects/gandalf/",
     edit_link: "/admin/projects/gandalf/edit",
     media_files: [
       {
@@ -113,6 +115,7 @@ const mock_project_list: ProjectListView = [
     },
     private: true,
     tags: ["c++", "web", "tailwind"],
+    view_link: "/projects/gandalf/",
     edit_link: "/admin/projects/gandalf/edit",
     media_files: [
       {
