@@ -49,8 +49,8 @@ export default function ProjectListElement({
   project,
 }: ProjectEntryElementProps) {
   return (
-    <li className="card bg-base-100 shadow-xl lg:overflow-hidden lg:grid lg:grid-cols-3">
-      <figure className="h-96 relative lg:h-auto lg:rounded-none ">
+    <li className="card bg-base-100 shadow-xl lg:grid lg:grid-cols-3 lg:overflow-hidden">
+      <figure className="relative h-96 lg:h-auto lg:rounded-none">
         <Image
           src={project.thumbnail_media.url}
           alt={project.thumbnail_media.description}
@@ -96,54 +96,54 @@ export default function ProjectListElement({
           </div>
         </CardSection>
         <CardSection header="Timestamps">
-            <CardDefinitionList>
-              <CardDefinition term="Created At" definition={project.created_at} />
-              <CardDefinition term="Updated At" definition={project.updated_at} />
-            </CardDefinitionList>
-          </CardSection>
+          <CardDefinitionList>
+            <CardDefinition term="Created At" definition={project.created_at} />
+            <CardDefinition term="Updated At" definition={project.updated_at} />
+          </CardDefinitionList>
+        </CardSection>
       </section>
-      <details className="mx-8 mb-8 lg:mt-8 lg:pt-4 lg:col-span-3">
-          <summary>Gandalf Project Details</summary>
-          <div className="lg:grid lg:grid-cols-2">
-            <CardSection header="Media Files">
-              <CardSectionList>
-                {project.media_files.map((media_file) => {
-                  return (
-                    <li key={media_file.url}>
-                      <h4>{media_file.url}</h4>
-                      <CardDefinitionList>
-                        <CardDefinition
-                          term="Mime Type"
-                          definition={media_file.mime_type}
-                        />
-                        <CardDefinition
-                          term="Description"
-                          definition={media_file.description}
-                        />
-                      </CardDefinitionList>
-                    </li>
-                  );
-                })}
-              </CardSectionList>
-            </CardSection>
+      <details className="mx-8 mb-8 lg:col-span-3 lg:mt-8 lg:pt-4">
+        <summary>Gandalf Project Details</summary>
+        <div className="lg:grid lg:grid-cols-2">
+          <CardSection header="Media Files">
+            <CardSectionList>
+              {project.media_files.map((media_file) => {
+                return (
+                  <li key={media_file.url}>
+                    <h4>{media_file.url}</h4>
+                    <CardDefinitionList>
+                      <CardDefinition
+                        term="Mime Type"
+                        definition={media_file.mime_type}
+                      />
+                      <CardDefinition
+                        term="Description"
+                        definition={media_file.description}
+                      />
+                    </CardDefinitionList>
+                  </li>
+                );
+              })}
+            </CardSectionList>
+          </CardSection>
 
-            <CardSection header="Links">
-              <CardSectionList>
-                {project.links.map((link) => {
-                  return (
-                    <li key={link.url}>
-                      <h4>{link.url}</h4>
-                      <CardDefinitionList>
-                        <CardDefinition term="Type" definition={link.type} />
-                        <CardDefinition term="Live" definition={link.live} />
-                      </CardDefinitionList>
-                    </li>
-                  );
-                })}
-              </CardSectionList>
-            </CardSection>
-          </div>
-        </details>
+          <CardSection header="Links">
+            <CardSectionList>
+              {project.links.map((link) => {
+                return (
+                  <li key={link.url}>
+                    <h4>{link.url}</h4>
+                    <CardDefinitionList>
+                      <CardDefinition term="Type" definition={link.type} />
+                      <CardDefinition term="Live" definition={link.live} />
+                    </CardDefinitionList>
+                  </li>
+                );
+              })}
+            </CardSectionList>
+          </CardSection>
+        </div>
+      </details>
     </li>
   );
 }

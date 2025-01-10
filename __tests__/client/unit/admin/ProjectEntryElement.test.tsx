@@ -210,9 +210,7 @@ test("displaying the type for a link.", () => {
   );
 
   const link_section_element = getSectionByHeader(/links/i, getByRole);
-  expect(
-    within(link_section_element).queryByText("live"),
-  ).toBeInTheDocument();
+  expect(within(link_section_element).queryByText("live")).toBeInTheDocument();
 });
 
 test("displaying the live status for a link.", () => {

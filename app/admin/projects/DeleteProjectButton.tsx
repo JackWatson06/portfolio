@@ -27,9 +27,15 @@ export default function DeleteProjectButton({
           <h4>Are you sure?</h4>
           <div className="modal-action">
             <form method="dialog" onSubmit={onSubmit}>
-              <button className="btn" type="submit">Yes</button>
+              <button className="btn" type="submit">
+                Yes
+              </button>
             </form>
-            <button className="btn" type="button" onClick={() => setDialogOpen(false)}>
+            <button
+              className="btn"
+              type="button"
+              onClick={() => setDialogOpen(false)}
+            >
               Cancel
             </button>
           </div>

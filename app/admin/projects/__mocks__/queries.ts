@@ -1,4 +1,4 @@
-import { ProjectListView } from "../queries"
+import { ProjectListView } from "../queries";
 
 const mock_project_list: ProjectListView = [
   {
@@ -156,9 +156,9 @@ const mock_project_list: ProjectListView = [
         live: "No",
       },
     ],
-  }
-]
+  },
+];
 
 export const fetchProjectListView = jest.fn().mockImplementation(() => {
-  return mock_project_list
-})
+  return mock_project_list;
+});

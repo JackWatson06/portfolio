@@ -3,12 +3,14 @@
 This is a [Next.js](https://nextjs.org/) project to host my portfolio!
 
 ## Develompent
-**Note** Temporarily we have to add react to package.json overrides because Next.JS 15 decided to 
+
+**Note** Temporarily we have to add react to package.json overrides because Next.JS 15 decided to
 rely on a release candidate for modern features.
 
-
 ### Building
+
 To build the docker image for the portfolio node application use the following command:
+
 ```
 cd env
 docker compose --env-file ../.env build --build-arg USER=$(id -u) --build-arg GROUP=$(id -u)
