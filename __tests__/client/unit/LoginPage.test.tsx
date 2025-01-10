@@ -1,9 +1,12 @@
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 
 import Login from "@/app/login/page";
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import "html-validate/jest";
+import { axe, toHaveNoViolations } from "jest-axe";
+
+expect.extend(toHaveNoViolations);
 
 jest.mock("@/app/login/SessionCommand", () => {
   return {
@@ -11,50 +14,58 @@ jest.mock("@/app/login/SessionCommand", () => {
   };
 });
 
-jest.mock("react-dom", () => {
+jest.mock("react", () => {
   return {
-    ...jest.requireActual("react-dom"),
-    useFormState: jest.fn(),
+    ...jest.requireActual("react"),
+    useActionState: jest.fn(),
   };
 });
 
 beforeEach(() => {
-  (useFormState as jest.Mock).mockImplementation(() => [
+  (useActionState as jest.Mock).mockImplementation(() => [
     { errors: [] },
     "testing",
   ]);
 });
 
-test("login page has valid HTML.", async () => {
+test("login page renders valid HTML.", async () => {
   const { container } = render(<Login />);
 
   expect(container.innerHTML).toHTMLValidate();
 });
 
-test("login form does not render warnings when we have no errors.", () => {
-  render(<Login />);
+test("accessability of page.", async () => {
+  const { container } = render(<Login />);
 
-  expect(screen.queryByRole("alert")).toBe(null);
+  await act(async () => {
+    expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+test("login form does not render warnings when we have no errors.", () => {
+  const { queryByRole } = render(<Login />);
+
+  expect(queryByRole("alert")).toBe(null);
 });
 
 test("login form does renders warning when we have an error.", () => {
-  (useFormState as jest.Mock).mockImplementation(() => [
+  (useActionState as jest.Mock).mockImplementation(() => [
     { errors: ["testing"] },
     "testing",
   ]);
 
-  render(<Login />);
+  const { queryByText } = render(<Login />);
 
-  expect(screen.queryByText("testing")).not.toBe(null);
+  expect(queryByText("testing")).not.toBe(null);
 });
 
 test("login form does renders warnings when we have multiple errors.", () => {
-  (useFormState as jest.Mock).mockImplementation(() => [
+  (useActionState as jest.Mock).mockImplementation(() => [
     { errors: ["testing", "testing"] },
     "testing",
   ]);
 
-  render(<Login />);
+  const { queryByText } = render(<Login />);
 
-  expect(screen.queryByText("testing, testing")).not.toBe(null);
+  expect(queryByText("testing, testing")).not.toBe(null);
 });

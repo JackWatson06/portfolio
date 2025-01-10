@@ -1,10 +1,8 @@
 import Projects from "@/app/admin/projects/page";
-import RootLayout from "@/app/layout";
 import "@testing-library/jest-dom";
 import { act, cleanup, render } from "@testing-library/react";
 import "html-validate/jest";
 import { axe, toHaveNoViolations } from "jest-axe";
-import { Suspense } from "react";
 
 expect.extend(toHaveNoViolations);
 
