@@ -1,15 +1,15 @@
 "use client";
 
-import { useFormState } from "react-dom";
 import { createSession } from "./SessionCommand";
 import LoginAlert from "./LoginAlert";
+import { useActionState } from "react";
 
 const initial_form_state = {
   errors: [],
 };
 
 export default function Login() {
-  const [state, formAction] = useFormState(createSession, initial_form_state);
+  const [state, formAction] = useActionState(createSession, initial_form_state);
 
   return (
     <div className="flex min-h-svh flex-col justify-center">

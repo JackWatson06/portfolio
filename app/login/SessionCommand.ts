@@ -44,7 +44,7 @@ export async function createSession(
     };
   }
 
-  cookies().set("session", auth_service_response.token, {
+  (await cookies()).set("session", auth_service_response.token, {
     httpOnly: true,
     secure: auth_service_response.secure,
     expires: auth_service_response.expires,

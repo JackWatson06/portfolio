@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 ARG USER=1000
 ARG GROUP=1000
 
