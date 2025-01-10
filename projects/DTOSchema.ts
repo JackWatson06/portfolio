@@ -6,6 +6,7 @@ export type LinkInput = {
 export type MediaInput = {
   mime_type: string;
   url: string;
+  description: string;
 };
 
 export type ProjectCreate = {

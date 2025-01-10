@@ -8,15 +8,18 @@ export interface Project {
   media: Array<MediaElement>;
   links: Array<Link>;
   private: boolean;
+  created_at: Date;
+  updated_at: Date;
   deleted_at?: Date;
 }
 
 export type MediaElement = {
   mime_type: string;
   url: string;
+  description: string;
 };
 
 export type Link = {
   type: string;
-  url: string;
+  url: string;  
 };

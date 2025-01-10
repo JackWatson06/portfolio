@@ -14,7 +14,7 @@ type ValidationRoutine = {
 const IMAGE_TYPES = ["image/png", "image/jpg", "image/webp"];
 const VIDEO_TYPES = ["video/mp4"];
 const VALID_MIME_TYPES = [...IMAGE_TYPES, ...VIDEO_TYPES];
-const VALID_SERVICE_TYPES = ["github", "website"];
+const VALID_SERVICE_TYPES = ["source", "website", "download"];
 
 export class ProjectValidator implements Validator {
   validate(project: Project): ValidatorResult {
@@ -31,7 +31,7 @@ export class ProjectValidator implements Validator {
       },
       {
         error_message:
-          "You can only choose 'github', or 'website' for the project links.",
+          "You can only choose 'source', 'website', or 'download' for the project links.",
         is_valid: () => this.linksHaveValidServiceTypes(project.links),
       },
       {
