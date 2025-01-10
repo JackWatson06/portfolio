@@ -7,7 +7,6 @@ export type MediaFileView = {
 export type LinkView = {
   type: string;
   url: string;
-  live: string;
 };
 
 export type ThumbnailView = {
@@ -69,17 +68,14 @@ export function fetchProjectListView(): ProjectListView {
         {
           type: "live",
           url: "https://localhost:8080/project",
-          live: "Yes",
         },
         {
           type: "source",
           url: "https://github.com/project",
-          live: "No",
         },
         {
           type: "media",
           url: "https://youtube.com/video",
-          live: "No",
         },
       ],
     },
@@ -121,17 +117,14 @@ export function fetchProjectListView(): ProjectListView {
         {
           type: "live",
           url: "https://localhost:8080/project",
-          live: "Yes",
         },
         {
           type: "source",
           url: "https://github.com/project",
-          live: "No",
         },
         {
           type: "media",
           url: "https://youtube.com/video",
-          live: "No",
         },
       ],
     },
@@ -173,17 +166,14 @@ export function fetchProjectListView(): ProjectListView {
         {
           type: "live",
           url: "https://localhost:8080/project",
-          live: "Yes",
         },
         {
           type: "source",
           url: "https://github.com/project",
-          live: "No",
         },
         {
           type: "media",
           url: "https://youtube.com/video",
-          live: "No",
         },
       ],
     },

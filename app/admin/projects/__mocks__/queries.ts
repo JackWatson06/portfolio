@@ -39,17 +39,14 @@ const mock_project_list: ProjectListView = [
       {
         type: "live",
         url: "https://localhost:8080/project",
-        live: "Yes",
       },
       {
         type: "source",
         url: "https://github.com/project",
-        live: "No",
       },
       {
         type: "media",
         url: "https://youtube.com/video",
-        live: "No",
       },
     ],
   },
@@ -91,17 +88,14 @@ const mock_project_list: ProjectListView = [
       {
         type: "live",
         url: "https://localhost:8080/project",
-        live: "Yes",
       },
       {
         type: "source",
         url: "https://github.com/project",
-        live: "No",
       },
       {
         type: "media",
         url: "https://youtube.com/video",
-        live: "No",
       },
     ],
   },
@@ -143,17 +137,14 @@ const mock_project_list: ProjectListView = [
       {
         type: "live",
         url: "https://localhost:8080/project",
-        live: "Yes",
       },
       {
         type: "source",
         url: "https://github.com/project",
-        live: "No",
       },
       {
         type: "media",
         url: "https://youtube.com/video",
-        live: "No",
       },
     ],
   },

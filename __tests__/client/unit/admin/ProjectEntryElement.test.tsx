@@ -47,17 +47,14 @@ const project_entry_view: ProjectListElementView = {
     {
       type: "live",
       url: "https://localhost:8080/project",
-      live: "Yes",
     },
     {
       type: "source",
       url: "https://github.com/project",
-      live: "No",
     },
     {
       type: "media",
       url: "https://youtube.com/video",
-      live: "No",
     },
   ],
 };
@@ -211,17 +208,6 @@ test("displaying the type for a link.", () => {
 
   const link_section_element = getSectionByHeader(/links/i, getByRole);
   expect(within(link_section_element).queryByText("live")).toBeInTheDocument();
-});
-
-test("displaying the live status for a link.", () => {
-  const { getByRole } = render(
-    <ProjectListElement project={project_entry_view} />,
-  );
-
-  const link_section_element = getSectionByHeader(/links/i, getByRole);
-  expect(
-    within(link_section_element).queryByText(/^yes$/i),
-  ).toBeInTheDocument();
 });
 
 test("displaying the created at date.", () => {
