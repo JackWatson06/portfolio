@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd env
+docker compose --env-file ../.env build --build-arg USER=$(id -u) --build-arg GROUP=$(id -u)
