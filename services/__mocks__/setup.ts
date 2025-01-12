@@ -1,3 +1,8 @@
+import {
+  TEST_PROJECT_ONE,
+  TEST_PROJECT_THREE,
+  TEST_PROJECT_TWO,
+} from "@/__tests__/seeding/projects/ProjectData";
 import { ScriptResult } from "@/auth/login/TransactionScriptResult";
 import { PortfolioServiceLocator } from "@/services/PortfolioNodeServiceLocator";
 
@@ -27,7 +32,13 @@ function mock_portfolio_transaction_script() {
     create: jest.fn(),
     find: jest.fn(),
     findPublic: jest.fn(),
-    findAll: jest.fn(),
+    findAll: jest.fn().mockImplementation(() => {
+      return [
+        { ...TEST_PROJECT_ONE },
+        { ...TEST_PROJECT_TWO },
+        { ...TEST_PROJECT_THREE },
+      ];
+    }),
     findAllPublic: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),

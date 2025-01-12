@@ -1,3 +1,8 @@
+import {
+  TEST_PROJECT_ONE,
+  TEST_PROJECT_THREE,
+  TEST_PROJECT_TWO,
+} from "@/__tests__/seeding/projects/ProjectData";
 import { buildMongoConnection } from "@/__tests__/seeding/setup";
 import { ProjectsGateway } from "@/projects/ProjectsGateway";
 import { PortfolioDatabase } from "@/services/db/PortfolioDatabase";
@@ -24,37 +29,10 @@ afterEach(async () => {
 test("we can insert data into the projects collection.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
 
-  await project_data_gateway.insert({
-    name: "testing",
-    slug: "testing",
-    description: "testing",
-    tags: ["mongodb", "c++", "typescript"],
-    thumbnail_media: "https://testing.com/picture_one",
-    media: [
-      {
-        mime_type: "image/png",
-        url: "https://testing.com/picture_one",
-      },
-      {
-        mime_type: "image/png",
-        url: "https://testing.com/picture_two",
-      },
-    ],
-    links: [
-      {
-        type: "website",
-        url: "https://testing.com",
-      },
-      {
-        type: "github",
-        url: "https://github.com/testing",
-      },
-    ],
-    private: false,
-  });
+  await project_data_gateway.insert({ ...TEST_PROJECT_ONE });
 
   const project_on_disk = await db.projects.findOne({
-    slug: "testing",
+    slug: "gandalf",
   });
 
   expect(project_on_disk).not.toBe(null);
@@ -62,23 +40,9 @@ test("we can insert data into the projects collection.", async () => {
 
 test("we can find a project by the slug.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
-  await db.projects.insertOne({
-    name: "testing",
-    slug: "testing",
-    description: "testing",
-    tags: [],
-    thumbnail_media: "https://testing.com/picture_one",
-    media: [
-      {
-        mime_type: "image/png",
-        url: "https://testing.com/picture_one",
-      },
-    ],
-    links: [],
-    private: false,
-  });
+  await db.projects.insertOne({ ...TEST_PROJECT_ONE });
 
-  const project = await project_data_gateway.findBySlug("testing");
+  const project = await project_data_gateway.findBySlug("gandalf");
 
   expect(project).not.toBe(null);
 });
@@ -86,22 +50,11 @@ test("we can find a project by the slug.", async () => {
 test("we can not find private projects on public search.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({
-    name: "testing",
-    slug: "testing",
-    description: "testing",
-    tags: [],
-    thumbnail_media: "https://testing.com/picture_one",
-    media: [
-      {
-        mime_type: "image/png",
-        url: "https://testing.com/picture_one",
-      },
-    ],
-    links: [],
+    ...TEST_PROJECT_ONE,
     private: true,
   });
 
-  const project = await project_data_gateway.findPublicBySlug("testing");
+  const project = await project_data_gateway.findPublicBySlug("gandalf");
 
   expect(project).toBe(null);
 });
@@ -109,36 +62,8 @@ test("we can not find private projects on public search.", async () => {
 test("we can get a list of projects.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
-    {
-      name: "testing",
-      slug: "testing",
-      description: "testing",
-      tags: [],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
-      private: false,
-    },
-    {
-      name: "testing_two",
-      slug: "testing_two",
-      description: "testing_two",
-      tags: [],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
-      private: false,
-    },
+    { ...TEST_PROJECT_ONE },
+    { ...TEST_PROJECT_TWO },
   ]);
 
   const projects = await project_data_gateway.findAll([]);
@@ -150,49 +75,16 @@ test("we only fetch the projects with specific tags.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
-      name: "testing",
-      slug: "testing",
-      description: "testing",
+      ...TEST_PROJECT_ONE,
       tags: ["testing"],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
-      private: false,
     },
     {
-      name: "testing_two",
-      slug: "testing_two",
-      description: "testing_two",
+      ...TEST_PROJECT_TWO,
       tags: ["c++"],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
-      private: false,
     },
     {
-      name: "testing_three",
-      slug: "testing_three",
-      description: "testing_three",
+      ...TEST_PROJECT_THREE,
       tags: ["c++", "testing_two"],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
-      private: false,
     },
   ]);
 
@@ -208,33 +100,11 @@ test("we can get a list of public projects.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
-      name: "testing",
-      slug: "testing",
-      description: "testing",
-      tags: [],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
+      ...TEST_PROJECT_ONE,
       private: true,
     },
     {
-      name: "testing_two",
-      slug: "testing_two",
-      description: "testing_two",
-      tags: [],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
+      ...TEST_PROJECT_TWO,
       private: false,
     },
   ]);
@@ -248,48 +118,18 @@ test("we only fetch the public projects with specific tags.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
-      name: "testing",
-      slug: "testing",
-      description: "testing",
+      ...TEST_PROJECT_ONE,
       tags: ["testing"],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
       private: true,
     },
     {
-      name: "testing_two",
-      slug: "testing_two",
-      description: "testing_two",
+      ...TEST_PROJECT_TWO,
       tags: ["c++"],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
       private: false,
     },
     {
-      name: "testing_three",
-      slug: "testing_three",
-      description: "testing_three",
+      ...TEST_PROJECT_THREE,
       tags: ["c++", "testing_two"],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
       private: false,
     },
   ]);
@@ -304,23 +144,9 @@ test("we only fetch the public projects with specific tags.", async () => {
 
 test("we can update a project.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
-  await db.projects.insertOne({
-    name: "testing",
-    slug: "testing",
-    description: "testing",
-    tags: [],
-    thumbnail_media: "https://testing.com/picture_one",
-    media: [
-      {
-        mime_type: "image/png",
-        url: "https://testing.com/picture_one",
-      },
-    ],
-    links: [],
-    private: false,
-  });
+  await db.projects.insertOne({ ...TEST_PROJECT_ONE });
 
-  await project_data_gateway.update("testing", {
+  await project_data_gateway.update("gandalf", {
     slug: "testing_updated",
   });
 
@@ -333,23 +159,11 @@ test("we can update a project.", async () => {
 test("we can not fetch a deleted project while searching by slug.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({
-    name: "testing",
-    slug: "testing",
-    description: "testing",
-    tags: [],
-    thumbnail_media: "https://testing.com/picture_one",
-    media: [
-      {
-        mime_type: "image/png",
-        url: "https://testing.com/picture_one",
-      },
-    ],
-    links: [],
+    ...TEST_PROJECT_ONE,
     deleted_at: new Date(),
-    private: false,
   });
 
-  const project = await project_data_gateway.findBySlug("testing");
+  const project = await project_data_gateway.findBySlug("gandalf");
 
   expect(project).toBe(null);
 });
@@ -358,36 +172,10 @@ test("we can not fetch a deleted project while searching for all projects.", asy
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
-      name: "testing",
-      slug: "testing",
-      description: "testing",
-      tags: [],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
+      ...TEST_PROJECT_ONE,
       deleted_at: new Date(),
-      private: false,
     },
-    {
-      name: "testing_two",
-      slug: "testing_two",
-      description: "testing_two",
-      tags: [],
-      thumbnail_media: "https://testing.com/picture_one",
-      media: [
-        {
-          mime_type: "image/png",
-          url: "https://testing.com/picture_one",
-        },
-      ],
-      links: [],
-      private: false,
-    },
+    { ...TEST_PROJECT_TWO },
   ]);
 
   const projects = await project_data_gateway.findAll([]);
@@ -397,26 +185,12 @@ test("we can not fetch a deleted project while searching for all projects.", asy
 
 test("we can remove a project.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
-  await db.projects.insertOne({
-    name: "testing",
-    slug: "testing",
-    description: "testing",
-    tags: [],
-    thumbnail_media: "https://testing.com/picture_one",
-    media: [
-      {
-        mime_type: "image/png",
-        url: "https://testing.com/picture_one",
-      },
-    ],
-    links: [],
-    private: false,
-  });
+  await db.projects.insertOne({ ...TEST_PROJECT_ONE });
 
-  await project_data_gateway.delete("testing");
+  await project_data_gateway.delete("gandalf");
 
   const project_on_disk = await db.projects.findOne({
-    slug: "testing",
+    slug: "gandalf",
   });
   expect(project_on_disk?.deleted_at).not.toBe(undefined);
 });

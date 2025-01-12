@@ -31,7 +31,7 @@
     "@tailwindcss/typography": "^0.5.15",
     "@types/jest": "^29.5.12",
     "@types/jest-axe": "^3.5.9",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^19.0.4",
     "@types/react-dom": "^19.0.2",
     "autoprefixer": "^10.0.1",

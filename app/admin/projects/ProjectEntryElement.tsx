@@ -135,7 +135,6 @@ export default function ProjectListElement({
                     <h4>{link.url}</h4>
                     <CardDefinitionList>
                       <CardDefinition term="Type" definition={link.type} />
-                      <CardDefinition term="Live" definition={link.live} />
                     </CardDefinitionList>
                   </li>
                 );

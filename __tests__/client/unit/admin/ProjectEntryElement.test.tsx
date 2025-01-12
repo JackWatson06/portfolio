@@ -1,3 +1,4 @@
+import { TEST_ADMIN_PROJECT_LIST_VIEW } from "@/__tests__/seeding/projects/ProjectViewData";
 import ProjectListElement from "@/app/admin/projects/ProjectEntryElement";
 import { ProjectListElementView } from "@/app/admin/projects/queries";
 import "@testing-library/jest-dom";
@@ -9,58 +10,8 @@ import {
 } from "@testing-library/react";
 import "html-validate/jest";
 
-const project_entry_view: ProjectListElementView = {
-  title: "gandalf",
-  created_at: "2020-01-01 12:21 pm",
-  updated_at: "2020-02-01 1:00 am",
-  thumbnail_media: {
-    url: "/assets/images/gandalf.png",
-    description: "Picture of Gandalf holding a staff.",
-  },
-  private: true,
-  tags: ["c++", "web", "tailwind"],
-  view_link: "/projects/gandalf/edit",
-  edit_link: "/admin/projects/gandalf/edit",
-  media_files: [
-    {
-      url: "/assets/images/gandalf.png",
-      mime_type: "image/png",
-      description: "Picture of Gandalf holding a staff.",
-    },
-    {
-      url: "/assets/images/frodo.webp",
-      mime_type: "image/webp",
-      description: "Frodo dancing on the table.",
-    },
-    {
-      url: "/assets/videos/sam.mp4",
-      mime_type: "video/mp4",
-      description: "Sam running across the shire.",
-    },
-    {
-      url: "/assets/images/aragorn.jpg",
-      mime_type: "image/jpeg",
-      description: "Aragorn kicking butt.",
-    },
-  ],
-  links: [
-    {
-      type: "live",
-      url: "https://localhost:8080/project",
-      live: "Yes",
-    },
-    {
-      type: "source",
-      url: "https://github.com/project",
-      live: "No",
-    },
-    {
-      type: "media",
-      url: "https://youtube.com/video",
-      live: "No",
-    },
-  ],
-};
+const project_entry_view: ProjectListElementView =
+  TEST_ADMIN_PROJECT_LIST_VIEW[0];
 
 type RenderGetByRole = (
   role: ByRoleMatcher,
@@ -112,13 +63,18 @@ test("marking a project as public.", () => {
 
 test("marking a project as private.", () => {
   const { queryByRole } = render(
-    <ProjectListElement project={project_entry_view} />,
+    <ProjectListElement
+      project={{
+        ...project_entry_view,
+        private: true,
+      }}
+    />,
   );
 
   expect(queryByRole("status")).toHaveTextContent(/private/i);
 });
 
-test.each([[/^c\+\+$/i], [/^web$/i], [/^tailwind$/i]])(
+test.each([[/^MongoDB$/i], [/^Web$/i], [/^Tailwind$/i]])(
   "displaying the tag. Tag: %s",
   (query: RegExp) => {
     const { getByRole } = render(
@@ -149,7 +105,7 @@ test("displaying the correct link for editing a project.", () => {
 
   expect(
     queryByRole("link", {
-      name: "Edit gandalf",
+      name: "Edit Gandalf",
     }),
   ).toHaveAttribute("href", "/admin/projects/gandalf/edit");
 });
@@ -210,39 +166,40 @@ test("displaying the type for a link.", () => {
   );
 
   const link_section_element = getSectionByHeader(/links/i, getByRole);
-  expect(within(link_section_element).queryByText("live")).toBeInTheDocument();
-});
-
-test("displaying the live status for a link.", () => {
-  const { getByRole } = render(
-    <ProjectListElement project={project_entry_view} />,
-  );
-
-  const link_section_element = getSectionByHeader(/links/i, getByRole);
   expect(
-    within(link_section_element).queryByText(/^yes$/i),
+    within(link_section_element).queryByText("website"),
   ).toBeInTheDocument();
 });
 
 test("displaying the created at date.", () => {
   const { getByRole } = render(
-    <ProjectListElement project={project_entry_view} />,
+    <ProjectListElement
+      project={{
+        ...project_entry_view,
+        created_at: "1/1/2020, 12:21:00 PM",
+      }}
+    />,
   );
 
   const timestamp_section = getSectionByHeader(/timestamps/i, getByRole);
   expect(
-    within(timestamp_section).queryByText("2020-01-01 12:21 pm"),
+    within(timestamp_section).queryByText("1/1/2020, 12:21:00 PM"),
   ).toBeInTheDocument();
 });
 
 test("displaying the last edited date.", () => {
   const { getByRole } = render(
-    <ProjectListElement project={project_entry_view} />,
+    <ProjectListElement
+      project={{
+        ...project_entry_view,
+        updated_at: "2/1/2020, 1:00:00 AM",
+      }}
+    />,
   );
 
   const timestamp_section = getSectionByHeader(/timestamps/i, getByRole);
   expect(
-    within(timestamp_section).queryByText("2020-02-01 1:00 am"),
+    within(timestamp_section).queryByText("2/1/2020, 1:00:00 AM"),
   ).toBeInTheDocument();
 });
 

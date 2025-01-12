@@ -39,6 +39,8 @@ export class ProjectsTransactionScript implements TransactionScript {
       media: project_input.media,
       links: project_input.links,
       private: project_input.private,
+      created_at: new Date(),
+      updated_at: new Date(),
     };
 
     const validation_result = this.project_validator.validate(project);
@@ -122,6 +124,7 @@ export class ProjectsTransactionScript implements TransactionScript {
     await this.projects_collection_gateway.update(project.slug, {
       ...project_input,
       slug: updated_project_info.slug,
+      updated_at: new Date(),
     });
 
     return {
