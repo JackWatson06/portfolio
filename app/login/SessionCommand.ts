@@ -15,12 +15,6 @@ export async function createSession(
   form_data: FormData,
 ): Promise<CreateSessionResponse> {
   const portfolio_service_locator = await init();
-  if (portfolio_service_locator == null) {
-    return {
-      errors: ["Server error. Try again later."],
-    };
-  }
-
   const login_service = portfolio_service_locator.login;
 
   const form_schema = z.object({

@@ -1,4 +1,5 @@
 import { createSession } from "@/app/login/SessionCommand";
+import { init } from "@/services/setup";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -65,16 +66,6 @@ test("we return an error with an invalid form.", async () => {
   form_data.append("invalid", "testing_invalid");
 
   const response = await createSession({}, form_data);
-
-  expect(response.errors.length).toBe(1);
-});
-
-test("we get error when the service locator does not get initialized.", async () => {
-  jest.mock("@/services/setup", () => ({
-    portfolio_service_locator: null,
-  }));
-
-  const response = await createSession({}, new FormData());
 
   expect(response.errors.length).toBe(1);
 });
