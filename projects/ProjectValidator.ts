@@ -38,7 +38,10 @@ export class ProjectValidator implements Validator {
         error_message:
           "The media element you selected as the thumbnail does not exist.",
         is_valid: () =>
-          this.thumbnailMediaUrlInMedia(project.thumbnail_media, project.media),
+          this.thumbnailMediaUrlInMedia(
+            project.thumbnail_media.url,
+            project.media,
+          ),
       },
       {
         error_message:
@@ -50,7 +53,10 @@ export class ProjectValidator implements Validator {
       {
         error_message: "You can only use images for the thumbnail.",
         is_valid: () =>
-          this.thumbnailMustBePicture(project.thumbnail_media, project.media),
+          this.thumbnailMustBePicture(
+            project.thumbnail_media.url,
+            project.media,
+          ),
       },
     ];
 

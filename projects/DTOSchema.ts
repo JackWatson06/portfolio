@@ -13,7 +13,10 @@ export type ProjectCreate = {
   name: string;
   description: string;
   tags: string[];
-  thumbnail_media: string;
+  thumbnail_media: {
+    url: string;
+    description: string;
+  };
   live_project_link?: string;
   media: MediaInput[];
   links: LinkInput[];

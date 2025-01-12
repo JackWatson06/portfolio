@@ -9,42 +9,44 @@ import { ProjectsTransactionScript } from "@/projects/ProjectsTransactionScript"
 import { Project } from "@/services/db/schemas/Project";
 import { MatchKeysAndValues, WithId } from "mongodb";
 import {
-  TEST_PRIVATE_PROJECT,
-  TEST_PROJECT_CREATE_INPUT,
-  TEST_PUBLIC_PROJECT,
-} from "@/__tests__/seeding/ProjectTestData";
+  TEST_PROJECT_ONE_CREATE_INPUT,
+  TEST_PROJECT_TWO,
+} from "@/__tests__/seeding/ProjectData";
 import {
   ScriptResult,
   SlugScriptResult,
 } from "@/projects/TransactionScriptResult";
-import { before } from "node:test";
+import {
+  TEST_PROJECT_ONE_PERSISTED,
+  TEST_PROJECT_TWO_PERSISTED,
+} from "@/__tests__/seeding/ProjectInDBData";
 
 class TestCollectionGateway implements CollectionGateway {
   public created_project: Project | null = null;
   public updated_project: MatchKeysAndValues<Project> | null = null;
 
   async findBySlug(slug: string): Promise<WithId<Project> | null> {
-    if (slug == TEST_PUBLIC_PROJECT.slug) {
-      return TEST_PUBLIC_PROJECT;
+    if (slug == TEST_PROJECT_ONE_PERSISTED.slug) {
+      return TEST_PROJECT_ONE_PERSISTED;
     }
 
-    if (slug == "testing2") {
-      return TEST_PUBLIC_PROJECT;
+    if (slug == TEST_PROJECT_TWO.slug) {
+      return TEST_PROJECT_TWO_PERSISTED;
     }
 
     return null;
   }
 
   async findPublicBySlug(slug: string): Promise<WithId<Project> | null> {
-    return TEST_PUBLIC_PROJECT;
+    return TEST_PROJECT_ONE_PERSISTED;
   }
 
   async findAll(): Promise<Array<WithId<Project>>> {
-    return [TEST_PRIVATE_PROJECT, TEST_PUBLIC_PROJECT];
+    return [TEST_PROJECT_ONE_PERSISTED, TEST_PROJECT_TWO_PERSISTED];
   }
 
   async findAllPublic(): Promise<Array<WithId<Project>>> {
-    return [TEST_PRIVATE_PROJECT, TEST_PUBLIC_PROJECT];
+    return [TEST_PROJECT_ONE_PERSISTED];
   }
 
   async insert(project: Project): Promise<void> {
@@ -77,9 +79,10 @@ test("creating a project.", async () => {
     new TestCollectionGateway(),
   );
 
-  const script_result = await projects_transaction_script.create(
-    TEST_PROJECT_CREATE_INPUT,
-  );
+  const script_result = await projects_transaction_script.create({
+    ...TEST_PROJECT_ONE_CREATE_INPUT,
+    name: "testing",
+  });
 
   expect(script_result.code).toBe(ScriptResult.SUCCESS);
 });
@@ -91,7 +94,7 @@ test("converting name for slug when creating a project.", async () => {
   );
 
   const script_result = await projects_transaction_script.create({
-    ...TEST_PROJECT_CREATE_INPUT,
+    ...TEST_PROJECT_ONE_CREATE_INPUT,
     name: "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=",
   });
 
@@ -108,7 +111,10 @@ test("setting `created_at` when creating a project.", async () => {
     projects_collection_gateway,
   );
 
-  await projects_transaction_script.create(TEST_PROJECT_CREATE_INPUT);
+  await projects_transaction_script.create({
+    ...TEST_PROJECT_ONE_CREATE_INPUT,
+    name: "testing",
+  });
 
   expect(
     projects_collection_gateway.created_project?.created_at.valueOf(),
@@ -123,7 +129,10 @@ test("setting `updated_at` when creating a project.", async () => {
     projects_collection_gateway,
   );
 
-  await projects_transaction_script.create(TEST_PROJECT_CREATE_INPUT);
+  await projects_transaction_script.create({
+    ...TEST_PROJECT_ONE_CREATE_INPUT,
+    name: "testing",
+  });
 
   expect(
     projects_collection_gateway.created_project?.updated_at.valueOf(),
@@ -136,10 +145,9 @@ test("we can not create project with duplicate slug.", async () => {
     new TestCollectionGateway(),
   );
 
-  const script_result = await projects_transaction_script.create({
-    ...TEST_PROJECT_CREATE_INPUT,
-    name: "testing",
-  });
+  const script_result = await projects_transaction_script.create(
+    TEST_PROJECT_ONE_CREATE_INPUT,
+  );
 
   expect(script_result.code).toBe(ScriptResult.DUPLICATE);
 });
@@ -151,8 +159,8 @@ test("we get error when the project is invalid.", async () => {
   );
 
   const script_result = await projects_transaction_script.create({
-    ...TEST_PROJECT_CREATE_INPUT,
-    name: "testing_invalid",
+    ...TEST_PROJECT_ONE_CREATE_INPUT,
+    name: "testing",
   });
 
   expect(script_result.code).toBe(ScriptResult.INVALID);
@@ -164,7 +172,7 @@ test("we can fetch a project.", async () => {
     new TestCollectionGateway(),
   );
 
-  const project = await projects_transaction_script.find("testing");
+  const project = await projects_transaction_script.find("gandalf");
 
   expect(project).not.toBe(null);
 });
@@ -175,7 +183,7 @@ test("we can fetch a public project.", async () => {
     new TestCollectionGateway(),
   );
 
-  const project = await projects_transaction_script.findPublic("testing");
+  const project = await projects_transaction_script.findPublic("gandalf");
 
   expect(project).not.toBe(null);
 });
@@ -208,7 +216,7 @@ test("we can update a project.", async () => {
     new TestCollectionGateway(),
   );
 
-  const script_result = await projects_transaction_script.update("testing", {
+  const script_result = await projects_transaction_script.update("gandalf", {
     private: false,
   });
 
@@ -221,7 +229,7 @@ test("when we update a project we properly convert the slug.", async () => {
     new TestCollectionGateway(),
   );
 
-  const script_result = await projects_transaction_script.update("testing", {
+  const script_result = await projects_transaction_script.update("gandalf", {
     name: "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=",
   });
 
@@ -236,8 +244,8 @@ test("we can not update a project when the new slug is not unique.", async () =>
     new TestCollectionGateway(),
   );
 
-  const script_result = await projects_transaction_script.update("testing", {
-    name: "testing2",
+  const script_result = await projects_transaction_script.update("gandalf", {
+    name: "Bilbo Baggins",
   });
 
   expect(script_result.code).toBe(ScriptResult.DUPLICATE);
@@ -250,7 +258,7 @@ test("setting `updated_at` when updating a project.", async () => {
     projects_collection_gateway,
   );
 
-  await projects_transaction_script.update("testing", {
+  await projects_transaction_script.update("gandalf", {
     private: false,
   });
 
@@ -265,7 +273,7 @@ test("we get an error when the update project is invalid.", async () => {
     new TestCollectionGateway(),
   );
 
-  const script_result = await projects_transaction_script.update("testing", {
+  const script_result = await projects_transaction_script.update("gandalf", {
     private: false,
   });
 

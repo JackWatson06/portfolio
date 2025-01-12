@@ -3,7 +3,10 @@ export interface Project {
   slug: string;
   description: string;
   tags: string[];
-  thumbnail_media: string;
+  thumbnail_media: {
+    url: string;
+    description: string;
+  };
   live_project_link?: string;
   media: Array<MediaElement>;
   links: Array<Link>;
@@ -21,5 +24,5 @@ export type MediaElement = {
 
 export type Link = {
   type: string;
-  url: string;  
+  url: string;
 };

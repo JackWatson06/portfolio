@@ -1,155 +1,49 @@
+import {
+  TEST_PROJECT_ONE,
+  TEST_PROJECT_THREE,
+  TEST_PROJECT_TWO,
+} from "@/__tests__/seeding/ProjectData";
 import { ProjectListView } from "../queries";
 
-const mock_project_list: ProjectListView = [
+export const TEST_ADMIN_PROJECT_LIST_VIEW: ProjectListView = [
   {
-    title: "gandalf",
-    created_at: "2020-01-01 12:21 pm",
-    updated_at: "2020-02-01 1:00 am",
-    thumbnail_media: {
-      url: "/assets/images/gandalf.png",
-      description: "Picture of Gandalf holding a staff.",
-    },
-    private: true,
-    tags: ["c++", "web", "tailwind"],
+    created_at: "1/1/2020, 12:21:00 PM",
+    updated_at: "2/1/2020, 1:00:00 AM",
     view_link: "/projects/gandalf/",
     edit_link: "/admin/projects/gandalf/edit",
-    media_files: [
-      {
-        url: "/assets/images/gandalf.png",
-        mime_type: "image/png",
-        description: "Picture of Gandalf holding a staff.",
-      },
-      {
-        url: "/assets/images/frodo.webp",
-        mime_type: "image/webp",
-        description: "Frodo dancing on the table.",
-      },
-      {
-        url: "/assets/videos/sam.mp4",
-        mime_type: "video/mp4",
-        description: "Sam running across the shire.",
-      },
-      {
-        url: "/assets/images/aragorn.jpg",
-        mime_type: "image/jpeg",
-        description: "Aragorn kicking butt.",
-      },
-    ],
-    links: [
-      {
-        type: "live",
-        url: "https://localhost:8080/project",
-      },
-      {
-        type: "source",
-        url: "https://github.com/project",
-      },
-      {
-        type: "media",
-        url: "https://youtube.com/video",
-      },
-    ],
+    title: TEST_PROJECT_ONE.name,
+    thumbnail_media: TEST_PROJECT_ONE.thumbnail_media,
+    private: TEST_PROJECT_ONE.private,
+    tags: TEST_PROJECT_ONE.tags,
+    media_files: TEST_PROJECT_ONE.media,
+    links: TEST_PROJECT_ONE.links,
   },
   {
-    title: "bilbo",
-    created_at: "2020-01-01 12:21 pm",
-    updated_at: "2020-02-01 1:00 am",
-    thumbnail_media: {
-      url: "/assets/images/gandalf.png",
-      description: "Picture of Gandalf holding a staff.",
-    },
-    private: true,
-    tags: ["c++", "web", "tailwind"],
-    view_link: "/projects/gandalf/",
-    edit_link: "/admin/projects/gandalf/edit",
-    media_files: [
-      {
-        url: "/assets/images/gandalf.png",
-        mime_type: "image/png",
-        description: "Picture of Gandalf holding a staff.",
-      },
-      {
-        url: "/assets/images/frodo.webp",
-        mime_type: "image/webp",
-        description: "Frodo dancing on the table.",
-      },
-      {
-        url: "/assets/videos/sam.mp4",
-        mime_type: "video/mp4",
-        description: "Sam running across the shire.",
-      },
-      {
-        url: "/assets/images/aragorn.jpg",
-        mime_type: "image/jpeg",
-        description: "Aragorn kicking butt.",
-      },
-    ],
-    links: [
-      {
-        type: "live",
-        url: "https://localhost:8080/project",
-      },
-      {
-        type: "source",
-        url: "https://github.com/project",
-      },
-      {
-        type: "media",
-        url: "https://youtube.com/video",
-      },
-    ],
+    created_at: "1/1/2020, 12:21:00 PM",
+    updated_at: "2/1/2020, 1:00:00 AM",
+    view_link: "/projects/bilbo_baggins/",
+    edit_link: "/admin/projects/bilbo_baggins/edit",
+    title: TEST_PROJECT_TWO.name,
+    thumbnail_media: TEST_PROJECT_TWO.thumbnail_media,
+    private: TEST_PROJECT_TWO.private,
+    tags: TEST_PROJECT_TWO.tags,
+    media_files: TEST_PROJECT_TWO.media,
+    links: TEST_PROJECT_TWO.links,
   },
   {
-    title: "aragorn",
-    created_at: "2020-01-01 12:21 pm",
-    updated_at: "2020-02-01 1:00 am",
-    thumbnail_media: {
-      url: "/assets/images/gandalf.png",
-      description: "Picture of Gandalf holding a staff.",
-    },
-    private: true,
-    tags: ["c++", "web", "tailwind"],
-    view_link: "/projects/gandalf/",
-    edit_link: "/admin/projects/gandalf/edit",
-    media_files: [
-      {
-        url: "/assets/images/gandalf.png",
-        mime_type: "image/png",
-        description: "Picture of Gandalf holding a staff.",
-      },
-      {
-        url: "/assets/images/frodo.webp",
-        mime_type: "image/webp",
-        description: "Frodo dancing on the table.",
-      },
-      {
-        url: "/assets/videos/sam.mp4",
-        mime_type: "video/mp4",
-        description: "Sam running across the shire.",
-      },
-      {
-        url: "/assets/images/aragorn.jpg",
-        mime_type: "image/jpeg",
-        description: "Aragorn kicking butt.",
-      },
-    ],
-    links: [
-      {
-        type: "live",
-        url: "https://localhost:8080/project",
-      },
-      {
-        type: "source",
-        url: "https://github.com/project",
-      },
-      {
-        type: "media",
-        url: "https://youtube.com/video",
-      },
-    ],
+    created_at: "1/1/2020, 12:21:00 PM",
+    updated_at: "2/1/2020, 1:00:00 AM",
+    view_link: "/projects/aragorn/",
+    edit_link: "/admin/projects/aragorn/edit",
+    title: TEST_PROJECT_THREE.name,
+    thumbnail_media: TEST_PROJECT_THREE.thumbnail_media,
+    private: TEST_PROJECT_THREE.private,
+    tags: TEST_PROJECT_THREE.tags,
+    media_files: TEST_PROJECT_THREE.media,
+    links: TEST_PROJECT_THREE.links,
   },
 ];
 
 export const fetchProjectListView = jest.fn().mockImplementation(() => {
-  return mock_project_list;
+  return TEST_ADMIN_PROJECT_LIST_VIEW;
 });

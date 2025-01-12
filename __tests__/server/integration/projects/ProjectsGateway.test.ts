@@ -1,4 +1,8 @@
-import { TEST_PROJECT_INSERT } from "@/__tests__/seeding/ProjectTestData";
+import {
+  TEST_PROJECT_ONE,
+  TEST_PROJECT_THREE,
+  TEST_PROJECT_TWO,
+} from "@/__tests__/seeding/ProjectData";
 import { buildMongoConnection } from "@/__tests__/seeding/setup";
 import { ProjectsGateway } from "@/projects/ProjectsGateway";
 import { PortfolioDatabase } from "@/services/db/PortfolioDatabase";
@@ -25,10 +29,10 @@ afterEach(async () => {
 test("we can insert data into the projects collection.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
 
-  await project_data_gateway.insert({ ...TEST_PROJECT_INSERT });
+  await project_data_gateway.insert({ ...TEST_PROJECT_ONE });
 
   const project_on_disk = await db.projects.findOne({
-    slug: "testing",
+    slug: "gandalf",
   });
 
   expect(project_on_disk).not.toBe(null);
@@ -36,9 +40,9 @@ test("we can insert data into the projects collection.", async () => {
 
 test("we can find a project by the slug.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
-  await db.projects.insertOne({ ...TEST_PROJECT_INSERT });
+  await db.projects.insertOne({ ...TEST_PROJECT_ONE });
 
-  const project = await project_data_gateway.findBySlug("testing");
+  const project = await project_data_gateway.findBySlug("gandalf");
 
   expect(project).not.toBe(null);
 });
@@ -46,11 +50,11 @@ test("we can find a project by the slug.", async () => {
 test("we can not find private projects on public search.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({
-    ...TEST_PROJECT_INSERT,
-    private: true
+    ...TEST_PROJECT_ONE,
+    private: true,
   });
 
-  const project = await project_data_gateway.findPublicBySlug("testing");
+  const project = await project_data_gateway.findPublicBySlug("gandalf");
 
   expect(project).toBe(null);
 });
@@ -58,11 +62,8 @@ test("we can not find private projects on public search.", async () => {
 test("we can get a list of projects.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
-    { ...TEST_PROJECT_INSERT },
-    {
-      ...TEST_PROJECT_INSERT,
-      slug: "testing_two"
-    }
+    { ...TEST_PROJECT_ONE },
+    { ...TEST_PROJECT_TWO },
   ]);
 
   const projects = await project_data_gateway.findAll([]);
@@ -74,18 +75,16 @@ test("we only fetch the projects with specific tags.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
-      ...TEST_PROJECT_INSERT,
+      ...TEST_PROJECT_ONE,
       tags: ["testing"],
     },
     {
-      ...TEST_PROJECT_INSERT,
+      ...TEST_PROJECT_TWO,
       tags: ["c++"],
-      slug: "testing_two"
     },
     {
-      ...TEST_PROJECT_INSERT,
+      ...TEST_PROJECT_THREE,
       tags: ["c++", "testing_two"],
-      slug: "testing_three"
     },
   ]);
 
@@ -101,13 +100,12 @@ test("we can get a list of public projects.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
-      ...TEST_PROJECT_INSERT,
-      private: true
+      ...TEST_PROJECT_ONE,
+      private: true,
     },
     {
-      ...TEST_PROJECT_INSERT,
-      slug: "testing_two",
-      private: false
+      ...TEST_PROJECT_TWO,
+      private: false,
     },
   ]);
 
@@ -120,21 +118,19 @@ test("we only fetch the public projects with specific tags.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
-      ...TEST_PROJECT_INSERT,
+      ...TEST_PROJECT_ONE,
       tags: ["testing"],
-      private: true
+      private: true,
     },
     {
-      ...TEST_PROJECT_INSERT,
-      slug: "testing_two",
+      ...TEST_PROJECT_TWO,
       tags: ["c++"],
-      private: false
+      private: false,
     },
     {
-      ...TEST_PROJECT_INSERT,
-      slug: "testing_three",
+      ...TEST_PROJECT_THREE,
       tags: ["c++", "testing_two"],
-      private: false
+      private: false,
     },
   ]);
 
@@ -148,9 +144,9 @@ test("we only fetch the public projects with specific tags.", async () => {
 
 test("we can update a project.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
-  await db.projects.insertOne({ ...TEST_PROJECT_INSERT });
+  await db.projects.insertOne({ ...TEST_PROJECT_ONE });
 
-  await project_data_gateway.update("testing", {
+  await project_data_gateway.update("gandalf", {
     slug: "testing_updated",
   });
 
@@ -163,11 +159,11 @@ test("we can update a project.", async () => {
 test("we can not fetch a deleted project while searching by slug.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({
-    ...TEST_PROJECT_INSERT,
-    deleted_at: new Date()
+    ...TEST_PROJECT_ONE,
+    deleted_at: new Date(),
   });
 
-  const project = await project_data_gateway.findBySlug("testing");
+  const project = await project_data_gateway.findBySlug("gandalf");
 
   expect(project).toBe(null);
 });
@@ -176,10 +172,10 @@ test("we can not fetch a deleted project while searching for all projects.", asy
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
-      ...TEST_PROJECT_INSERT,
+      ...TEST_PROJECT_ONE,
       deleted_at: new Date(),
     },
-    { ...TEST_PROJECT_INSERT },
+    { ...TEST_PROJECT_TWO },
   ]);
 
   const projects = await project_data_gateway.findAll([]);
@@ -189,12 +185,12 @@ test("we can not fetch a deleted project while searching for all projects.", asy
 
 test("we can remove a project.", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
-  await db.projects.insertOne({ ...TEST_PROJECT_INSERT });
+  await db.projects.insertOne({ ...TEST_PROJECT_ONE });
 
-  await project_data_gateway.delete("testing");
+  await project_data_gateway.delete("gandalf");
 
   const project_on_disk = await db.projects.findOne({
-    slug: "testing",
+    slug: "gandalf",
   });
   expect(project_on_disk?.deleted_at).not.toBe(undefined);
 });
