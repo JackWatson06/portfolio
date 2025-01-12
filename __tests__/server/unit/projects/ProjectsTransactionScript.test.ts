@@ -11,7 +11,7 @@ import { MatchKeysAndValues, WithId } from "mongodb";
 import {
   TEST_PROJECT_ONE_CREATE_INPUT,
   TEST_PROJECT_TWO,
-} from "@/__tests__/seeding/ProjectData";
+} from "@/__tests__/seeding/projects/ProjectData";
 import {
   ScriptResult,
   SlugScriptResult,
@@ -19,7 +19,7 @@ import {
 import {
   TEST_PROJECT_ONE_PERSISTED,
   TEST_PROJECT_TWO_PERSISTED,
-} from "@/__tests__/seeding/ProjectInDBData";
+} from "@/__tests__/seeding/projects/ProjectInDBData";
 
 class TestCollectionGateway implements CollectionGateway {
   public created_project: Project | null = null;

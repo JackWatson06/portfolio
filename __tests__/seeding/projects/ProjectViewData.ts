@@ -1,14 +1,14 @@
 import {
   TEST_PROJECT_ONE,
-  TEST_PROJECT_THREE,
   TEST_PROJECT_TWO,
-} from "@/__tests__/seeding/ProjectData";
-import { ProjectListView } from "../queries";
+  TEST_PROJECT_THREE,
+} from "./ProjectData";
+import { ProjectListView } from "@/app/admin/projects/queries";
 
 export const TEST_ADMIN_PROJECT_LIST_VIEW: ProjectListView = [
   {
-    created_at: "1/1/2020, 12:21:00 PM",
-    updated_at: "2/1/2020, 1:00:00 AM",
+    created_at: TEST_PROJECT_ONE.created_at.toLocaleString(),
+    updated_at: TEST_PROJECT_ONE.updated_at.toLocaleString(),
     view_link: "/projects/gandalf/",
     edit_link: "/admin/projects/gandalf/edit",
     title: TEST_PROJECT_ONE.name,
@@ -19,8 +19,8 @@ export const TEST_ADMIN_PROJECT_LIST_VIEW: ProjectListView = [
     links: TEST_PROJECT_ONE.links,
   },
   {
-    created_at: "1/1/2020, 12:21:00 PM",
-    updated_at: "2/1/2020, 1:00:00 AM",
+    created_at: TEST_PROJECT_ONE.created_at.toLocaleString(),
+    updated_at: TEST_PROJECT_ONE.updated_at.toLocaleString(),
     view_link: "/projects/bilbo_baggins/",
     edit_link: "/admin/projects/bilbo_baggins/edit",
     title: TEST_PROJECT_TWO.name,
@@ -31,8 +31,8 @@ export const TEST_ADMIN_PROJECT_LIST_VIEW: ProjectListView = [
     links: TEST_PROJECT_TWO.links,
   },
   {
-    created_at: "1/1/2020, 12:21:00 PM",
-    updated_at: "2/1/2020, 1:00:00 AM",
+    created_at: TEST_PROJECT_ONE.created_at.toLocaleString(),
+    updated_at: TEST_PROJECT_ONE.updated_at.toLocaleString(),
     view_link: "/projects/aragorn/",
     edit_link: "/admin/projects/aragorn/edit",
     title: TEST_PROJECT_THREE.name,
@@ -43,7 +43,3 @@ export const TEST_ADMIN_PROJECT_LIST_VIEW: ProjectListView = [
     links: TEST_PROJECT_THREE.links,
   },
 ];
-
-export const fetchProjectListView = jest.fn().mockImplementation(() => {
-  return TEST_ADMIN_PROJECT_LIST_VIEW;
-});

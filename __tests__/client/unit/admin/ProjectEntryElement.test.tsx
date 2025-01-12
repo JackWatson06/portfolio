@@ -1,4 +1,4 @@
-import { TEST_ADMIN_PROJECT_LIST_VIEW } from "@/app/admin/projects/__mocks__/queries";
+import { TEST_ADMIN_PROJECT_LIST_VIEW } from "@/__tests__/seeding/projects/ProjectViewData";
 import ProjectListElement from "@/app/admin/projects/ProjectEntryElement";
 import { ProjectListElementView } from "@/app/admin/projects/queries";
 import "@testing-library/jest-dom";
@@ -173,7 +173,12 @@ test("displaying the type for a link.", () => {
 
 test("displaying the created at date.", () => {
   const { getByRole } = render(
-    <ProjectListElement project={project_entry_view} />,
+    <ProjectListElement
+      project={{
+        ...project_entry_view,
+        created_at: "1/1/2020, 12:21:00 PM",
+      }}
+    />,
   );
 
   const timestamp_section = getSectionByHeader(/timestamps/i, getByRole);
@@ -184,7 +189,12 @@ test("displaying the created at date.", () => {
 
 test("displaying the last edited date.", () => {
   const { getByRole } = render(
-    <ProjectListElement project={project_entry_view} />,
+    <ProjectListElement
+      project={{
+        ...project_entry_view,
+        updated_at: "2/1/2020, 1:00:00 AM",
+      }}
+    />,
   );
 
   const timestamp_section = getSectionByHeader(/timestamps/i, getByRole);

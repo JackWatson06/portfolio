@@ -1,5 +1,5 @@
 import { ProjectValidator } from "@/projects/ProjectValidator";
-import { TEST_PROJECT_ONE } from "@/__tests__/seeding/ProjectData";
+import { TEST_PROJECT_ONE } from "@/__tests__/seeding/projects/ProjectData";
 
 test("successfully validating a project.", async () => {
   const validator = new ProjectValidator();

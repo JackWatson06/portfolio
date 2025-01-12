@@ -2,7 +2,7 @@ import {
   TEST_PROJECT_ONE,
   TEST_PROJECT_THREE,
   TEST_PROJECT_TWO,
-} from "@/__tests__/seeding/ProjectData";
+} from "@/__tests__/seeding/projects/ProjectData";
 import { buildMongoConnection } from "@/__tests__/seeding/setup";
 import { ProjectsGateway } from "@/projects/ProjectsGateway";
 import { PortfolioDatabase } from "@/services/db/PortfolioDatabase";

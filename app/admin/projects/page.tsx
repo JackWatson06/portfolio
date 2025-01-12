@@ -6,16 +6,24 @@ export default async function Projects() {
 
   return (
     <main className="container mx-auto">
-      <ul className="space-y-10">
-        {projects.map((project_entry_view) => {
-          return (
-            <ProjectListElement
-              key={project_entry_view.title}
-              project={project_entry_view}
-            />
-          );
-        })}
-      </ul>
+      <section>
+        <h1>Projects</h1>
+
+        {projects.length == 0 ? (
+          <p>No projects found! Add some of your work!</p>
+        ) : (
+          <ul className="space-y-10">
+            {projects.map((project_entry_view) => {
+              return (
+                <ProjectListElement
+                  key={project_entry_view.title}
+                  project={project_entry_view}
+                />
+              );
+            })}
+          </ul>
+        )}
+      </section>
     </main>
   );
 }
