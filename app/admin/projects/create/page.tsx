@@ -2,5 +2,5 @@
 import CreateProjectForm from "./CreateProjectForm";
 
 export default function CreateProject() {
-  return <CreateProjectForm state={{ errors: [] }} onSubmit={() => {}} />;
+  return <CreateProjectForm />;
 }
