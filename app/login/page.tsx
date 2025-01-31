@@ -1,8 +1,8 @@
 "use client";
 
-import { createSession } from "./SessionCommand";
-import LoginAlert from "./LoginAlert";
+import { createSession } from "./commands";
 import { useActionState } from "react";
+import FormAlert from "@/components/FormAlert";
 
 const initial_form_state = {
   errors: [],
@@ -24,7 +24,7 @@ export default function Login() {
             required
           />
         </label>
-        <LoginAlert errors={state.errors} />
+        <FormAlert errors={state.errors} />
         <div className="flex justify-end">
           <button className="btn" type="submit">
             Submit

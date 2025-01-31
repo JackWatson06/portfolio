@@ -1,4 +1,4 @@
-import { createSession } from "@/app/login/SessionCommand";
+import { createSession } from "@/app/login/commands";
 import { init } from "@/services/setup";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";

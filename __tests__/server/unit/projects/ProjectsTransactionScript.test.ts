@@ -291,3 +291,5 @@ test("we can not delete a project that does not exist.", async () => {
 
   expect(script_result.code).toBe(ScriptResult.NOT_FOUND);
 });
+
+test.todo("tags can not have any duplicates.");

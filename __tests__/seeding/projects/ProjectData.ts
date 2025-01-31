@@ -29,7 +29,7 @@ export const TEST_PROJECT_ONE_CREATE_INPUT: ProjectCreate = {
     },
     {
       url: "/assets/images/aragorn.jpg",
-      mime_type: "image/jpg",
+      mime_type: "image/jpeg",
       description: "Aragorn kicking butt.",
     },
   ],
