@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org/) project to host my portfolio!
 
 ## Develompent
 
-### Workflow
+### Git Workflow
 
 We use Github Actions to handle deployment of the application, testing, linting, and formatting.
 Use the below steps to make changes to the application.
@@ -18,41 +18,43 @@ Use the below steps to make changes to the application.
 
 ### Testing
 
-We have two seperate testing environments. Both environments use Jest for testing. We have backend
-tests and app tests. The backend tests use the _node_ environment and the app tests use the _jsdom_
+We have two seperate testing environments. Both environments use Jest for testing. We have client
+tests and server tests. The server tests use the _node_ environment and the client tests use the _jsdom_
 environment. While developing a feature write tests alongside the feature code.
+
+_Note_ The edge runtime does not catch all edge issues at the current moment. They may have not have
+a complete implementation for jest.
 
 #### Running the Tests
 
-Run backend integration and unit tests:
+Run client tests:
 
-```
-bin/npm run test:backend
-```
-
-Run Next.JS app integration and unit tests:
-
-```
-bin/npm run test:app
+```bash
+bin/npm run test:client:[unit|int]
 ```
 
-Run all tests:
+Run server tests:
 
+```bash
+bin/npm run test:server:[unit|int]
 ```
+
+Watch a specific client test:
+
+```bash
+bin/npm run test:client:watch -- {file_path}
+```
+
+Watch a specific server test:
+
+```bash
+bin/npm run test:server:watch -- {file_path}
+```
+
+Run entire testing suite:
+
+```bash
 bin/npm run test
-```
-
-Additionally you can either watch the app or backend tests for changes by appending watch to the end
-of either the backend or app test command:
-
-```
-bin/npm run test:app:watch
-```
-
-If you want to run a specific test file you can use the following command.
-
-```
-bin/npm run test:app:watch {test_file_path}
 ```
 
 ## Deploying
