@@ -1,19 +1,21 @@
-export default async function ProjectAdminListView() {
+import ProjectListElement from "./ProjectEntryElement";
+import { fetchProjectListView } from "./queries";
+
+export default async function Projects() {
+  const projects = await fetchProjectListView();
+
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
-      <figure>
-        <img
-          src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-          alt="Shoes"
-        />
-      </figure>
-      <div className="card-body">
-        <h2 className="card-title">Shoes!</h2>
-        <p>If a dog chews shoes whose shoes does he choose?</p>
-        <div className="card-actions justify-end">
-          <button className="btn btn-primary">Buy Now</button>
-        </div>
-      </div>
-    </div>
+    <main className="container mx-auto">
+      <ul className="space-y-10">
+        {projects.map((project_entry_view) => {
+          return (
+            <ProjectListElement
+              key={project_entry_view.title}
+              project={project_entry_view}
+            />
+          );
+        })}
+      </ul>
+    </main>
   );
 }
