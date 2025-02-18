@@ -13,6 +13,7 @@ export class PortfolioDatabaseFactory
 
     return new PortfolioDatabase(
       db.collection("projects"),
+      db.collection("media"),
       db.collection("migrations"),
     );
   }

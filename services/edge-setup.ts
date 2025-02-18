@@ -17,6 +17,7 @@ function buildTokenTransactionScript(
 }
 
 let portfolio_service_locator: PortfolioEdgeServiceLocator | null = null;
+export let environment: string | null = null;
 export function init(): PortfolioEdgeServiceLocator {
   if (portfolio_service_locator != null) {
     return portfolio_service_locator;
@@ -26,9 +27,11 @@ export function init(): PortfolioEdgeServiceLocator {
   portfolio_service_locator = new PortfolioEdgeServiceLocator(
     buildTokenTransactionScript(environment_settings_dictionary),
   );
+  environment = environment_settings_dictionary.env;
   return portfolio_service_locator;
 }
 
 export function free() {
   portfolio_service_locator = null;
+  environment = null;
 }

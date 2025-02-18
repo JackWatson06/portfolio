@@ -9,6 +9,7 @@ function mock_token_transaction_script() {
 }
 
 let portfolio_service_locator: PortfolioEdgeServiceLocator | null = null;
+export let environment: string | null = "development";
 export const init = jest.fn().mockImplementation(() => {
   if (portfolio_service_locator != null) {
     return portfolio_service_locator;

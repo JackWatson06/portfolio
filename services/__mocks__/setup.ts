@@ -6,7 +6,7 @@ import {
 import { ScriptResult } from "@/auth/login/TransactionScriptResult";
 import { PortfolioServiceLocator } from "@/services/PortfolioNodeServiceLocator";
 
-function mock_login_transaction_script() {
+function mockLoginTransactionScript() {
   return {
     login: jest.fn().mockImplementation((password: string) => {
       return new Promise((resolve) => {
@@ -27,7 +27,7 @@ function mock_login_transaction_script() {
   };
 }
 
-function mock_portfolio_transaction_script() {
+function mockPortfolioTransactionScript() {
   return {
     create: jest.fn(),
     find: jest.fn(),
@@ -45,6 +45,14 @@ function mock_portfolio_transaction_script() {
   };
 }
 
+function mockMediaTransactionScript() {
+  return {
+    upload: jest.fn(),
+    read: jest.fn(),
+    delete: jest.fn(),
+  };
+}
+
 let portfolio_service_locator: PortfolioServiceLocator | null = null;
 export const init = jest.fn().mockImplementation(() => {
   if (portfolio_service_locator != null) {
@@ -52,8 +60,9 @@ export const init = jest.fn().mockImplementation(() => {
   }
 
   portfolio_service_locator = {
-    login: mock_login_transaction_script(),
-    project: mock_portfolio_transaction_script(),
+    login: mockLoginTransactionScript(),
+    media: mockMediaTransactionScript(),
+    project: mockPortfolioTransactionScript(),
   };
   return portfolio_service_locator;
 });
