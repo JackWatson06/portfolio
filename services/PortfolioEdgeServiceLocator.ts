@@ -1,6 +1,6 @@
-import { TransactionScript as TokenTransactionScript } from "@/auth/token/TransactionScript";
+import { TokenService } from "@/auth/token/TokenService";
 import { EdgeServiceLocator } from "./EdgeServiceLocator";
 
 export class PortfolioEdgeServiceLocator implements EdgeServiceLocator {
-  constructor(readonly token: TokenTransactionScript) {}
+  constructor(readonly token: TokenService) {}
 }

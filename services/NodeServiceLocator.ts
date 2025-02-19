@@ -1,9 +1,11 @@
-import { TransactionScript as LoginTransactionScript } from "@/auth/login/TransactionScript";
-import { TransactionScript as MediaTransactionScript } from "@/media/TransactionScript";
-import { TransactionScript as ProjectsTransactionScript } from "@/projects/TransactionScript";
+import { LoginService } from "@/auth/login/LoginService";
+import { MediaService } from "@/media/MediaService";
+import { MediaUploadService } from "@/media/MediaUploadService";
+import { ProjectService } from "@/projects/ProjectService";
 
 export interface NodeServiceLocator {
-  readonly login: LoginTransactionScript;
-  readonly media: MediaTransactionScript;
-  readonly project: ProjectsTransactionScript;
+  readonly login: LoginService;
+  readonly media: MediaService;
+  readonly media_upload: MediaUploadService;
+  readonly project: ProjectService;
 }

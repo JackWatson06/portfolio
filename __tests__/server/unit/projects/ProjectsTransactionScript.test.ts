@@ -5,17 +5,14 @@ import {
   SuccessfulValidatorResult,
   ValidatorResult,
 } from "@/projects/ValidatorResult";
-import { ProjectsTransactionScript } from "@/projects/ProjectsTransactionScript";
+import { ProjectsTransactionScript } from "@/projects/ProjectTransactionScript";
 import { Project } from "@/services/db/schemas/Project";
 import { MatchKeysAndValues, WithId } from "mongodb";
 import {
   TEST_PROJECT_ONE_CREATE_INPUT,
   TEST_PROJECT_TWO,
 } from "@/__tests__/seeding/projects/ProjectData";
-import {
-  ScriptResult,
-  SlugScriptResult,
-} from "@/projects/TransactionScriptResult";
+import { ServiceResult, SlugResult } from "@/projects/ProjectServiceResult";
 import {
   TEST_PROJECT_ONE_PERSISTED,
   TEST_PROJECT_TWO_PERSISTED,
@@ -84,7 +81,7 @@ test("creating a project.", async () => {
     name: "testing",
   });
 
-  expect(script_result.code).toBe(ScriptResult.SUCCESS);
+  expect(script_result.code).toBe(ServiceResult.SUCCESS);
 });
 
 test("converting name for slug when creating a project.", async () => {
@@ -98,7 +95,7 @@ test("converting name for slug when creating a project.", async () => {
     name: "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=",
   });
 
-  expect((script_result as SlugScriptResult).slug).toBe(
+  expect((script_result as SlugResult).slug).toBe(
     "abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz0123456789",
   );
 });
@@ -149,7 +146,7 @@ test("we can not create project with duplicate slug.", async () => {
     TEST_PROJECT_ONE_CREATE_INPUT,
   );
 
-  expect(script_result.code).toBe(ScriptResult.DUPLICATE);
+  expect(script_result.code).toBe(ServiceResult.DUPLICATE);
 });
 
 test("we get error when the project is invalid.", async () => {
@@ -163,7 +160,7 @@ test("we get error when the project is invalid.", async () => {
     name: "testing",
   });
 
-  expect(script_result.code).toBe(ScriptResult.INVALID);
+  expect(script_result.code).toBe(ServiceResult.INVALID);
 });
 
 test("we can fetch a project.", async () => {
@@ -220,7 +217,7 @@ test("we can update a project.", async () => {
     private: false,
   });
 
-  expect(script_result.code).toBe(ScriptResult.SUCCESS);
+  expect(script_result.code).toBe(ServiceResult.SUCCESS);
 });
 
 test("when we update a project we properly convert the slug.", async () => {
@@ -233,7 +230,7 @@ test("when we update a project we properly convert the slug.", async () => {
     name: "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=",
   });
 
-  expect((script_result as SlugScriptResult).slug).toBe(
+  expect((script_result as SlugResult).slug).toBe(
     "abcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyz0123456789",
   );
 });
@@ -248,7 +245,7 @@ test("we can not update a project when the new slug is not unique.", async () =>
     name: "Bilbo Baggins",
   });
 
-  expect(script_result.code).toBe(ScriptResult.DUPLICATE);
+  expect(script_result.code).toBe(ServiceResult.DUPLICATE);
 });
 
 test("setting `updated_at` when updating a project.", async () => {
@@ -277,7 +274,7 @@ test("we get an error when the update project is invalid.", async () => {
     private: false,
   });
 
-  expect(script_result.code).toBe(ScriptResult.INVALID);
+  expect(script_result.code).toBe(ServiceResult.INVALID);
 });
 
 test("we can not delete a project that does not exist.", async () => {
@@ -289,7 +286,7 @@ test("we can not delete a project that does not exist.", async () => {
   const script_result =
     await projects_transaction_script.delete("does_not_exist");
 
-  expect(script_result.code).toBe(ScriptResult.NOT_FOUND);
+  expect(script_result.code).toBe(ServiceResult.NOT_FOUND);
 });
 
 test.todo("tags can not have any duplicates.");

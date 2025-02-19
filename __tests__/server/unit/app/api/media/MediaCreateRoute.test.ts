@@ -1,6 +1,6 @@
 import { POST } from "@/app/api/media/route";
-import { TransactionScript as MediaTransactionScript } from "@/media/TransactionScript";
-import { ScriptResult } from "@/media/TransactionScriptResult";
+import { TransactionScript as MediaTransactionScript } from "@/media/MediaService";
+import { ServiceResult } from "@/media/MediaServiceResult";
 import { Media } from "@/services/db/schemas/Media";
 import { init } from "@/services/setup";
 import { ObjectId, WithId } from "mongodb";
@@ -21,7 +21,7 @@ let mocked_media_transaction_script: MediaTransactionScript;
 beforeEach(async () => {
   mocked_media_transaction_script = (await init()).media;
   (mocked_media_transaction_script.upload as jest.Mock).mockReturnValue({
-    code: ScriptResult.SUCCESS,
+    code: ServiceResult.SUCCESS,
   });
 });
 
@@ -104,7 +104,7 @@ test("writing a file returns 400 with invalid content size", async () => {
 
 test("writing a file returns 500 on service error", async () => {
   (mocked_media_transaction_script.upload as jest.Mock).mockReturnValue({
-    code: ScriptResult.SERVICE_ERROR,
+    code: ServiceResult.SERVICE_ERROR,
   });
   const request = new Request(TEST_ENDPOINT, {
     method: "POST",

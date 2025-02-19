@@ -1,6 +1,6 @@
 "use server";
 
-import { ScriptResult } from "@/auth/login/TransactionScriptResult";
+import { ServiceResult } from "@/auth/login/LoginServiceResult";
 import { init } from "@/services/setup";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -32,7 +32,7 @@ export async function createSession(
   }
 
   const auth_service_response = await login_service.login(result.data.password);
-  if (auth_service_response.code == ScriptResult.INVALID) {
+  if (auth_service_response.code == ServiceResult.INVALID) {
     return {
       errors: ["Invalid password"],
     };

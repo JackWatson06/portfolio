@@ -12,7 +12,7 @@ import { PortfolioHashingAlgorithm } from "@/auth/login/PortfolioHashingAlgorith
 import { JWTSessionAlgorithm } from "@/auth/services/JWTSessionAlgorithm";
 import { ProjectValidator } from "@/projects/ProjectValidator";
 import { ProjectsGateway } from "@/projects/ProjectsGateway";
-import { ProjectsTransactionScript } from "@/projects/ProjectsTransactionScript";
+import { ProjectsTransactionScript } from "@/projects/ProjectTransactionScript";
 import { Collection } from "mongodb";
 import { Project } from "./db/schemas/Project";
 import { load_from_file } from "./settings/load-env-file";
@@ -20,27 +20,32 @@ import { Sha1FileHashingAlgorithm } from "./fs/Sha1FileHashingAlgorithm";
 import { Media } from "./db/schemas/Media";
 import { MediaTransactionScript } from "@/media/MediaTransactionScript";
 import { MediaGateway } from "@/media/MediaGateway";
+import { BackBlazeBlobStorage } from "./fs/BackBlazeBlobStorage";
+import { BlobStorage } from "./fs/BlobStorage";
+import { LocalBlobStorage } from "./fs/LocalBlobStorage";
+import { MediaUploadTransactionScript } from "@/media/MediaUploadTransactionScript";
 
-const environment_settings_dictionary = new EnvironmentSettingDictionary(
-  load_from_file(".env"),
-);
+/* -------------------------------------------------------------------------- */
+/*                              Service Factories                             */
+/* -------------------------------------------------------------------------- */
+function buildBlobStorageService(
+  environment_settings_dictionary: EnvironmentSettingDictionary,
+): BlobStorage {
+  if (environment_settings_dictionary.env == "production") {
+    return new BackBlazeBlobStorage(
+      environment_settings_dictionary.backblaze_app_key_id,
+      environment_settings_dictionary.backblaze_app_key,
+      environment_settings_dictionary.backblaze_bucket_id,
+      environment_settings_dictionary.backblaze_bucket_name,
+    );
+  }
 
-const portfolio_database_factory = new PortfolioDatabaseFactory(
-  environment_settings_dictionary.database,
-);
-const mongo_connection = new MongoDBConnection<PortfolioDatabase>(
-  environment_settings_dictionary.database_connection_string,
-  portfolio_database_factory,
-);
-
-const file_hashing_algorithm = new Sha1FileHashingAlgorithm();
-const local_file_system = new LocalFileSystem(file_hashing_algorithm);
-
-function buildPortfolioLogger() {
-  return new PortfolioLogger("portfolio");
+  return new LocalBlobStorage(environment_settings_dictionary.port);
 }
 
-function buildLoginTransactionScript() {
+function buildLoginTransactionScript(
+  environment_settings_dictionary: EnvironmentSettingDictionary,
+) {
   const session_algorithm = new JWTSessionAlgorithm(
     environment_settings_dictionary.jwt_secret,
   );
@@ -67,12 +72,38 @@ function buildMediaTransactionScript(media: Collection<Media>) {
   return new MediaTransactionScript(local_file_system, media_gateway);
 }
 
+function buildMediaUploadTransactionScript(blob_storage: BlobStorage) {
+  return new MediaUploadTransactionScript(blob_storage);
+}
+
 function buildProjectsTransactionScript(projects: Collection<Project>) {
   const project_gateway = new ProjectsGateway(projects);
   const project_validator = new ProjectValidator();
 
   return new ProjectsTransactionScript(project_validator, project_gateway);
 }
+
+/* -------------------------------------------------------------------------- */
+/*                              Service Creation                              */
+/* -------------------------------------------------------------------------- */
+const environment_settings_dictionary = new EnvironmentSettingDictionary(
+  load_from_file(".env"),
+);
+
+const portfolio_database_factory = new PortfolioDatabaseFactory(
+  environment_settings_dictionary.database,
+);
+const mongo_connection = new MongoDBConnection<PortfolioDatabase>(
+  environment_settings_dictionary.database_connection_string,
+  portfolio_database_factory,
+);
+
+const file_hashing_algorithm = new Sha1FileHashingAlgorithm();
+const local_file_system = new LocalFileSystem(file_hashing_algorithm);
+const portfolio_logger = new PortfolioLogger("portfolio");
+const blob_storage_service = buildBlobStorageService(
+  environment_settings_dictionary,
+);
 
 let portfolio_service_locator: PortfolioServiceLocator | null = null;
 export async function init(): Promise<PortfolioServiceLocator> {
@@ -87,8 +118,9 @@ export async function init(): Promise<PortfolioServiceLocator> {
   }
 
   portfolio_service_locator = new PortfolioServiceLocator(
-    buildLoginTransactionScript(),
+    buildLoginTransactionScript(environment_settings_dictionary),
     buildMediaTransactionScript(mongo_connection.db.media),
+    buildMediaUploadTransactionScript(blob_storage_service),
     buildProjectsTransactionScript(mongo_connection.db.projects),
   );
   return portfolio_service_locator;

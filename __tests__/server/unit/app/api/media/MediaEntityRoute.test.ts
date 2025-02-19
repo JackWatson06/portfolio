@@ -1,7 +1,7 @@
 import { GET, DELETE } from "@/app/api/media/[name]/route";
 import { MediaRead } from "@/media/DTOSchema";
-import { TransactionScript as MediaTransactionScript } from "@/media/TransactionScript";
-import { ScriptResult } from "@/media/TransactionScriptResult";
+import { TransactionScript as MediaTransactionScript } from "@/media/MediaService";
+import { ServiceResult } from "@/media/MediaServiceResult";
 import { init } from "@/services/setup";
 
 jest.mock("@/services/setup");
@@ -25,7 +25,7 @@ let mocked_media_transaction_script: MediaTransactionScript;
 beforeEach(async () => {
   mocked_media_transaction_script = (await init()).media;
   (mocked_media_transaction_script.delete as jest.Mock).mockReturnValue({
-    code: ScriptResult.SUCCESS,
+    code: ServiceResult.SUCCESS,
   });
 });
 
@@ -120,7 +120,7 @@ test("reading a file with init error returns 500", async () => {
 /* -------------------------------------------------------------------------- */
 test("deleting a file returns 200", async () => {
   (mocked_media_transaction_script.delete as jest.Mock).mockReturnValue({
-    code: ScriptResult.SUCCESS,
+    code: ServiceResult.SUCCESS,
   });
   const request = new Request(TEST_ENDPOINT, {
     method: "DELETE",
@@ -133,7 +133,7 @@ test("deleting a file returns 200", async () => {
 
 test("deleting a file returns 404", async () => {
   (mocked_media_transaction_script.delete as jest.Mock).mockReturnValue({
-    code: ScriptResult.NOT_FOUND,
+    code: ServiceResult.NOT_FOUND,
   });
   const request = new Request(TEST_ENDPOINT, {
     method: "DELETE",
@@ -159,7 +159,7 @@ test("deleting a file returns 500 on init error", async () => {
 
 test("deleting a file returns 500 on service error", async () => {
   (mocked_media_transaction_script.delete as jest.Mock).mockReturnValue({
-    code: ScriptResult.SERVICE_ERROR,
+    code: ServiceResult.SERVICE_ERROR,
   });
   const request = new Request(TEST_ENDPOINT, {
     method: "DELETE",

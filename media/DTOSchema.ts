@@ -13,3 +13,12 @@ export type MediaRead = {
   size: number;
   uploaded_at: Date;
 };
+
+export type MediaUploadParams = {
+  upload: {
+    url: string;
+    method: string;
+    headers: Record<string, string>;
+  };
+  public_url: string;
+};

@@ -1,5 +1,5 @@
 import { MediaCreate } from "@/media/DTOSchema";
-import { ScriptResult } from "@/media/TransactionScriptResult";
+import { ServiceResult } from "@/media/MediaServiceResult";
 import { init } from "@/services/setup";
 
 function buildMediaCreate(body: Buffer, headers: Headers): MediaCreate | null {
@@ -44,12 +44,12 @@ export async function POST(request: Request) {
     const response = await media_script.upload(media_create);
 
     switch (response.code) {
-      case ScriptResult.SUCCESS:
+      case ServiceResult.SUCCESS:
         return new Response("", {
           status: 201,
         });
 
-      case ScriptResult.SERVICE_ERROR:
+      case ServiceResult.SERVICE_ERROR:
       default:
         return new Response("", {
           status: 500,

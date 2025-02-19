@@ -1,22 +1,22 @@
 import {
-  NotFoundScriptResult,
-  ScriptResult,
-  ServiceErrorScriptResult,
-  SuccessfulScriptResult,
-} from "./TransactionScriptResult";
+  NotFoundResult,
+  ServiceResult,
+  ServiceErrorResult,
+  SuccessfulResult,
+} from "./MediaServiceResult";
 import { MediaCreate, MediaRead } from "./DTOSchema";
-import { TransactionScript } from "./TransactionScript";
+import { MediaService } from "./MediaService";
 import { FileSystem } from "@/services/fs/FileSystem";
 import { CollectionGateway } from "./CollectionGateway";
 
-export class MediaTransactionScript implements TransactionScript {
+export class MediaTransactionScript implements MediaService {
   constructor(
     private media_file_system: FileSystem,
     private media_collection_gateway: CollectionGateway,
   ) {}
   async upload(
     media_create: MediaCreate,
-  ): Promise<SuccessfulScriptResult | ServiceErrorScriptResult> {
+  ): Promise<SuccessfulResult | ServiceErrorResult> {
     try {
       const hash = await this.media_file_system.write(media_create.data);
       await this.media_collection_gateway.insert({
@@ -28,11 +28,11 @@ export class MediaTransactionScript implements TransactionScript {
       });
 
       return {
-        code: ScriptResult.SUCCESS,
+        code: ServiceResult.SUCCESS,
       };
     } catch (e) {
       return {
-        code: ScriptResult.SERVICE_ERROR,
+        code: ServiceResult.SERVICE_ERROR,
       };
     }
   }
@@ -62,14 +62,12 @@ export class MediaTransactionScript implements TransactionScript {
 
   async delete(
     file_name: string,
-  ): Promise<
-    SuccessfulScriptResult | NotFoundScriptResult | ServiceErrorScriptResult
-  > {
+  ): Promise<SuccessfulResult | NotFoundResult | ServiceErrorResult> {
     const media = await this.media_collection_gateway.find(file_name);
 
     if (media == null) {
       return {
-        code: ScriptResult.NOT_FOUND,
+        code: ServiceResult.NOT_FOUND,
       };
     }
 
@@ -77,11 +75,11 @@ export class MediaTransactionScript implements TransactionScript {
       await this.media_collection_gateway.delete(file_name);
       await this.media_file_system.unlink(media.hash);
       return {
-        code: ScriptResult.SUCCESS,
+        code: ServiceResult.SUCCESS,
       };
     } catch (e) {
       return {
-        code: ScriptResult.SERVICE_ERROR,
+        code: ServiceResult.SERVICE_ERROR,
       };
     }
   }

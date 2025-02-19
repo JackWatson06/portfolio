@@ -3,7 +3,7 @@ import {
   TEST_PROJECT_THREE,
   TEST_PROJECT_TWO,
 } from "@/__tests__/seeding/projects/ProjectData";
-import { ScriptResult } from "@/auth/login/TransactionScriptResult";
+import { ServiceResult } from "@/auth/login/LoginServiceResult";
 import { PortfolioServiceLocator } from "@/services/PortfolioNodeServiceLocator";
 
 function mockLoginTransactionScript() {
@@ -12,12 +12,12 @@ function mockLoginTransactionScript() {
       return new Promise((resolve) => {
         if (password != "testing") {
           return resolve({
-            code: ScriptResult.INVALID,
+            code: ServiceResult.INVALID,
           });
         }
 
         return resolve({
-          code: ScriptResult.SUCCESS,
+          code: ServiceResult.SUCCESS,
           token: "testing",
           expires: 10_000,
           secure: false,

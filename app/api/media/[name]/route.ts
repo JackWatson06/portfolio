@@ -1,4 +1,4 @@
-import { ScriptResult } from "@/media/TransactionScriptResult";
+import { ServiceResult } from "@/media/MediaServiceResult";
 import { init } from "@/services/setup";
 
 export async function GET(
@@ -39,16 +39,16 @@ export async function DELETE(
     const response = await media_script.delete((await params).file_name);
 
     switch (response.code) {
-      case ScriptResult.NOT_FOUND:
+      case ServiceResult.NOT_FOUND:
         return new Response("", {
           status: 404,
         });
-      case ScriptResult.SUCCESS:
+      case ServiceResult.SUCCESS:
         return new Response("", {
           status: 200,
         });
 
-      case ScriptResult.SERVICE_ERROR:
+      case ServiceResult.SERVICE_ERROR:
       default:
         return new Response("", {
           status: 500,

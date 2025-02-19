@@ -3,16 +3,16 @@ import { WithId } from "mongodb";
 import { ProjectCreate, ProjectUpdate } from "./DTOSchema";
 import {
   DuplicateResult,
-  InvalidScriptResult,
-  NotFoundScriptResult,
-  SlugScriptResult,
-  SuccessfulScriptResult,
-} from "./TransactionScriptResult";
+  InvalidResult,
+  NotFoundResult,
+  SlugResult,
+  SuccessfulResult,
+} from "./ProjectServiceResult";
 
-export interface TransactionScript {
+export interface ProjectService {
   create(
     project_create_input: ProjectCreate,
-  ): Promise<SlugScriptResult | InvalidScriptResult | DuplicateResult>;
+  ): Promise<SlugResult | InvalidResult | DuplicateResult>;
 
   find(slug: string): Promise<WithId<Project> | null>;
 
@@ -25,12 +25,7 @@ export interface TransactionScript {
   update(
     slug: string,
     project_input: ProjectUpdate,
-  ): Promise<
-    | SlugScriptResult
-    | NotFoundScriptResult
-    | InvalidScriptResult
-    | DuplicateResult
-  >;
+  ): Promise<SlugResult | NotFoundResult | InvalidResult | DuplicateResult>;
 
-  delete(slug: string): Promise<SuccessfulScriptResult | NotFoundScriptResult>;
+  delete(slug: string): Promise<SuccessfulResult | NotFoundResult>;
 }

@@ -13,12 +13,16 @@ import { PortfolioHashingAlgorithm } from "@/auth/login/PortfolioHashingAlgorith
 import { JWTSessionAlgorithm } from "@/auth/services/JWTSessionAlgorithm";
 import { ExpiresDateTimeCalculator } from "@/auth/login/ExpiresDateTimeCalculator";
 import { LoginTransactionScript } from "@/auth/login/LoginTransactionScript";
+import { LocalBlobStorage } from "@/services/fs/LocalBlobStorage";
+import { BackBlazeBlobStorage } from "@/services/fs/BackBlazeBlobStorage";
 
 jest.mock("@/services/settings/load-env-file");
 jest.mock("@/services/db/PortfolioDatabaseFactory");
 jest.mock("@/services/db/MongoDBConnection");
 jest.mock("@/services/fs/LocalFileSystem");
 jest.mock("@/services/fs/Sha1FileHashingAlgorithm");
+jest.mock("@/services/fs/LocalBlobStorage");
+jest.mock("@/services/fs/BackBlazeBlobStorage");
 jest.mock("@/services/logging/PortfolioLogger");
 jest.mock("@/auth/services/JWTSessionAlgorithm");
 jest.mock("@/auth/login/PortfolioHashingAlgorithm");
@@ -26,10 +30,11 @@ jest.mock("@/auth/login/ExpiresDateTimeCalculator");
 jest.mock("@/auth/login/LoginTransactionScript");
 jest.mock("@/projects/ProjectValidator");
 jest.mock("@/projects/ProjectsGateway");
-jest.mock("@/projects/ProjectsTransactionScript");
+jest.mock("@/projects/ProjectTransactionScript");
 
 beforeEach(() => {
   free();
+
   mockConnected.mockReturnValue(true);
 });
 
@@ -81,6 +86,33 @@ test("init login script with environment variables", () => {
     expect.anything(),
     expect.anything(),
     expect.anything(),
+  );
+});
+
+test("init local blob storage with environment variables", async () => {
+  expect(LocalBlobStorage).toHaveBeenCalledWith(8080);
+});
+
+test("init back blaze blob with environment variables", async () => {
+  const mocked_env_vars = load_from_file("testing");
+  jest.resetModules();
+  jest.doMock("@/services/settings/load-env-file", () => ({
+    load_from_file: () => {
+      return {
+        ...mocked_env_vars,
+        NODE_ENV: "production",
+      };
+    },
+  }));
+  const backblaze_module = await import("@/services/fs/BackBlazeBlobStorage");
+
+  await import("@/services/setup");
+
+  expect(backblaze_module.BackBlazeBlobStorage).toHaveBeenCalledWith(
+    "test_app_key_id",
+    "test_app_key",
+    "test_bucket_id",
+    "test_bucket_name",
   );
 });
 

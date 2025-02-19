@@ -2,18 +2,18 @@ import { Project } from "@/services/db/schemas/Project";
 import { WithId } from "mongodb";
 import { CollectionGateway } from "./CollectionGateway";
 import { ProjectCreate, ProjectUpdate } from "./DTOSchema";
-import { TransactionScript } from "./TransactionScript";
+import { ProjectService } from "./ProjectService";
 import {
   DuplicateResult,
-  InvalidScriptResult,
-  NotFoundScriptResult,
-  ScriptResult,
-  SlugScriptResult,
-  SuccessfulScriptResult,
-} from "./TransactionScriptResult";
+  InvalidResult,
+  NotFoundResult,
+  ServiceResult,
+  SlugResult,
+  SuccessfulResult,
+} from "./ProjectServiceResult";
 import { Validator } from "./Validator";
 
-export class ProjectsTransactionScript implements TransactionScript {
+export class ProjectsTransactionScript implements ProjectService {
   constructor(
     private project_validator: Validator,
     private projects_collection_gateway: CollectionGateway,
@@ -21,11 +21,11 @@ export class ProjectsTransactionScript implements TransactionScript {
 
   async create(
     project_input: ProjectCreate,
-  ): Promise<SlugScriptResult | InvalidScriptResult | DuplicateResult> {
+  ): Promise<SlugResult | InvalidResult | DuplicateResult> {
     const slug = this.generateSlug(project_input.name);
     if ((await this.projects_collection_gateway.findBySlug(slug)) != null) {
       return {
-        code: ScriptResult.DUPLICATE,
+        code: ServiceResult.DUPLICATE,
       };
     }
 
@@ -46,14 +46,14 @@ export class ProjectsTransactionScript implements TransactionScript {
     const validation_result = this.project_validator.validate(project);
     if (!validation_result.valid) {
       return {
-        code: ScriptResult.INVALID,
+        code: ServiceResult.INVALID,
         message: validation_result.message,
       };
     }
 
     await this.projects_collection_gateway.insert(project);
     return {
-      code: ScriptResult.SUCCESS,
+      code: ServiceResult.SUCCESS,
       slug: project.slug,
     };
   }
@@ -77,17 +77,12 @@ export class ProjectsTransactionScript implements TransactionScript {
   async update(
     slug: string,
     project_input: ProjectUpdate,
-  ): Promise<
-    | SlugScriptResult
-    | NotFoundScriptResult
-    | InvalidScriptResult
-    | DuplicateResult
-  > {
+  ): Promise<SlugResult | NotFoundResult | InvalidResult | DuplicateResult> {
     const project = await this.find(slug);
 
     if (project == null) {
       return {
-        code: ScriptResult.NOT_FOUND,
+        code: ServiceResult.NOT_FOUND,
       };
     }
 
@@ -103,7 +98,7 @@ export class ProjectsTransactionScript implements TransactionScript {
       )) != null
     ) {
       return {
-        code: ScriptResult.DUPLICATE,
+        code: ServiceResult.DUPLICATE,
       };
     }
 
@@ -116,7 +111,7 @@ export class ProjectsTransactionScript implements TransactionScript {
       this.project_validator.validate(updated_project_info);
     if (!validation_result.valid) {
       return {
-        code: ScriptResult.INVALID,
+        code: ServiceResult.INVALID,
         message: validation_result.message,
       };
     }
@@ -128,25 +123,23 @@ export class ProjectsTransactionScript implements TransactionScript {
     });
 
     return {
-      code: ScriptResult.SUCCESS,
+      code: ServiceResult.SUCCESS,
       slug: updated_project_info.slug,
     };
   }
 
-  async delete(
-    slug: string,
-  ): Promise<SuccessfulScriptResult | NotFoundScriptResult> {
+  async delete(slug: string): Promise<SuccessfulResult | NotFoundResult> {
     const project = await this.find(slug);
 
     if (project == null) {
       return {
-        code: ScriptResult.NOT_FOUND,
+        code: ServiceResult.NOT_FOUND,
       };
     }
 
     await this.projects_collection_gateway.delete(slug);
     return {
-      code: ScriptResult.SUCCESS,
+      code: ServiceResult.SUCCESS,
     };
   }
 

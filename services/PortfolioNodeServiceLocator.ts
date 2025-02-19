@@ -1,12 +1,14 @@
-import { TransactionScript as LoginTransactionScript } from "@/auth/login/TransactionScript";
-import { TransactionScript as MediaTransactionScript } from "@/media/TransactionScript";
-import { TransactionScript as ProjectsTransactionScript } from "@/projects/TransactionScript";
+import { LoginService } from "@/auth/login/LoginService";
+import { MediaService } from "@/media/MediaService";
+import { ProjectService } from "@/projects/ProjectService";
 import { NodeServiceLocator } from "./NodeServiceLocator";
+import { MediaUploadService } from "@/media/MediaUploadService";
 
 export class PortfolioServiceLocator implements NodeServiceLocator {
   constructor(
-    public login: LoginTransactionScript,
-    public media: MediaTransactionScript,
-    public project: ProjectsTransactionScript,
+    public login: LoginService,
+    public media: MediaService,
+    public media_upload: MediaUploadService,
+    public project: ProjectService,
   ) {}
 }

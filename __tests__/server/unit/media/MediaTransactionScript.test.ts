@@ -2,7 +2,7 @@ import { FileSystem } from "@/services/fs/FileSystem";
 import { CollectionGateway } from "@/media/CollectionGateway";
 import { Media } from "@/services/db/schemas/Media";
 import { ObjectId, WithId } from "mongodb";
-import { ScriptResult } from "@/media/TransactionScriptResult";
+import { ServiceResult } from "@/media/MediaServiceResult";
 import { MediaTransactionScript } from "@/media/MediaTransactionScript";
 
 const MEDIA_CREATE_INPUT_ONE = {
@@ -81,7 +81,7 @@ test("uplaoding a media file", async () => {
 
   const result = await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
 
-  expect(result.code).toBe(ScriptResult.SUCCESS);
+  expect(result.code).toBe(ServiceResult.SUCCESS);
 });
 
 test("uplaoding a media file creates a new file", async () => {
@@ -116,7 +116,7 @@ test("service error on invalid write", async () => {
 
   const result = await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
 
-  expect(result.code).toBe(ScriptResult.SERVICE_ERROR);
+  expect(result.code).toBe(ServiceResult.SERVICE_ERROR);
 });
 
 test("fetching a media element", async () => {
@@ -160,7 +160,7 @@ test("deleting a file", async () => {
 
   const result = await media_transaction_script.delete("testing.png");
 
-  expect(result.code).toBe(ScriptResult.SUCCESS);
+  expect(result.code).toBe(ServiceResult.SUCCESS);
 });
 test("deleting a file returns not found", async () => {
   const media_transaction_script = new MediaTransactionScript(
@@ -170,7 +170,7 @@ test("deleting a file returns not found", async () => {
 
   const result = await media_transaction_script.delete("testing.png");
 
-  expect(result.code).toBe(ScriptResult.NOT_FOUND);
+  expect(result.code).toBe(ServiceResult.NOT_FOUND);
 });
 
 test("deleting a file removes the database record", async () => {
@@ -205,5 +205,5 @@ test("deleting a file returns service error on invalid write", async () => {
 
   const result = await media_transaction_script.delete("testing.png");
 
-  expect(result.code).toBe(ScriptResult.SERVICE_ERROR);
+  expect(result.code).toBe(ServiceResult.SERVICE_ERROR);
 });
