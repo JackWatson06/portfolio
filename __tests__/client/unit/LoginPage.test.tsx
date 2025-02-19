@@ -8,11 +8,9 @@ import { axe, toHaveNoViolations } from "jest-axe";
 
 expect.extend(toHaveNoViolations);
 
-jest.mock("@/app/login/commands", () => {
-  return {
-    createSession: jest.fn(),
-  };
-});
+jest.mock("@/app/login/actions", () => ({
+  createSession: jest.fn(),
+}));
 
 jest.mock("react", () => {
   return {

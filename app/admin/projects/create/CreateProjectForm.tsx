@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import LinkInput from "./LinkInput";
 import MediaInput from "./MediaInput";
-import { handleProjectFormAction } from "./commands";
+import { handleProjectFormAction } from "./actions";
 import FormAlert from "@/components/FormAlert";
 
 export default function AdminProjectCreateForm() {

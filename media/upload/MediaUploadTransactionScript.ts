@@ -1,5 +1,5 @@
 import { BlobStorage } from "@/services/fs/BlobStorage";
-import { MediaUploadParams } from "./DTOSchema";
+import { MediaUploadParams } from "../DTOSchema";
 import { MediaUploadService } from "./MediaUploadService";
 
 export class MediaUploadTransactionScript implements MediaUploadService {

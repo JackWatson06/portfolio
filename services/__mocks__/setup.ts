@@ -27,6 +27,14 @@ function mockLoginTransactionScript() {
   };
 }
 
+function mockTokenTransactionScript() {
+  return {
+    validate: jest
+      .fn()
+      .mockImplementation((token: string) => token == "testing"),
+  };
+}
+
 function mockPortfolioTransactionScript() {
   return {
     create: jest.fn(),
@@ -53,6 +61,12 @@ function mockMediaTransactionScript() {
   };
 }
 
+function mockMediaUploadTransactionScript() {
+  return {
+    findUploadParams: jest.fn(),
+  };
+}
+
 let portfolio_service_locator: PortfolioServiceLocator | null = null;
 export const init = jest.fn().mockImplementation(() => {
   if (portfolio_service_locator != null) {
@@ -61,7 +75,9 @@ export const init = jest.fn().mockImplementation(() => {
 
   portfolio_service_locator = {
     login: mockLoginTransactionScript(),
+    token: mockTokenTransactionScript(),
     media: mockMediaTransactionScript(),
+    media_upload: mockMediaUploadTransactionScript(),
     project: mockPortfolioTransactionScript(),
   };
   return portfolio_service_locator;

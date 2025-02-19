@@ -23,7 +23,9 @@ import { MediaGateway } from "@/media/MediaGateway";
 import { BackBlazeBlobStorage } from "./fs/BackBlazeBlobStorage";
 import { BlobStorage } from "./fs/BlobStorage";
 import { LocalBlobStorage } from "./fs/LocalBlobStorage";
-import { MediaUploadTransactionScript } from "@/media/MediaUploadTransactionScript";
+import { MediaUploadTransactionScript } from "@/media/upload/MediaUploadTransactionScript";
+import { SessionAlgorithm } from "@/auth/services/SessionAlgorithm";
+import { TokenTransactionScript } from "@/auth/token/TokenTransactionScript";
 
 /* -------------------------------------------------------------------------- */
 /*                              Service Factories                             */
@@ -45,10 +47,8 @@ function buildBlobStorageService(
 
 function buildLoginTransactionScript(
   environment_settings_dictionary: EnvironmentSettingDictionary,
+  session_algorithm: SessionAlgorithm,
 ) {
-  const session_algorithm = new JWTSessionAlgorithm(
-    environment_settings_dictionary.jwt_secret,
-  );
   const hasing_algorithm = new PortfolioHashingAlgorithm(
     environment_settings_dictionary.salt,
   );
@@ -65,6 +65,10 @@ function buildLoginTransactionScript(
     hasing_algorithm,
     expires_calculator,
   );
+}
+
+function buildTokenTransactionScript(session_algorithm: SessionAlgorithm) {
+  return new TokenTransactionScript(session_algorithm);
 }
 
 function buildMediaTransactionScript(media: Collection<Media>) {
@@ -104,6 +108,9 @@ const portfolio_logger = new PortfolioLogger("portfolio");
 const blob_storage_service = buildBlobStorageService(
   environment_settings_dictionary,
 );
+const session_algorithm = new JWTSessionAlgorithm(
+  environment_settings_dictionary.jwt_secret,
+);
 
 let portfolio_service_locator: PortfolioServiceLocator | null = null;
 export async function init(): Promise<PortfolioServiceLocator> {
@@ -118,7 +125,11 @@ export async function init(): Promise<PortfolioServiceLocator> {
   }
 
   portfolio_service_locator = new PortfolioServiceLocator(
-    buildLoginTransactionScript(environment_settings_dictionary),
+    buildLoginTransactionScript(
+      environment_settings_dictionary,
+      session_algorithm,
+    ),
+    buildTokenTransactionScript(session_algorithm),
     buildMediaTransactionScript(mongo_connection.db.media),
     buildMediaUploadTransactionScript(blob_storage_service),
     buildProjectsTransactionScript(mongo_connection.db.projects),

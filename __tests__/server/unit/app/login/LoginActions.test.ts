@@ -1,29 +1,15 @@
-import { createSession } from "@/app/login/commands";
-import { init } from "@/services/setup";
+import { createSession } from "@/app/login/actions";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-function mockCookiesFactory() {
-  const cookies_constructor_return = {
-    set: jest.fn(),
-  };
-
-  const cookies_constructor = jest.fn();
-  cookies_constructor.mockReturnValue(cookies_constructor_return);
-
-  return {
-    cookies: cookies_constructor,
-  };
-}
-
-function mockRedirectFactory() {
-  return {
-    redirect: jest.fn(),
-  };
-}
-
-jest.mock("next/headers", mockCookiesFactory);
-jest.mock("next/navigation", mockRedirectFactory);
+jest.mock("next/headers", () => ({
+  cookies: jest.fn().mockReturnValue({
+    get: jest.fn(),
+  }),
+}));
+jest.mock("next/navigation", () => ({
+  redirect: jest.fn(),
+}));
 jest.mock("@/services/setup");
 
 const redirect_mock = redirect as unknown as jest.Mock;

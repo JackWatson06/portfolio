@@ -6,6 +6,9 @@ import { axe, toHaveNoViolations } from "jest-axe";
 
 expect.extend(toHaveNoViolations);
 
+jest.mock("@/app/admin/projects/create/actions", () => ({
+  handleProjectFormAction: jest.fn(),
+}));
 // How are we checking for required forms on the backend? I don't think we are doing any check
 // for the required fields. I think that since we have a type contract between the frontend and
 // the backend we can do a zod validation on the frontend client. This can be handled in the submit

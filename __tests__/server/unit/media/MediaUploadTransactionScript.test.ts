@@ -1,4 +1,4 @@
-import { MediaUploadTransactionScript } from "@/media/MediaUploadTransactionScript";
+import { MediaUploadTransactionScript } from "@/media/upload/MediaUploadTransactionScript";
 import { BlobStorage, UploadHTTPParams } from "@/services/fs/BlobStorage";
 
 class TestBlobStorageService implements BlobStorage {

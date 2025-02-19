@@ -1,3 +1,5 @@
+"use server";
+
 export type ProjectCreateInput = {
   title: string;
   description: string;
@@ -16,14 +18,21 @@ export type ProjectCreateInput = {
   tags?: string;
 };
 
-export type ProjectCreateResponse = {
+export enum ServerActionCode {
+  SUCCESS = 0,
+  UNAUTHENTICATED,
+}
+
+export type ServerActionResult = {
+  code: ServerActionCode;
   errors: string[];
 };
 
 export async function handleProjectFormAction(
   input: ProjectCreateInput,
-): Promise<ProjectCreateResponse> {
+): Promise<ServerActionResult> {
   return {
+    code: ServerActionCode.SUCCESS,
     errors: [],
   };
 }

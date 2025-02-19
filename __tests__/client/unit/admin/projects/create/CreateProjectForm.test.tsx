@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import "html-validate/jest";
 import { useActionState } from "react";
 
-jest.mock("@/app/admin/projects/create/commands", () => ({
+jest.mock("@/app/admin/projects/create/actions", () => ({
   handleProjectFormAction: jest.fn(),
 }));
 
