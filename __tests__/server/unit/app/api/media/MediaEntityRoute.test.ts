@@ -1,4 +1,4 @@
-import { GET, DELETE } from "@/app/api/media/[name]/route";
+import { GET, DELETE } from "@/app/api/media/[file_name]/route";
 import { MediaRead } from "@/media/DTOSchema";
 import { TransactionScript as MediaTransactionScript } from "@/media/MediaService";
 import { ServiceResult } from "@/media/MediaServiceResult";

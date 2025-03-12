@@ -22,6 +22,7 @@ jest.mock("react", () => {
   return {
     ...jest.requireActual("react"),
     useActionState: jest.fn(),
+    useEffect: jest.fn(), // Mocking this because we don't have the DataTransfer API in jsdom.
   };
 });
 
@@ -30,17 +31,19 @@ const DEFAULT_FORM_STATE: ProjectFormState = {
     name: "testing",
     description: "testing",
     tags: "testing",
-    visiblity: "private",
-    media_descriptions: [
+    visibility: "private",
+    media: [
       {
-        file_name: "testing.png",
-        file_description: "testing",
+        file: new File(["testing"], "testing.png", {
+          type: "image/png",
+        }),
+        description: "testing",
       },
     ],
     thumbnail: "testing.png",
-    link_types: [
+    links: [
       {
-        link: "https://testing.com",
+        url: "https://testing.com",
         type: "website",
       },
     ],
@@ -144,10 +147,6 @@ function setDescriptionValue() {
       name: /markdown description/i,
     })
     .setAttribute("value", "");
-}
-
-function setMeidaValue() {
-  screen.getByLabelText(/upload media/i).setAttribute("value", "");
 }
 
 function setMediaDescriptionsValue() {
