@@ -59,14 +59,17 @@ export default function MediaInput({
   };
 
   return (
-    <fieldset>
-      <legend>Media Input</legend>
+    <fieldset className="flex flex-col gap-2">
+      <legend className="text-xl">Media Input</legend>
 
-      <label htmlFor="UploadMediaInput">Upload Media</label>
-      <span>
+      <label htmlFor="UploadMediaInput" className="label">
+        Upload Media
+      </label>
+      <span className="flex flex-col">
         <input
           ref={media_input}
           id="UploadMediaInput"
+          className="file-input"
           type="file"
           name="media_file"
           required
@@ -75,17 +78,41 @@ export default function MediaInput({
           aria-describedby="UploadMediaInputDescription"
           onChange={handleChange}
         />
-        <span id="UploadMediaInputDescription">Upload multiple files.</span>
+        <span
+          id="UploadMediaInputDescription"
+          className="text-sm text-gray-400"
+        >
+          Upload multiple files.
+        </span>
       </span>
-      <ul aria-live="polite">
+      {files.length > 0 && (
+        <>
+          <label htmlFor="ThumbnailInput" className="label">
+            Thumbnail Image
+          </label>
+          <input
+            className="input"
+            id="ThumbnailInput"
+            name="thumbnail"
+            type="text"
+            defaultValue={value_thumbnail}
+            required
+          />
+        </>
+      )}
+      {files.length > 0 && <p>Selected File Descriptions:</p>}
+      <ul aria-live="polite" className="flex flex-col gap-2">
         {files.map((file, index) => {
           const id = `MediaDescriptionInput${index}`;
           const description_value = findInitialDescriptionValue(file.name);
           return (
             <li key={file.name}>
-              <label htmlFor={id}>{file.name} Description</label>
+              <label htmlFor={id} className="label text-wrap">
+                {file.name} Description
+              </label>
               <input
                 id={id}
+                className="input"
                 type="text"
                 name="media_description"
                 defaultValue={description_value}
@@ -95,20 +122,6 @@ export default function MediaInput({
           );
         })}
       </ul>
-
-      {files.length > 0 && (
-        <>
-          <label htmlFor="ThumbnailInput">Thumbnail Image</label>
-          <input
-            className="input input-bordered w-full max-w-xs"
-            id="ThumbnailInput"
-            name="thumbnail"
-            type="text"
-            defaultValue={value_thumbnail}
-            required
-          />
-        </>
-      )}
     </fieldset>
   );
 }

@@ -58,18 +58,41 @@ export default function LinkInput({
   };
 
   return (
-    <fieldset>
-      <legend>Link Input</legend>
+    <fieldset className="flex flex-col gap-2">
+      <legend className="mb-3 text-xl">Link Input</legend>
 
-      <input
-        ref={add_link_input_ref}
-        type="text"
-        aria-labelledby="AddLinkButton"
-      />
-      <button id="AddLinkButton" onClick={handleAddClick} type="button">
-        Add Link
-      </button>
-      <ul aria-live="polite">
+      <span className="flex flex-row">
+        <input
+          ref={add_link_input_ref}
+          className="input"
+          type="text"
+          aria-labelledby="AddLinkButton"
+        />
+        <button
+          id="AddLinkButton"
+          className="btn"
+          onClick={handleAddClick}
+          type="button"
+        >
+          Add Link
+        </button>
+      </span>
+      {link_urls.length > 0 && (
+        <>
+          <label htmlFor="LiveProjectInput" className="label">
+            Live Project Link
+          </label>
+          <input
+            className="input"
+            id="LiveProjectInput"
+            name="live_project_link"
+            type="text"
+            defaultValue={value_live_project_link}
+          />
+        </>
+      )}
+      {link_urls.length > 0 && <p>Added Link Types:</p>}
+      <ul aria-live="polite" className="flex flex-col gap-2">
         {link_urls.map((link, index) => {
           const type_id = `LinkTypeInput${index}`;
           const type_value = findInitialLinkTypeValue(link);
@@ -78,32 +101,33 @@ export default function LinkInput({
             <li key={link}>
               <input type="hidden" name="link_url" value={link} />
 
-              <label htmlFor={type_id}>{link} Link Type</label>
-              <select id={type_id} name="link_type" defaultValue={type_value}>
-                <option value="source">Source Code</option>
-                <option value="website">Website</option>
-                <option value="download">Download</option>
-              </select>
-              <button value={link} onClick={handleRemoveClick} type="button">
-                Remove <span className="sr-only">{link}</span>
-              </button>
+              <label htmlFor={type_id} className="label text-wrap">
+                {link} Link Type
+              </label>
+              <span className="flex flex-row">
+                <select
+                  id={type_id}
+                  className="select"
+                  name="link_type"
+                  defaultValue={type_value}
+                >
+                  <option value="source">Source Code</option>
+                  <option value="website">Website</option>
+                  <option value="download">Download</option>
+                </select>
+                <button
+                  value={link}
+                  onClick={handleRemoveClick}
+                  className="btn"
+                  type="button"
+                >
+                  Remove <span className="sr-only">{link}</span>
+                </button>
+              </span>
             </li>
           );
         })}
       </ul>
-
-      {link_urls.length > 0 && (
-        <>
-          <label htmlFor="LiveProjectInput">Live Project Link</label>
-          <input
-            className="input input-bordered w-full max-w-xs"
-            id="LiveProjectInput"
-            name="live_project_link"
-            type="text"
-            defaultValue={value_live_project_link}
-          />
-        </>
-      )}
     </fieldset>
   );
 }

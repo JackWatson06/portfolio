@@ -9,7 +9,6 @@ import { MediaService } from "./MediaService";
 import { FileSystem } from "@/services/fs/FileSystem";
 import { CollectionGateway } from "./CollectionGateway";
 import { MediaScriptInstrumentation } from "./MediaScriptInstrumentation";
-import { object } from "zod";
 
 export class MediaTransactionScript implements MediaService {
   constructor(

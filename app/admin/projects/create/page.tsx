@@ -1,5 +1,14 @@
 import CreateProjectForm from "./CreateProjectForm";
 
 export default function CreateProject() {
-  return <CreateProjectForm />;
+  return (
+    <>
+      <header className="mx-auto w-xs">
+        <h1 className="text-2xl">Project Create Form</h1>
+      </header>
+      <main className="mx-auto w-xs">
+        <CreateProjectForm />
+      </main>
+    </>
+  );
 }

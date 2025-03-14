@@ -4,7 +4,6 @@ import { ServiceResult } from "@/auth/login/LoginServiceResult";
 import { init } from "@/services/setup";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { z } from "zod";
 
 export type CreateSessionResponse = {
   errors: string[];
@@ -16,22 +15,17 @@ export async function createSession(
 ): Promise<CreateSessionResponse> {
   const portfolio_service_locator = await init();
   const login_service = portfolio_service_locator.login;
+  const password = form_data.get("password");
 
-  const form_schema = z.object({
-    password: z.string({ message: "Password required." }),
-  });
-
-  const result = form_schema.safeParse(Object.fromEntries(form_data.entries()));
-
-  if (!result.success) {
+  if (!password) {
     return {
-      errors: result.error.errors.map((zod_error) => {
-        return zod_error.message;
-      }),
+      errors: [
+        "Password required."
+      ],
     };
   }
 
-  const auth_service_response = await login_service.login(result.data.password);
+  const auth_service_response = await login_service.login(password.toString());
   if (auth_service_response.code == ServiceResult.INVALID) {
     return {
       errors: ["Invalid password"],

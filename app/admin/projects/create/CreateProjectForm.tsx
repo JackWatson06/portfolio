@@ -24,33 +24,39 @@ export default function AdminProjectCreateForm() {
     useProjectFormActionState(DEFAULT_FORM_STATE);
 
   return (
-    <form action={handleAction}>
+    <form action={handleAction} className="flex max-w-xs flex-col gap-10">
       <FormAlert errors={state.errors} />
 
-      <fieldset>
-        <legend>Content</legend>
-        <label htmlFor="NameInput">Name</label>
+      <fieldset className="flex flex-col gap-2">
+        <legend className="mb-3 text-xl">Content</legend>
+        <label htmlFor="NameInput" className="label">
+          Name
+        </label>
         <input
-          className="input input-bordered w-full max-w-xs"
+          className="input"
           id="NameInput"
           name="name"
           type="text"
           required
           defaultValue={state.data.name}
         />
-        <label htmlFor="MarkdownDescriptionInput">Markdown Description</label>
+        <label htmlFor="MarkdownDescriptionInput" className="label">
+          Markdown Description
+        </label>
         <textarea
-          className="input input-bordered w-full max-w-xs"
+          className="textarea textarea-md h-24"
           id="MarkdownDescriptionInput"
           name="description"
           aria-multiline
           required
           defaultValue={state.data.description}
         />
-        <label htmlFor="TagsInput">Tags</label>
-        <span>
+        <label htmlFor="TagsInput" className="label">
+          Tags
+        </label>
+        <span className="flex flex-col">
           <input
-            className="input input-bordered w-full max-w-xs"
+            className="input"
             id="TagsInput"
             placeholder="C++, JavaScript, etc..."
             name="tags"
@@ -58,10 +64,15 @@ export default function AdminProjectCreateForm() {
             aria-describedby="TagsInputDescription"
             defaultValue={state.data.tags}
           />
-          <span id="TagsInputDescription">Seperate each tag by a comma.</span>
+          <span id="TagsInputDescription" className="text-sm text-gray-400">
+            Seperate each tag by a comma.
+          </span>
         </span>
-        <label htmlFor="VisibilityInput">Visibility</label>
+        <label htmlFor="VisibilityInput" className="label">
+          Visibility
+        </label>
         <select
+          className="select"
           id="VisibilityInput"
           name="visibility"
           defaultValue={state.data.visibility}
@@ -84,7 +95,9 @@ export default function AdminProjectCreateForm() {
           <span className="loading loading-spinner text-primary"></span>
         </div>
       ) : (
-        <button type="submit">Submit</button>
+        <button type="submit" className="btn">
+          Submit
+        </button>
       )}
     </form>
   );
