@@ -25,8 +25,8 @@ const MEDIA_ONE_PERSISTED: WithId<Media> = {
 jest.mock("@/services/fs/LocalFileSystem");
 
 class MockFileSystem implements FileSystem {
-  public last_buffer_write: Buffer | null = null;
-  public last_removed_hash: string | null = null;
+  public last_write: Buffer | null = null;
+  public last_unlink: string | null = null;
 
   constructor(private read_result: Buffer | null = Buffer.from([1, 2, 3])) {}
 
@@ -37,30 +37,28 @@ class MockFileSystem implements FileSystem {
     return this.read_result;
   }
   async write(data: Buffer): Promise<string> {
-    this.last_buffer_write = data;
+    this.last_write = data;
     return "testing_hash";
   }
   async unlink(hash: string): Promise<void> {
-    this.last_removed_hash = hash;
+    this.last_unlink = hash;
   }
 }
 
 class MockCollectionGateway implements CollectionGateway {
-  public last_created_media: Media | null = null;
-  public last_removed_file_name: string | null = null;
+  public last_insert: Media | null = null;
+  public last_delete: string | null = null;
 
-  constructor(
-    private find_result: WithId<Media> | null = MEDIA_ONE_PERSISTED,
-  ) {}
+  constructor(public find_result: WithId<Media> | null = MEDIA_ONE_PERSISTED) {}
 
   async insert(media: Media): Promise<void> {
-    this.last_created_media = media;
+    this.last_insert = media;
   }
   async find(file_name: string): Promise<WithId<Media> | null> {
     return this.find_result;
   }
   async delete(file_name: string): Promise<void> {
-    this.last_removed_file_name = file_name;
+    this.last_delete = file_name;
   }
 }
 
@@ -92,13 +90,31 @@ test("uplaoding a media file creates a new file", async () => {
   const test_file_system = new MockFileSystem();
   const media_transaction_script = new MediaTransactionScript(
     test_file_system,
-    new MockCollectionGateway(),
+    new MockCollectionGateway(null),
     new MockMediaScriptInstrumentation(),
   );
 
   await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
 
-  expect(test_file_system.last_buffer_write).toBe(MEDIA_CREATE_INPUT_ONE.data);
+  expect(test_file_system.last_write).toBe(MEDIA_CREATE_INPUT_ONE.data);
+});
+
+test("uploading same file twice does not upload write the file to the file system", async () => {
+  const test_file_system = new MockFileSystem();
+  const test_collection_gateway = new MockCollectionGateway();
+  const media_transaction_script = new MediaTransactionScript(
+    test_file_system,
+    test_collection_gateway,
+    new MockMediaScriptInstrumentation(),
+  );
+
+  await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
+
+  test_collection_gateway.find_result = MEDIA_ONE_PERSISTED;
+  test_file_system.last_write = null;
+
+  await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
+  expect(test_file_system.last_write).toBe(null);
 });
 
 test("uploading file creates a new database record", async () => {
@@ -111,13 +127,13 @@ test("uploading file creates a new database record", async () => {
 
   await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
 
-  expect(test_collection_gateway.last_created_media?.hash).toBe("testing_hash");
+  expect(test_collection_gateway.last_insert?.hash).toBe("testing_hash");
 });
 
 test("service error on invalid write", async () => {
   const media_transaction_script = new MediaTransactionScript(
     new StubInvalidFileSystem(),
-    new MockCollectionGateway(),
+    new MockCollectionGateway(null),
     new MockMediaScriptInstrumentation(),
   );
 
@@ -131,7 +147,7 @@ test("recording error on write", async () => {
     new MockMediaScriptInstrumentation();
   const media_transaction_script = new MediaTransactionScript(
     new StubInvalidFileSystem(),
-    new MockCollectionGateway(),
+    new MockCollectionGateway(null),
     mock_media_script_instrumentation,
   );
 
@@ -261,7 +277,7 @@ test("deleting a file removes the database record", async () => {
 
   await media_transaction_script.delete("testing.png");
 
-  expect(test_collection_gateway.last_removed_file_name).toBe("testing.png");
+  expect(test_collection_gateway.last_delete).toBe("testing.png");
 });
 
 test("deleting a file uses the hash", async () => {
@@ -274,7 +290,7 @@ test("deleting a file uses the hash", async () => {
 
   await media_transaction_script.delete("testing.png");
 
-  expect(test_file_system.last_removed_hash).toBe("testing_hash");
+  expect(test_file_system.last_unlink).toBe("testing_hash");
 });
 
 test("deleting a file returns service error on invalid write", async () => {

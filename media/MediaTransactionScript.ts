@@ -20,7 +20,17 @@ export class MediaTransactionScript implements MediaService {
     media_create: MediaCreate,
   ): Promise<SuccessfulResult | ServiceErrorResult> {
     try {
-      const hash = await this.media_file_system.write(media_create.data);
+      const existing_media_file = await this.media_collection_gateway.find(
+        media_create.file_name,
+      );
+      let hash = "";
+
+      if (!existing_media_file) {
+        hash = await this.media_file_system.write(media_create.data);
+      } else {
+        hash = existing_media_file.hash;
+      }
+
       await this.media_collection_gateway.insert({
         hash: hash,
         file_name: media_create.file_name,

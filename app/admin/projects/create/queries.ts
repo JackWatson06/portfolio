@@ -3,7 +3,6 @@
 import { MediaUploadParams } from "@/media/upload/MediaUploadDTOSchema";
 import { Project } from "@/services/db/schemas/Project";
 import { init } from "@/services/setup";
-import { WithId } from "mongodb";
 import { cookies } from "next/headers";
 
 export async function fetchBlobUploadParameters(
