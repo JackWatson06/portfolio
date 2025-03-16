@@ -4,6 +4,7 @@ import { Media } from "@/services/db/schemas/Media";
 import { ObjectId, WithId } from "mongodb";
 import { ServiceResult } from "@/media/MediaServiceResult";
 import { MediaTransactionScript } from "@/media/MediaTransactionScript";
+import { MockMediaScriptInstrumentation } from "@/media/__mocks__/MediaScriptInstrumentation";
 
 const MEDIA_CREATE_INPUT_ONE = {
   file_name: "testing.png",
@@ -21,7 +22,9 @@ const MEDIA_ONE_PERSISTED: WithId<Media> = {
   uploaded_at: new Date("2024-02-021T01:00Z"),
 };
 
-class TestFileSystem implements FileSystem {
+jest.mock("@/services/fs/LocalFileSystem");
+
+class MockFileSystem implements FileSystem {
   public last_buffer_write: Buffer | null = null;
   public last_removed_hash: string | null = null;
 
@@ -29,7 +32,7 @@ class TestFileSystem implements FileSystem {
 
   async read(hash: string): Promise<Buffer> {
     if (this.read_result == null) {
-      throw new Error("Error");
+      throw new Error("test_error");
     }
     return this.read_result;
   }
@@ -42,7 +45,7 @@ class TestFileSystem implements FileSystem {
   }
 }
 
-class TestCollecitonGateway implements CollectionGateway {
+class MockCollectionGateway implements CollectionGateway {
   public last_created_media: Media | null = null;
   public last_removed_file_name: string | null = null;
 
@@ -61,22 +64,23 @@ class TestCollecitonGateway implements CollectionGateway {
   }
 }
 
-class TestInvalidFileSystem implements FileSystem {
+class StubInvalidFileSystem implements FileSystem {
   read(hash: string): Promise<Buffer> {
-    throw new Error("Error");
+    throw new Error("test_error");
   }
   write(data: Buffer): Promise<string> {
-    throw new Error("Error");
+    throw new Error("test_error");
   }
   unlink(hash: string): Promise<void> {
-    throw new Error("Error");
+    throw new Error("test_error");
   }
 }
 
 test("uplaoding a media file", async () => {
   const media_transaction_script = new MediaTransactionScript(
-    new TestFileSystem(),
-    new TestCollecitonGateway(),
+    new MockFileSystem(),
+    new MockCollectionGateway(),
+    new MockMediaScriptInstrumentation(),
   );
 
   const result = await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
@@ -85,10 +89,11 @@ test("uplaoding a media file", async () => {
 });
 
 test("uplaoding a media file creates a new file", async () => {
-  const test_file_system = new TestFileSystem();
+  const test_file_system = new MockFileSystem();
   const media_transaction_script = new MediaTransactionScript(
     test_file_system,
-    new TestCollecitonGateway(),
+    new MockCollectionGateway(),
+    new MockMediaScriptInstrumentation(),
   );
 
   await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
@@ -97,10 +102,11 @@ test("uplaoding a media file creates a new file", async () => {
 });
 
 test("uploading file creates a new database record", async () => {
-  const test_collection_gateway = new TestCollecitonGateway();
+  const test_collection_gateway = new MockCollectionGateway();
   const media_transaction_script = new MediaTransactionScript(
-    new TestFileSystem(),
+    new MockFileSystem(),
     test_collection_gateway,
+    new MockMediaScriptInstrumentation(),
   );
 
   await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
@@ -110,8 +116,9 @@ test("uploading file creates a new database record", async () => {
 
 test("service error on invalid write", async () => {
   const media_transaction_script = new MediaTransactionScript(
-    new TestInvalidFileSystem(),
-    new TestCollecitonGateway(),
+    new StubInvalidFileSystem(),
+    new MockCollectionGateway(),
+    new MockMediaScriptInstrumentation(),
   );
 
   const result = await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
@@ -119,10 +126,27 @@ test("service error on invalid write", async () => {
   expect(result.code).toBe(ServiceResult.SERVICE_ERROR);
 });
 
+test("recording error on write", async () => {
+  const mock_media_script_instrumentation =
+    new MockMediaScriptInstrumentation();
+  const media_transaction_script = new MediaTransactionScript(
+    new StubInvalidFileSystem(),
+    new MockCollectionGateway(),
+    mock_media_script_instrumentation,
+  );
+
+  await media_transaction_script.upload(MEDIA_CREATE_INPUT_ONE);
+
+  expect(mock_media_script_instrumentation.upload_failed).toBe(
+    "Error: test_error",
+  );
+});
+
 test("fetching a media element", async () => {
   const media_transaction_script = new MediaTransactionScript(
-    new TestFileSystem(),
-    new TestCollecitonGateway(),
+    new MockFileSystem(),
+    new MockCollectionGateway(),
+    new MockMediaScriptInstrumentation(),
   );
 
   const media = await media_transaction_script.read("testing");
@@ -130,10 +154,11 @@ test("fetching a media element", async () => {
   expect(media).not.toBe(null);
 });
 
-test("returning null when media element not found on the file system", async () => {
+test("returning null when media element not found in the database", async () => {
   const media_transaction_script = new MediaTransactionScript(
-    new TestFileSystem(null),
-    new TestCollecitonGateway(),
+    new MockFileSystem(),
+    new MockCollectionGateway(null),
+    new MockMediaScriptInstrumentation(),
   );
 
   const media = await media_transaction_script.read("testing");
@@ -141,31 +166,68 @@ test("returning null when media element not found on the file system", async () 
   expect(media).toBe(null);
 });
 
-test("returning null when media element not found in the database", async () => {
+test("recording missing file fetch with database miss", async () => {
+  const mock_media_script_instrumentation =
+    new MockMediaScriptInstrumentation();
   const media_transaction_script = new MediaTransactionScript(
-    new TestFileSystem(),
-    new TestCollecitonGateway(null),
+    new MockFileSystem(),
+    new MockCollectionGateway(null),
+    mock_media_script_instrumentation,
+  );
+
+  await media_transaction_script.read("testing");
+
+  expect(mock_media_script_instrumentation.missing_file_for_fetch).toBe(
+    "testing",
+  );
+});
+
+test("returning null when media element not found on the file system", async () => {
+  const media_transaction_script = new MediaTransactionScript(
+    new MockFileSystem(null),
+    new MockCollectionGateway(),
+    new MockMediaScriptInstrumentation(),
   );
 
   const media = await media_transaction_script.read("testing");
 
   expect(media).toBe(null);
+});
+
+test("recording error for file fetch with file system error", async () => {
+  const mock_media_script_instrumentation =
+    new MockMediaScriptInstrumentation();
+  const media_transaction_script = new MediaTransactionScript(
+    new MockFileSystem(null),
+    new MockCollectionGateway(),
+    mock_media_script_instrumentation,
+  );
+
+  await media_transaction_script.read("testing");
+
+  expect(mock_media_script_instrumentation.fetch_failed).toEqual([
+    "testing",
+    "Error: test_error",
+  ]);
 });
 
 test("deleting a file", async () => {
   const media_transaction_script = new MediaTransactionScript(
-    new TestFileSystem(),
-    new TestCollecitonGateway(),
+    new MockFileSystem(),
+    new MockCollectionGateway(),
+    new MockMediaScriptInstrumentation(),
   );
 
   const result = await media_transaction_script.delete("testing.png");
 
   expect(result.code).toBe(ServiceResult.SUCCESS);
 });
+
 test("deleting a file returns not found", async () => {
   const media_transaction_script = new MediaTransactionScript(
-    new TestFileSystem(),
-    new TestCollecitonGateway(null),
+    new MockFileSystem(),
+    new MockCollectionGateway(null),
+    new MockMediaScriptInstrumentation(),
   );
 
   const result = await media_transaction_script.delete("testing.png");
@@ -173,11 +235,28 @@ test("deleting a file returns not found", async () => {
   expect(result.code).toBe(ServiceResult.NOT_FOUND);
 });
 
-test("deleting a file removes the database record", async () => {
-  const test_collection_gateway = new TestCollecitonGateway();
+test("recording missing file for delete with database miss", async () => {
+  const mock_media_script_instrumentation =
+    new MockMediaScriptInstrumentation();
   const media_transaction_script = new MediaTransactionScript(
-    new TestFileSystem(),
+    new MockFileSystem(),
+    new MockCollectionGateway(null),
+    mock_media_script_instrumentation,
+  );
+
+  await media_transaction_script.delete("testing.png");
+
+  expect(mock_media_script_instrumentation.missing_file_for_delete).toBe(
+    "testing.png",
+  );
+});
+
+test("deleting a file removes the database record", async () => {
+  const test_collection_gateway = new MockCollectionGateway();
+  const media_transaction_script = new MediaTransactionScript(
+    new MockFileSystem(),
     test_collection_gateway,
+    new MockMediaScriptInstrumentation(),
   );
 
   await media_transaction_script.delete("testing.png");
@@ -186,10 +265,11 @@ test("deleting a file removes the database record", async () => {
 });
 
 test("deleting a file uses the hash", async () => {
-  const test_file_system = new TestFileSystem();
+  const test_file_system = new MockFileSystem();
   const media_transaction_script = new MediaTransactionScript(
     test_file_system,
-    new TestCollecitonGateway(),
+    new MockCollectionGateway(),
+    new MockMediaScriptInstrumentation(),
   );
 
   await media_transaction_script.delete("testing.png");
@@ -199,11 +279,29 @@ test("deleting a file uses the hash", async () => {
 
 test("deleting a file returns service error on invalid write", async () => {
   const media_transaction_script = new MediaTransactionScript(
-    new TestInvalidFileSystem(),
-    new TestCollecitonGateway(),
+    new StubInvalidFileSystem(),
+    new MockCollectionGateway(),
+    new MockMediaScriptInstrumentation(),
   );
 
   const result = await media_transaction_script.delete("testing.png");
 
   expect(result.code).toBe(ServiceResult.SERVICE_ERROR);
+});
+
+test("recording delete failed", async () => {
+  const mock_media_script_instrumentation =
+    new MockMediaScriptInstrumentation();
+  const media_transaction_script = new MediaTransactionScript(
+    new StubInvalidFileSystem(),
+    new MockCollectionGateway(),
+    mock_media_script_instrumentation,
+  );
+
+  await media_transaction_script.delete("testing.png");
+
+  expect(mock_media_script_instrumentation.delete_failed).toEqual([
+    "testing.png",
+    "Error: test_error",
+  ]);
 });

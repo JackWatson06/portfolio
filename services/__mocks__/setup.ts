@@ -39,6 +39,7 @@ function mockPortfolioTransactionScript() {
   return {
     create: jest.fn(),
     find: jest.fn(),
+    findByName: jest.fn(),
     findPublic: jest.fn(),
     findAll: jest.fn().mockImplementation(() => {
       return [

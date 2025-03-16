@@ -1,31 +1,42 @@
 "use client";
 
-import { useActionState } from "react";
+import { ProjectFormState, useProjectFormActionState } from "./hooks";
 import LinkInput from "./LinkInput";
 import MediaInput from "./MediaInput";
-import { handleProjectFormAction } from "./actions";
 import FormAlert from "@/components/FormAlert";
 
+const DEFAULT_FORM_STATE: ProjectFormState = {
+  data: {
+    name: "",
+    description: "",
+    tags: "",
+    visibility: "private",
+    media: [],
+    thumbnail: "",
+    links: [],
+    live_project_link: "",
+  },
+  errors: [],
+};
+
 export default function AdminProjectCreateForm() {
-  const [state, handleAction, is_pending] = useActionState(
-    handleProjectFormAction,
-    {
-      errors: [],
-    },
-  );
+  const [state, handleAction, is_pending] =
+    useProjectFormActionState(DEFAULT_FORM_STATE);
 
   return (
     <form action={handleAction}>
       <FormAlert errors={state.errors} />
+
       <fieldset>
         <legend>Content</legend>
         <label htmlFor="NameInput">Name</label>
         <input
           className="input input-bordered w-full max-w-xs"
           id="NameInput"
-          name="title"
+          name="name"
           type="text"
           required
+          defaultValue={state.data.name}
         />
         <label htmlFor="MarkdownDescriptionInput">Markdown Description</label>
         <textarea
@@ -34,6 +45,7 @@ export default function AdminProjectCreateForm() {
           name="description"
           aria-multiline
           required
+          defaultValue={state.data.description}
         />
         <label htmlFor="TagsInput">Tags</label>
         <span>
@@ -44,42 +56,29 @@ export default function AdminProjectCreateForm() {
             name="tags"
             type="text"
             aria-describedby="TagsInputDescription"
+            defaultValue={state.data.tags}
           />
           <span id="TagsInputDescription">Seperate each tag by a comma.</span>
         </span>
         <label htmlFor="VisibilityInput">Visibility</label>
-        <select id="VisibilityInput" name="visibility">
+        <select
+          id="VisibilityInput"
+          name="visibility"
+          defaultValue={state.data.visibility}
+        >
           <option value="public">Public</option>
           <option value="private">Private</option>
         </select>
       </fieldset>
 
-      <fieldset>
-        <legend>Media Files</legend>
-        <MediaInput />
-
-        <label htmlFor="ThumbnailInput">Thumbnail Image</label>
-        <input
-          className="input input-bordered w-full max-w-xs"
-          id="ThumbnailInput"
-          name="thumbnail"
-          type="text"
-          required
-        />
-      </fieldset>
-
-      <fieldset>
-        <legend>Links</legend>
-        <LinkInput />
-
-        <label htmlFor="LiveProjectInput">Live Project Link</label>
-        <input
-          className="input input-bordered w-full max-w-xs"
-          id="LiveProjectInput"
-          name="live_project_link"
-          type="text"
-        />
-      </fieldset>
+      <MediaInput
+        value_media={state.data.media}
+        value_thumbnail={state.data.thumbnail}
+      />
+      <LinkInput
+        value_links={state.data.links}
+        value_live_project_link={state.data.live_project_link}
+      />
       {is_pending ? (
         <div role="alert" aria-label="Loading">
           <span className="loading loading-spinner text-primary"></span>

@@ -1,7 +1,10 @@
 import { BlobStorage, UploadHTTPParams } from "./BlobStorage";
 
 export class LocalBlobStorage implements BlobStorage {
-  constructor(private port: number) {}
+  constructor(
+    private port: number,
+    private public_origin: string,
+  ) {}
 
   async generateHTTPParams(sha1: string): Promise<UploadHTTPParams> {
     return {
@@ -12,7 +15,7 @@ export class LocalBlobStorage implements BlobStorage {
           "Portfolio-File-Name": sha1,
         },
       },
-      public_url: `http://localhost:${this.port}/api/media/${sha1}`,
+      public_url: `${this.public_origin}/api/media/${sha1}`,
     };
   }
   removeBlob(file_name: string): void {}

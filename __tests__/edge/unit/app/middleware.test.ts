@@ -71,6 +71,22 @@ test("returning 401 when accessing API unauthenticated", async () => {
   expect(response.status).toBe(401);
 });
 
+test("returning 200 for access to /api/media/[file_name]", async () => {
+  const request = new NextRequest("http://testing.com/api/media/fa34d23");
+
+  const response = await middleware(request);
+
+  expect(response.status).toBe(200);
+});
+
+test("returning 401 when accessing to /api/media/", async () => {
+  const request = new NextRequest("http://testing.com/api/media/");
+
+  const response = await middleware(request);
+
+  expect(response.status).toBe(401);
+});
+
 test("returning 501 when accessing API on production", async () => {
   const previous_environment = environment;
   jest.resetModules();

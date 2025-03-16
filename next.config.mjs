@@ -9,10 +9,10 @@ const nextConfig = {
     ],
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "platform.polygon.com",
-        port: "",
-        pathname: "/**",
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "3000",
+        pathname: "/api/media/**",
         search: "",
       },
     ],

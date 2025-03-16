@@ -8,25 +8,56 @@ import {
   writeFile,
 } from "fs/promises";
 import { FileHashingAlgorithm } from "./FileHashingAlgorithm";
+import { Logger } from "../logging/Logger";
+import { fileURLToPath } from "url";
+import path from "path";
 
-const DIRECTORY = `${__dirname}/files`;
+const FILE_NAME = fileURLToPath(import.meta.url);
+const DIRECTORY = `${path.dirname(FILE_NAME)}/files`;
 
 export class LocalFileSystem implements FileSystem {
-  constructor(private file_hash_algo: FileHashingAlgorithm) {}
+  constructor(
+    private file_hash_algo: FileHashingAlgorithm,
+    private logger: Logger,
+  ) {}
 
   async read(hash: string): Promise<Buffer> {
-    return await readFile(`${DIRECTORY}/${hash}`);
+    try {
+      return await readFile(`${DIRECTORY}/${hash}`);
+    } catch (e) {
+      this.logger.error(
+        `LocalFileSystem::read Could not read the file at directory: ${DIRECTORY}/${hash}`,
+      );
+      this.logger.error((e as NodeJS.ErrnoException).message);
+      throw e;
+    }
   }
 
   async write(data: Buffer): Promise<string> {
-    await this.createDirectoryIfNotExists();
-    const file_name = this.file_hash_algo.hash(data);
-    await writeFile(`${DIRECTORY}/${file_name}`, data);
-    return file_name;
+    try {
+      await this.createDirectoryIfNotExists();
+      const file_name = this.file_hash_algo.hash(data);
+      await writeFile(`${DIRECTORY}/${file_name}`, data);
+      return file_name;
+    } catch (e) {
+      this.logger.error(
+        `LocalFileSystem::write Could not write a file to directory: ${DIRECTORY}`,
+      );
+      this.logger.error((e as NodeJS.ErrnoException).message);
+      throw e;
+    }
   }
 
   async unlink(hash: string): Promise<void> {
-    await unlink(`${DIRECTORY}/${hash}`);
+    try {
+      await unlink(`${DIRECTORY}/${hash}`);
+    } catch (e) {
+      this.logger.error(
+        `LocalFileSystem::unlink Could not delete the file at directory: ${DIRECTORY}/${hash}`,
+      );
+      this.logger.error((e as NodeJS.ErrnoException).message);
+      throw e;
+    }
   }
 
   private async createDirectoryIfNotExists(): Promise<void> {

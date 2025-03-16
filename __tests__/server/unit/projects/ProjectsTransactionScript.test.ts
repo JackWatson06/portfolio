@@ -33,19 +33,15 @@ class TestCollectionGateway implements CollectionGateway {
 
     return null;
   }
-
   async findPublicBySlug(slug: string): Promise<WithId<Project> | null> {
     return TEST_PROJECT_ONE_PERSISTED;
   }
-
   async findAll(): Promise<Array<WithId<Project>>> {
     return [TEST_PROJECT_ONE_PERSISTED, TEST_PROJECT_TWO_PERSISTED];
   }
-
   async findAllPublic(): Promise<Array<WithId<Project>>> {
     return [TEST_PROJECT_ONE_PERSISTED];
   }
-
   async insert(project: Project): Promise<void> {
     this.created_project = project;
   }
@@ -70,7 +66,7 @@ class TestInvalidValidator implements Validator {
   }
 }
 
-test("creating a project.", async () => {
+test("creating a project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -84,7 +80,7 @@ test("creating a project.", async () => {
   expect(script_result.code).toBe(ServiceResult.SUCCESS);
 });
 
-test("converting name for slug when creating a project.", async () => {
+test("converting name for slug when creating a project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -100,7 +96,7 @@ test("converting name for slug when creating a project.", async () => {
   );
 });
 
-test("setting `created_at` when creating a project.", async () => {
+test("setting `created_at` when creating a project", async () => {
   const before_creating = new Date();
   const projects_collection_gateway = new TestCollectionGateway();
   const projects_transaction_script = new ProjectsTransactionScript(
@@ -118,7 +114,7 @@ test("setting `created_at` when creating a project.", async () => {
   ).toBeGreaterThanOrEqual(before_creating.valueOf());
 });
 
-test("setting `updated_at` when creating a project.", async () => {
+test("setting `updated_at` when creating a project", async () => {
   const before_creating = new Date();
   const projects_collection_gateway = new TestCollectionGateway();
   const projects_transaction_script = new ProjectsTransactionScript(
@@ -136,7 +132,7 @@ test("setting `updated_at` when creating a project.", async () => {
   ).toBeGreaterThanOrEqual(before_creating.valueOf());
 });
 
-test("we can not create project with duplicate slug.", async () => {
+test("creating a project with a duplicate slug", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -149,7 +145,7 @@ test("we can not create project with duplicate slug.", async () => {
   expect(script_result.code).toBe(ServiceResult.DUPLICATE);
 });
 
-test("we get error when the project is invalid.", async () => {
+test("creating project returns error when invalid", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestInvalidValidator(),
     new TestCollectionGateway(),
@@ -163,7 +159,7 @@ test("we get error when the project is invalid.", async () => {
   expect(script_result.code).toBe(ServiceResult.INVALID);
 });
 
-test("we can fetch a project.", async () => {
+test("fetching a project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -174,7 +170,20 @@ test("we can fetch a project.", async () => {
   expect(project).not.toBe(null);
 });
 
-test("we can fetch a public project.", async () => {
+test("fetching project by the name with proper slug", async () => {
+  const projects_transaction_script = new ProjectsTransactionScript(
+    new TestValidator(),
+    new TestCollectionGateway(),
+  );
+
+  const project = await projects_transaction_script.findByName(
+    "._~:/?#[]@!$&'()*+,;=Gandalf._~:/?#[]@!$&'()*+,;=",
+  );
+
+  expect(project).not.toBe(null);
+});
+
+test("fetching public project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -185,7 +194,7 @@ test("we can fetch a public project.", async () => {
   expect(project).not.toBe(null);
 });
 
-test("we can fetch all projects.", async () => {
+test("fetching all projects", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -196,7 +205,7 @@ test("we can fetch all projects.", async () => {
   expect(projects.length).not.toBe(0);
 });
 
-test("we can fetch all public projects.", async () => {
+test("fetching all public projects", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -207,7 +216,7 @@ test("we can fetch all public projects.", async () => {
   expect(projects.length).not.toBe(0);
 });
 
-test("we can update a project.", async () => {
+test("updating a project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -220,7 +229,7 @@ test("we can update a project.", async () => {
   expect(script_result.code).toBe(ServiceResult.SUCCESS);
 });
 
-test("when we update a project we properly convert the slug.", async () => {
+test("updating a project properly converts the slug", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -235,7 +244,7 @@ test("when we update a project we properly convert the slug.", async () => {
   );
 });
 
-test("we can not update a project when the new slug is not unique.", async () => {
+test("updating a project when the new slug is not unique", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),
@@ -248,7 +257,7 @@ test("we can not update a project when the new slug is not unique.", async () =>
   expect(script_result.code).toBe(ServiceResult.DUPLICATE);
 });
 
-test("setting `updated_at` when updating a project.", async () => {
+test("setting `updated_at` when updating a project", async () => {
   const projects_collection_gateway = new TestCollectionGateway();
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
@@ -264,7 +273,7 @@ test("setting `updated_at` when updating a project.", async () => {
   );
 });
 
-test("we get an error when the update project is invalid.", async () => {
+test("updating project returns error when it is invalid", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestInvalidValidator(),
     new TestCollectionGateway(),
@@ -277,7 +286,7 @@ test("we get an error when the update project is invalid.", async () => {
   expect(script_result.code).toBe(ServiceResult.INVALID);
 });
 
-test("we can not delete a project that does not exist.", async () => {
+test("deleting a project that does not exist", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
     new TestValidator(),
     new TestCollectionGateway(),

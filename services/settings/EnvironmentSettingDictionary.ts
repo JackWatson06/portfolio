@@ -13,6 +13,7 @@ export class EnvironmentSettingDictionary implements SettingDictionary {
   readonly expires_offset: number;
   readonly salt: string;
   readonly admin_password: string;
+  readonly local_blob_public_origin: string;
   readonly backblaze_app_key_id: string;
   readonly backblaze_app_key: string;
   readonly backblaze_bucket_id: string;
@@ -51,6 +52,10 @@ export class EnvironmentSettingDictionary implements SettingDictionary {
     this.admin_password = this.findEnvironmentSetting(
       environment_settings_key_value,
       "ADMIN_PASSWORD",
+    );
+    this.local_blob_public_origin = this.findEnvironmentSetting(
+      environment_settings_key_value,
+      "LOCAL_BLOB_PUBLIC_ORIGIN",
     );
     this.backblaze_app_key_id = this.findEnvironmentSetting(
       environment_settings_key_value,

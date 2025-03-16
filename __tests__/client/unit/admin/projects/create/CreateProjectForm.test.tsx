@@ -1,12 +1,21 @@
 import CreateProjectForm from "@/app/admin/projects/create/CreateProjectForm";
+import {
+  ProjectFormState,
+  useProjectFormActionState,
+} from "@/app/admin/projects/create/hooks";
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { fireEvent, logRoles, render, screen } from "@testing-library/react";
+import userEvent, { UserEvent } from "@testing-library/user-event";
 import "html-validate/jest";
 import { useActionState } from "react";
 
-jest.mock("@/app/admin/projects/create/actions", () => ({
-  handleProjectFormAction: jest.fn(),
+/* -------------------------------------------------------------------------- */
+/*                                    Mocks                                   */
+/* -------------------------------------------------------------------------- */
+jest.mock("@/app/admin/projects/create/hooks", () => ({
+  useProjectFormActionState: jest
+    .fn()
+    .mockImplementation(() => [{ ...DEFAULT_FORM_STATE }, jest.fn()]),
 }));
 
 jest.mock("react", () => {
@@ -16,49 +25,58 @@ jest.mock("react", () => {
   };
 });
 
-type ProjectFormInputs = {
-  name: HTMLElement;
-  markdown_description: HTMLTextAreaElement;
-  tags: HTMLElement;
-  visibility: HTMLElement;
-  thumbnail: HTMLElement;
-  live_link: HTMLElement;
+const DEFAULT_FORM_STATE: ProjectFormState = {
+  data: {
+    name: "testing",
+    description: "testing",
+    tags: "testing",
+    visiblity: "private",
+    media_descriptions: [
+      {
+        file_name: "testing.png",
+        file_description: "testing",
+      },
+    ],
+    thumbnail: "testing.png",
+    link_types: [
+      {
+        link: "https://testing.com",
+        type: "website",
+      },
+    ],
+    live_project_link: "https://testing.com",
+  },
+  errors: [],
 };
 
-function seedFormDefaults(): ProjectFormInputs {
-  const name_input = screen.getByLabelText(/name/i);
-  const markdown_description_input = screen.getByLabelText(
-    /markdown description/i,
-  ) as HTMLTextAreaElement;
-  const tags_input = screen.getByLabelText(/tags/i);
-  const visibility_input = screen.getByLabelText(/visibility/i);
-  const thumbnail_input = screen.getByLabelText(/thumbnail image/i);
-  const live_link_input = screen.getByLabelText(/live project link/i);
+async function setMediaInputFields(): Promise<HTMLInputElement> {
+  const user = userEvent.setup();
 
-  name_input.setAttribute("value", "Testing");
-  markdown_description_input.value = "test";
-  tags_input.setAttribute("value", "C++, TypeScript, Jest");
-  visibility_input.setAttribute("value", "private");
-  thumbnail_input.setAttribute("value", "testing.txt");
-  live_link_input.setAttribute("value", "https://testing.com/project");
+  // Upload file.
+  const testing_one_file = new File(["testing"], "testing.png", {
+    type: "image/png",
+  });
 
-  return {
-    name: name_input,
-    markdown_description: markdown_description_input,
-    tags: tags_input,
-    visibility: visibility_input,
-    thumbnail: thumbnail_input,
-    live_link: live_link_input,
-  };
+  const media_input = screen.getByLabelText(/upload media/i);
+  await user.upload(media_input, [testing_one_file]);
+
+  // Get inputs created after the file upload.
+  const description_input = screen.getByRole("textbox", {
+    name: /testing\.png description/i,
+  });
+  const thumbnail_input = screen.getByRole("textbox", {
+    name: /thumbnail/i,
+  });
+
+  description_input.setAttribute("value", "testing");
+  thumbnail_input.setAttribute("value", "testing.png");
+
+  return media_input as HTMLInputElement;
 }
 
-beforeEach(() => {
-  (useActionState as jest.Mock).mockImplementation(() => [
-    { errors: [] },
-    jest.fn(),
-  ]);
-});
-
+/* -------------------------------------------------------------------------- */
+/*                                    Tests                                   */
+/* -------------------------------------------------------------------------- */
 test("admin project create form renders valid HTML.", async () => {
   const { container } = render(<CreateProjectForm />);
 
@@ -66,84 +84,35 @@ test("admin project create form renders valid HTML.", async () => {
 });
 
 test("submitting a valid form.", async () => {
+  // Arrange
   const submit_form_mock = jest.fn();
-  (useActionState as jest.Mock).mockImplementation(() => [
-    { errors: [] },
+  (useProjectFormActionState as jest.Mock).mockImplementationOnce(() => [
+    { ...DEFAULT_FORM_STATE },
     submit_form_mock,
   ]);
   const user = userEvent.setup();
 
+  // Act
   render(<CreateProjectForm />);
-  seedFormDefaults();
+
+  const media_input = await setMediaInputFields();
+  // Looks like theres an issue with the required file input field and checking the forms input validity with the
+  // DOM interaction library.
+  // https://github.com/testing-library/user-event/issues/1133
+  media_input.removeAttribute("required");
   const submit_button = screen.getByRole("button", {
     name: /submit/i,
   });
   await user.click(submit_button);
 
+  // Assert
   expect(submit_form_mock).toHaveBeenCalled();
-});
-
-test("form requires a title", async () => {
-  const submit_form_mock = jest.fn();
-  (useActionState as jest.Mock).mockImplementation(() => [
-    { errors: [] },
-    submit_form_mock,
-  ]);
-  const user = userEvent.setup();
-
-  render(<CreateProjectForm />);
-  const inputs = seedFormDefaults();
-  inputs.name.setAttribute("value", "");
-  const submit_button = screen.getByRole("button", {
-    name: /submit/i,
-  });
-  await user.click(submit_button);
-
-  expect(submit_form_mock).not.toHaveBeenCalled();
-});
-
-test("form requires a description", async () => {
-  const submit_form_mock = jest.fn();
-  (useActionState as jest.Mock).mockImplementation(() => [
-    { errors: [] },
-    submit_form_mock,
-  ]);
-  const user = userEvent.setup();
-
-  render(<CreateProjectForm />);
-  const inputs = seedFormDefaults();
-  inputs.markdown_description.value = "";
-  const submit_button = screen.getByRole("button", {
-    name: /submit/i,
-  });
-  await user.click(submit_button);
-
-  expect(submit_form_mock).not.toHaveBeenCalled();
-});
-
-test("form requires a thumbnail", async () => {
-  const submit_form_mock = jest.fn();
-  (useActionState as jest.Mock).mockImplementation(() => [
-    { errors: [] },
-    submit_form_mock,
-  ]);
-  const user = userEvent.setup();
-
-  render(<CreateProjectForm />);
-  const inputs = seedFormDefaults();
-  inputs.thumbnail.setAttribute("value", "");
-  const submit_button = screen.getByRole("button", {
-    name: /submit/i,
-  });
-  await user.click(submit_button);
-
-  expect(submit_form_mock).not.toHaveBeenCalled();
 });
 
 test("displaying loading when pending upload", () => {
   const submit_form_mock = jest.fn();
-  (useActionState as jest.Mock).mockImplementation(() => [
-    { errors: [] },
+  (useProjectFormActionState as jest.Mock).mockImplementationOnce(() => [
+    { ...DEFAULT_FORM_STATE },
     submit_form_mock,
     true,
   ]);
@@ -159,3 +128,122 @@ test("displaying loading when pending upload", () => {
     }),
   ).toBeInTheDocument();
 });
+
+/* -------------------------- Test Required Values -------------------------- */
+function setNameValue() {
+  screen
+    .getByRole("textbox", {
+      name: /name/i,
+    })
+    .setAttribute("value", "");
+}
+
+function setDescriptionValue() {
+  screen
+    .getByRole("textbox", {
+      name: /markdown description/i,
+    })
+    .setAttribute("value", "");
+}
+
+function setMeidaValue() {
+  screen.getByLabelText(/upload media/i).setAttribute("value", "");
+}
+
+function setMediaDescriptionsValue() {
+  screen
+    .getByRole("textbox", {
+      name: /testing\.png description/i,
+    })
+    .setAttribute("value", "");
+}
+
+function setThumbnailValue() {
+  screen
+    .getByRole("textbox", {
+      name: /thumbnail/i,
+    })
+    .setAttribute("value", "");
+}
+
+test.each([
+  ["name", setNameValue],
+  ["description", setDescriptionValue],
+  ["media descriptions", setMediaDescriptionsValue],
+  ["thumbnail", setThumbnailValue],
+])("form requires a %s", async (form_field, attribute_set_callback) => {
+  const [state, submit_form_mock] =
+    useProjectFormActionState(DEFAULT_FORM_STATE);
+  const user = userEvent.setup();
+
+  render(<CreateProjectForm />);
+  await setMediaInputFields();
+  attribute_set_callback();
+  const submit_button = screen.getByRole("button", {
+    name: /submit/i,
+  });
+  await user.click(submit_button);
+
+  expect(submit_form_mock).not.toHaveBeenCalled();
+});
+
+test("form requires a media element", async () => {
+  const [state, submit_form_mock] =
+    useProjectFormActionState(DEFAULT_FORM_STATE);
+  const user = userEvent.setup();
+
+  // Act - By note seeding the media files we never set media input.
+  render(<CreateProjectForm />);
+  const submit_button = screen.getByRole("button", {
+    name: /submit/i,
+  });
+  await user.click(submit_button);
+
+  expect(submit_form_mock).not.toHaveBeenCalled();
+});
+
+/* ----------------------------- Test Get Values ---------------------------- */
+function getNameValue() {
+  return screen
+    .getByRole("textbox", {
+      name: /name/i,
+    })
+    .getAttribute("value");
+}
+
+function getDescriptionValue() {
+  return (
+    screen.getByRole("textbox", {
+      name: /markdown description/i,
+    }) as HTMLTextAreaElement
+  ).value;
+}
+
+function getTagsValue() {
+  return screen
+    .getByRole("textbox", {
+      name: /tags/i,
+    })
+    .getAttribute("value");
+}
+
+function getVisilibityValue() {
+  const select_box = screen.getByRole("combobox", {
+    name: /visibility/i,
+  }) as HTMLSelectElement;
+  return select_box.options[select_box.selectedIndex].value;
+}
+
+test.each([
+  ["name", getNameValue, "testing"],
+  ["description", getDescriptionValue, "testing"],
+  ["tags", getTagsValue, "testing"],
+  ["visibility", getVisilibityValue, "private"],
+])(
+  "form defaults %s to current state",
+  async (form_field, attribute_get_callback, expected_value) => {
+    render(<CreateProjectForm />);
+
+    expect(attribute_get_callback()).toBe(expected_value);
+  },
+);

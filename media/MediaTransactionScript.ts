@@ -8,11 +8,14 @@ import { MediaCreate, MediaRead } from "./DTOSchema";
 import { MediaService } from "./MediaService";
 import { FileSystem } from "@/services/fs/FileSystem";
 import { CollectionGateway } from "./CollectionGateway";
+import { MediaScriptInstrumentation } from "./MediaScriptInstrumentation";
+import { object } from "zod";
 
 export class MediaTransactionScript implements MediaService {
   constructor(
     private media_file_system: FileSystem,
     private media_collection_gateway: CollectionGateway,
+    private media_instrumentation: MediaScriptInstrumentation,
   ) {}
   async upload(
     media_create: MediaCreate,
@@ -31,6 +34,10 @@ export class MediaTransactionScript implements MediaService {
         code: ServiceResult.SUCCESS,
       };
     } catch (e) {
+      if (e && typeof e == "object") {
+        this.media_instrumentation.uploadFailed(e.toString());
+      }
+
       return {
         code: ServiceResult.SERVICE_ERROR,
       };
@@ -41,6 +48,7 @@ export class MediaTransactionScript implements MediaService {
     const media = await this.media_collection_gateway.find(file_name);
 
     if (media == null) {
+      this.media_instrumentation.missingFileForFetch(file_name);
       return null;
     }
 
@@ -56,6 +64,10 @@ export class MediaTransactionScript implements MediaService {
         uploaded_at: media.uploaded_at,
       };
     } catch (e) {
+      if (e && typeof e == "object") {
+        this.media_instrumentation.fetchFailed(file_name, e.toString());
+      }
+
       return null;
     }
   }
@@ -66,6 +78,7 @@ export class MediaTransactionScript implements MediaService {
     const media = await this.media_collection_gateway.find(file_name);
 
     if (media == null) {
+      this.media_instrumentation.missingFileForDelete(file_name);
       return {
         code: ServiceResult.NOT_FOUND,
       };
@@ -78,6 +91,10 @@ export class MediaTransactionScript implements MediaService {
         code: ServiceResult.SUCCESS,
       };
     } catch (e) {
+      if (e && typeof e == "object") {
+        this.media_instrumentation.deleteFailed(file_name, e.toString());
+      }
+
       return {
         code: ServiceResult.SERVICE_ERROR,
       };

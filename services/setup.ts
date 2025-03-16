@@ -26,6 +26,8 @@ import { LocalBlobStorage } from "./fs/LocalBlobStorage";
 import { MediaUploadTransactionScript } from "@/media/upload/MediaUploadTransactionScript";
 import { SessionAlgorithm } from "@/auth/services/SessionAlgorithm";
 import { TokenTransactionScript } from "@/auth/token/TokenTransactionScript";
+import { MediaScriptLoggerInstrumentation } from "@/media/MediaScriptLoggerInstrumentation";
+import { Logger } from "./logging/Logger";
 
 /* -------------------------------------------------------------------------- */
 /*                              Service Factories                             */
@@ -42,7 +44,10 @@ function buildBlobStorageService(
     );
   }
 
-  return new LocalBlobStorage(environment_settings_dictionary.port);
+  return new LocalBlobStorage(
+    environment_settings_dictionary.port,
+    environment_settings_dictionary.local_blob_public_origin,
+  );
 }
 
 function buildLoginTransactionScript(
@@ -71,9 +76,16 @@ function buildTokenTransactionScript(session_algorithm: SessionAlgorithm) {
   return new TokenTransactionScript(session_algorithm);
 }
 
-function buildMediaTransactionScript(media: Collection<Media>) {
+function buildMediaTransactionScript(media: Collection<Media>, logger: Logger) {
   const media_gateway = new MediaGateway(media);
-  return new MediaTransactionScript(local_file_system, media_gateway);
+  const media_script_instrumentation = new MediaScriptLoggerInstrumentation(
+    logger,
+  );
+  return new MediaTransactionScript(
+    local_file_system,
+    media_gateway,
+    media_script_instrumentation,
+  );
 }
 
 function buildMediaUploadTransactionScript(blob_storage: BlobStorage) {
@@ -103,8 +115,11 @@ const mongo_connection = new MongoDBConnection<PortfolioDatabase>(
 );
 
 const file_hashing_algorithm = new Sha1FileHashingAlgorithm();
-const local_file_system = new LocalFileSystem(file_hashing_algorithm);
 const portfolio_logger = new PortfolioLogger("portfolio");
+const local_file_system = new LocalFileSystem(
+  file_hashing_algorithm,
+  portfolio_logger,
+);
 const blob_storage_service = buildBlobStorageService(
   environment_settings_dictionary,
 );
@@ -130,7 +145,7 @@ export async function init(): Promise<PortfolioServiceLocator> {
       session_algorithm,
     ),
     buildTokenTransactionScript(session_algorithm),
-    buildMediaTransactionScript(mongo_connection.db.media),
+    buildMediaTransactionScript(mongo_connection.db.media, portfolio_logger),
     buildMediaUploadTransactionScript(blob_storage_service),
     buildProjectsTransactionScript(mongo_connection.db.projects),
   );

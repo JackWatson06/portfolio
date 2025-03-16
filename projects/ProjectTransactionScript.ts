@@ -62,6 +62,12 @@ export class ProjectsTransactionScript implements ProjectService {
     return await this.projects_collection_gateway.findBySlug(slug);
   }
 
+  async findByName(name: string): Promise<WithId<Project> | null> {
+    return await this.projects_collection_gateway.findBySlug(
+      this.generateSlug(name),
+    );
+  }
+
   async findPublic(slug: string): Promise<WithId<Project> | null> {
     return await this.projects_collection_gateway.findPublicBySlug(slug);
   }

@@ -1,16 +1,16 @@
 import { test } from "@jest/globals";
-import { access, chmod, constants, mkdir, rm, writeFile } from "fs/promises";
 import { normalize } from "path";
 import { LocalFileSystem } from "@/services/fs/LocalFileSystem";
-import { FileHashingAlgorithm } from "@/services/fs/FileHashingAlgorithm";
+import { MockFileHashingAlgorithm } from "@/services/fs/__mocks__/FileHashingAlgorithm";
+import { MockLogger } from "@/services/logging/__mocks__/Logger";
+import { writeFile, chmod, mkdir, access, constants, rm } from "fs/promises";
 
-class TestFileHashingAlgorithm implements FileHashingAlgorithm {
-  hash(buffer: Buffer): string {
-    return "testing";
-  }
-}
+const mocked_logger = new MockLogger();
+const local_file_system = new LocalFileSystem(
+  new MockFileHashingAlgorithm(),
+  mocked_logger,
+);
 
-const local_file_system = new LocalFileSystem(new TestFileHashingAlgorithm());
 const FILE_SYSTEM_MODULE_PATH = normalize(
   `${__dirname}/../../../../../services/fs`,
 );
@@ -18,6 +18,7 @@ const LOCAL_FILE_STORAGE_PATH = `${FILE_SYSTEM_MODULE_PATH}/files`;
 
 afterEach(async () => {
   await rm(LOCAL_FILE_STORAGE_PATH, { recursive: true, force: true });
+  mocked_logger.reset();
 });
 
 test("writing file to the disk", async () => {
@@ -92,4 +93,38 @@ test("removing a file", async () => {
   await local_file_system.unlink("testing");
 
   await expect(access(file_path)).rejects.toThrow();
+});
+
+test("logging write errors", async () => {
+  const data = new Uint8Array([5, 5, 5, 5]);
+  const test_file = Buffer.from(data);
+  await mkdir(LOCAL_FILE_STORAGE_PATH, {
+    mode: 0o555,
+  });
+
+  try {
+    await local_file_system.write(test_file);
+    expect(false);
+  } catch {
+    expect(mocked_logger.last_error_log).not.toBe("");
+  }
+  await chmod(LOCAL_FILE_STORAGE_PATH, 0o775);
+});
+
+test("logging read errors", async () => {
+  try {
+    await local_file_system.read("testing");
+    expect(false);
+  } catch {
+    expect(mocked_logger.last_error_log).not.toBe("");
+  }
+});
+
+test("logging unlink errors", async () => {
+  try {
+    await local_file_system.unlink("testing");
+    expect(false);
+  } catch {
+    expect(mocked_logger.last_error_log).not.toBe("");
+  }
 });

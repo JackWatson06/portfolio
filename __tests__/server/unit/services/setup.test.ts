@@ -90,7 +90,7 @@ test("init login script with environment variables", () => {
 });
 
 test("init local blob storage with environment variables", async () => {
-  expect(LocalBlobStorage).toHaveBeenCalledWith(8080);
+  expect(LocalBlobStorage).toHaveBeenCalledWith(8080, "http://127.0.0.1:3000");
 });
 
 test("init back blaze blob with environment variables", async () => {

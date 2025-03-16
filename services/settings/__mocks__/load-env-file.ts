@@ -9,6 +9,7 @@ const test_env_vars = {
   EXPIRES_OFFSET: "604800000",
   SALT: "16_character_str",
   ADMIN_PASSWORD: "testing",
+  LOCAL_BLOB_PUBLIC_ORIGIN: "http://127.0.0.1:3000",
   BACKBLAZE_APP_KEY_ID: "test_app_key_id",
   BACKBLAZE_APP_KEY: "test_app_key",
   BACKBLAZE_BUCKET_ID: "test_bucket_id",
