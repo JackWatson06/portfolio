@@ -50,11 +50,13 @@ export default function NavigationOptions() {
   );
 
   return (
-    <div className="border-slate-30 h-9 border-b px-8 text-base md:mx-auto md:flex md:h-full md:max-w-96 md:flex-col md:justify-center md:border-none md:px-0 xl:text-lg">
-      <div className="flex h-full items-end text-center md:h-auto">
+    <nav className="border-slate-30 h-9 border-b px-8 text-base md:mx-auto md:flex md:h-full md:max-w-96 md:flex-col md:justify-center md:border-none md:px-0 xl:text-lg">
+      <h2 className="sr-only">Site Navigation</h2>
+      <ul className="flex h-full items-end text-center md:h-auto">
         {routed_navigation_links.map((routed_navigation_link) => {
           return (
-            <div key={routed_navigation_link.link} className="basis-1/3">
+            <li key={routed_navigation_link.link} className="basis-1/3">
+              <span className="sr-only">Current Page: </span>
               <Link
                 href={routed_navigation_link.link}
                 className={`${routed_navigation_link.active && "text-lime-800"}`}
@@ -64,10 +66,10 @@ export default function NavigationOptions() {
               {routed_navigation_link.active && (
                 <div className="m-auto w-20 border-b border-lime-800 md:border-b-2 xl:w-24"></div>
               )}
-            </div>
+            </li>
           );
         })}
-      </div>
-    </div>
+      </ul>
+    </nav>
   );
 }

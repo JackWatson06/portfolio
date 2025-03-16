@@ -12,7 +12,7 @@ export default function Login() {
   const [state, formAction] = useActionState(createSession, initial_form_state);
 
   return (
-    <>
+    <div className="flex min-h-svh flex-col justify-center gap-4">
       <header className="mx-auto min-w-xs">
         <h1 className="text-2xl">Login Form</h1>
       </header>
@@ -36,6 +36,6 @@ export default function Login() {
           </div>
         </form>
       </main>
-    </>
+    </div>
   );
 }

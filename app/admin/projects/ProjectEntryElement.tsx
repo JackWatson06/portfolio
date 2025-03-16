@@ -103,7 +103,7 @@ export default function ProjectListElement({
         </CardSection>
       </section>
       <details className="mx-8 mb-8 lg:col-span-3 lg:mt-8 lg:pt-4">
-        <summary>Gandalf Project Details</summary>
+        <summary>{project.title} Project Details</summary>
         <div className="lg:grid lg:grid-cols-2">
           <CardSection header="Media Files">
             <CardSectionList>

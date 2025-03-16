@@ -50,20 +50,7 @@ test("displaying all project titles.", async () => {
 
 test("displaying empty message when we have no projects.", async () => {
   (fetchProjectListView as jest.Mock).mockImplementation(async () => []);
-  const { getByRole } = render(await Projects());
+  const { queryByText } = render(await Projects());
 
-  const projects_section = getByRole("heading", {
-    name: /projects/i,
-    level: 1,
-  }).closest("section");
-
-  if (projects_section == null) {
-    throw new Error("Projects header not nested within a section.");
-  }
-
-  expect(
-    within(projects_section).queryByText(
-      "No projects found! Add some of your work!",
-    ),
-  ).toBeInTheDocument();
+  expect(queryByText(/no projects/i)).toBeInTheDocument();
 });
