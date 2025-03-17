@@ -15,6 +15,13 @@ const nextConfig = {
         pathname: "/api/media/**",
         search: "",
       },
+      {
+        protocol: "https",
+        hostname: "*.backblazeb2.com",
+        port: "",
+        pathname: "/file/**",
+        search: "",
+      },
     ],
   },
 };
