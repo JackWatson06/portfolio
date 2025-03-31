@@ -177,7 +177,11 @@ async function uploadFile(file: File): Promise<string | null> {
     const response = await fetch(upload_params.upload.url, {
       method: upload_params.upload.method,
       body: file,
-      headers: upload_params.upload.headers,
+      headers: {
+        ...upload_params.upload.headers,
+        "Content-Type": file.type,
+        "Content-Length": file.size.toString(),
+      },
     });
 
     if (response.status >= 300) {

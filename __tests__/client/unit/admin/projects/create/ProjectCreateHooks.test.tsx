@@ -391,6 +391,8 @@ test("uploading file with the correct parameters", async () => {
     }),
     headers: {
       Testing: "testing",
+      "Content-Length": "9",
+      "Content-Type": "image/png",
     },
   });
 });
