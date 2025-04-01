@@ -19,9 +19,7 @@ export async function createSession(
 
   if (!password) {
     return {
-      errors: [
-        "Password required."
-      ],
+      errors: ["Password required."],
     };
   }
 
