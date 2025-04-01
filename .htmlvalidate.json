@@ -4,5 +4,6 @@
   "rules": {
     "attribute-boolean-style": "off",
     "no-inline-style": "off"
-  }
+  },
+  "elements": ["html5", "./elements.mjs"]
 }

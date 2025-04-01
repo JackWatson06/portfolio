@@ -2,7 +2,7 @@ import { Migration } from "@/services/db/Migration";
 import { MigrationState } from "@/services/db/MigrationState";
 import { test, describe } from "@jest/globals";
 
-test("Migrations throw error on date format that is to long.", () => {
+test("migrations throw error on date format that is to long", () => {
   const create_migration = () => {
     new Migration("2024050560701_testing_this", "./");
   };
@@ -10,7 +10,7 @@ test("Migrations throw error on date format that is to long.", () => {
   expect(create_migration).toThrow(Error);
 });
 
-test("Migrations throw errro on date format that includes non-numbers.", () => {
+test("migrations throw error on date format that includes non-numbers", () => {
   const create_migration = () => {
     new Migration("202d0505a070_testing_this", "./");
   };
@@ -18,7 +18,7 @@ test("Migrations throw errro on date format that includes non-numbers.", () => {
   expect(create_migration).toThrow(Error);
 });
 
-test("Migrations have correct time format.", () => {
+test("migrations have correct time format", () => {
   const migration = new Migration(
     "202404162020_testing_this",
     "./202404162020_testing_this",
@@ -26,7 +26,7 @@ test("Migrations have correct time format.", () => {
   expect(migration.date).toEqual(new Date("2024-04-16T20:20"));
 });
 
-test("We run the correct migrations when we set a specific state.", () => {
+test("running the correct migrations when we set a specific state", () => {
   const migrations = [
     new Migration("202404162020_testing_one", "/202404162020_testing_one"),
     new Migration("202404162021_testing_two", "/202404162021_testing_two"),
@@ -42,7 +42,7 @@ test("We run the correct migrations when we set a specific state.", () => {
   expect(migrations_to_run).toEqual(migrations.slice(2));
 });
 
-test("We run all the migrations when we have no state set.", () => {
+test("running all the migrations when we have no state set", () => {
   const migrations = [
     new Migration("202404162020_testing_one", "/202404162020_testing_one"),
     new Migration("202404162021_testing_two", "/202404162021_testing_two"),
@@ -55,7 +55,7 @@ test("We run all the migrations when we have no state set.", () => {
   expect(migrations_to_run).toEqual(migrations);
 });
 
-test("We run no migrations when at the end.", () => {
+test("running no migrations when at the end", () => {
   const migrations = [
     new Migration("202404162020_testing_one", "/202404162020_testing_one"),
     new Migration("202404162021_testing_two", "/202404162021_testing_two"),
@@ -71,7 +71,7 @@ test("We run no migrations when at the end.", () => {
   expect(migrations_to_run).toEqual([]);
 });
 
-test("When we do not run migrations we have no migrations ran.", () => {
+test("not running migrations we have no migrations ran", () => {
   const migrations = [
     new Migration("202404162020_testing_one", "/202404162020_testing_one"),
     new Migration("202404162021_testing_two", "/202404162021_testing_two"),
@@ -87,7 +87,7 @@ test("When we do not run migrations we have no migrations ran.", () => {
   expect(migrations_ran).toEqual([]);
 });
 
-test("We have no pending migrations after running.", () => {
+test("no pending migrations after running", () => {
   const migrations = [
     new Migration("202404162020_testing_one", "/202404162020_testing_one"),
     new Migration("202404162021_testing_two", "/202404162021_testing_two"),
@@ -103,7 +103,7 @@ test("We have no pending migrations after running.", () => {
   expect(pending_migrations).toEqual([]);
 });
 
-test("We return the migrations ran.", () => {
+test("returning the migrations ran", () => {
   const migrations = [
     new Migration("202404162020_testing_one", "/202404162020_testing_one"),
     new Migration("202404162021_testing_two", "/202404162021_testing_two"),

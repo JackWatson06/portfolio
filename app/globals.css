@@ -1,7 +1,2 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@media (prefers-color-scheme: dark) {
-  /* Dark color scheme */
-}
+@import "tailwindcss";
+@plugin "daisyui";
