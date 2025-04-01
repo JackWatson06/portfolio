@@ -2,7 +2,7 @@ import { MockSessionAlgorithm } from "@/auth/services/__mocks__/MockSessionAlgor
 import { LoginTransactionScript } from "@/auth/login/LoginTransactionScript";
 import { ExpiresCalculator } from "@/auth/login/ExpiresCalculator";
 import { HashingAlgorithm } from "@/auth/login/HashingAlgorithm";
-import { ScriptResult } from "@/auth/login/TransactionScriptResult";
+import { ServiceResult } from "@/auth/login/LoginServiceResult";
 
 class TestHashingAlgorithm implements HashingAlgorithm {
   hash(password: string): Promise<string> {
@@ -30,7 +30,7 @@ test("we can create a new authentication token.", async () => {
   );
 
   const auth_script_result = await auth_script.login("testing");
-  expect(auth_script_result.code).toBe(ScriptResult.SUCCESS);
+  expect(auth_script_result.code).toBe(ServiceResult.SUCCESS);
 });
 
 test("we get error when login is invalid.", async () => {
@@ -45,5 +45,5 @@ test("we get error when login is invalid.", async () => {
   );
 
   const auth_script_result = await auth_script.login("testing");
-  expect(auth_script_result.code).toBe(ScriptResult.INVALID);
+  expect(auth_script_result.code).toBe(ServiceResult.INVALID);
 });

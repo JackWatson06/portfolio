@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-100">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

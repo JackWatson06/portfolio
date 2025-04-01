@@ -3,21 +3,21 @@ import {
   TEST_PROJECT_THREE,
   TEST_PROJECT_TWO,
 } from "@/__tests__/seeding/projects/ProjectData";
-import { ScriptResult } from "@/auth/login/TransactionScriptResult";
+import { ServiceResult } from "@/auth/login/LoginServiceResult";
 import { PortfolioServiceLocator } from "@/services/PortfolioNodeServiceLocator";
 
-function mock_login_transaction_script() {
+function mockLoginTransactionScript() {
   return {
     login: jest.fn().mockImplementation((password: string) => {
       return new Promise((resolve) => {
         if (password != "testing") {
           return resolve({
-            code: ScriptResult.INVALID,
+            code: ServiceResult.INVALID,
           });
         }
 
         return resolve({
-          code: ScriptResult.SUCCESS,
+          code: ServiceResult.SUCCESS,
           token: "testing",
           expires: 10_000,
           secure: false,
@@ -27,10 +27,19 @@ function mock_login_transaction_script() {
   };
 }
 
-function mock_portfolio_transaction_script() {
+function mockTokenTransactionScript() {
+  return {
+    validate: jest
+      .fn()
+      .mockImplementation((token: string) => token == "testing"),
+  };
+}
+
+function mockPortfolioTransactionScript() {
   return {
     create: jest.fn(),
     find: jest.fn(),
+    findByName: jest.fn(),
     findPublic: jest.fn(),
     findAll: jest.fn().mockImplementation(() => {
       return [
@@ -45,6 +54,20 @@ function mock_portfolio_transaction_script() {
   };
 }
 
+function mockMediaTransactionScript() {
+  return {
+    upload: jest.fn(),
+    read: jest.fn(),
+    delete: jest.fn(),
+  };
+}
+
+function mockMediaUploadTransactionScript() {
+  return {
+    findUploadParams: jest.fn(),
+  };
+}
+
 let portfolio_service_locator: PortfolioServiceLocator | null = null;
 export const init = jest.fn().mockImplementation(() => {
   if (portfolio_service_locator != null) {
@@ -52,8 +75,11 @@ export const init = jest.fn().mockImplementation(() => {
   }
 
   portfolio_service_locator = {
-    login: mock_login_transaction_script(),
-    project: mock_portfolio_transaction_script(),
+    login: mockLoginTransactionScript(),
+    token: mockTokenTransactionScript(),
+    media: mockMediaTransactionScript(),
+    media_upload: mockMediaUploadTransactionScript(),
+    project: mockPortfolioTransactionScript(),
   };
   return portfolio_service_locator;
 });

@@ -26,7 +26,7 @@ afterEach(async () => {
   await mongo_connection.disconnect();
 });
 
-test("we can insert data into the projects collection.", async () => {
+test("inserting data into the projects collection", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
 
   await project_data_gateway.insert({ ...TEST_PROJECT_ONE });
@@ -38,7 +38,7 @@ test("we can insert data into the projects collection.", async () => {
   expect(project_on_disk).not.toBe(null);
 });
 
-test("we can find a project by the slug.", async () => {
+test("finding a project by slug", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({ ...TEST_PROJECT_ONE });
 
@@ -47,7 +47,7 @@ test("we can find a project by the slug.", async () => {
   expect(project).not.toBe(null);
 });
 
-test("we can not find private projects on public search.", async () => {
+test("private projects do not return on public search", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({
     ...TEST_PROJECT_ONE,
@@ -59,7 +59,7 @@ test("we can not find private projects on public search.", async () => {
   expect(project).toBe(null);
 });
 
-test("we can get a list of projects.", async () => {
+test("listing all projects", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     { ...TEST_PROJECT_ONE },
@@ -71,7 +71,7 @@ test("we can get a list of projects.", async () => {
   expect(projects.length).toBe(2);
 });
 
-test("we only fetch the projects with specific tags.", async () => {
+test("fetching projects with specific tags", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
@@ -96,7 +96,7 @@ test("we only fetch the projects with specific tags.", async () => {
   expect(projects.length).toBe(2);
 });
 
-test("we can get a list of public projects.", async () => {
+test("fetching all public projects", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
@@ -114,7 +114,7 @@ test("we can get a list of public projects.", async () => {
   expect(projects.length).toBe(1);
 });
 
-test("we only fetch the public projects with specific tags.", async () => {
+test("fetching public projects with specific tags", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
@@ -142,7 +142,7 @@ test("we only fetch the public projects with specific tags.", async () => {
   expect(projects.length).toBe(1);
 });
 
-test("we can update a project.", async () => {
+test("updating project", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({ ...TEST_PROJECT_ONE });
 
@@ -156,7 +156,7 @@ test("we can update a project.", async () => {
   expect(project_on_disk).not.toBe(null);
 });
 
-test("we can not fetch a deleted project while searching by slug.", async () => {
+test("deleted project does not return on fetch by slug", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({
     ...TEST_PROJECT_ONE,
@@ -168,7 +168,7 @@ test("we can not fetch a deleted project while searching by slug.", async () => 
   expect(project).toBe(null);
 });
 
-test("we can not fetch a deleted project while searching for all projects.", async () => {
+test("deleted project does not return on find all", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertMany([
     {
@@ -183,7 +183,7 @@ test("we can not fetch a deleted project while searching for all projects.", asy
   expect(projects.length).toBe(1);
 });
 
-test("we can remove a project.", async () => {
+test("removing project", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({ ...TEST_PROJECT_ONE });
 

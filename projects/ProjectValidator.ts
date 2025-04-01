@@ -11,7 +11,7 @@ type ValidationRoutine = {
   is_valid: () => boolean;
 };
 
-const IMAGE_TYPES = ["image/png", "image/jpg", "image/webp"];
+const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const VIDEO_TYPES = ["video/mp4"];
 const VALID_MIME_TYPES = [...IMAGE_TYPES, ...VIDEO_TYPES];
 const VALID_SERVICE_TYPES = ["source", "website", "download"];

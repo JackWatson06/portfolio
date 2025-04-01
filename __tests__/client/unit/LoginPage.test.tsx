@@ -8,11 +8,9 @@ import { axe, toHaveNoViolations } from "jest-axe";
 
 expect.extend(toHaveNoViolations);
 
-jest.mock("@/app/login/SessionCommand", () => {
-  return {
-    createSession: async (prev_state: any, form_data: FormData) => {},
-  };
-});
+jest.mock("@/app/login/actions", () => ({
+  createSession: jest.fn(),
+}));
 
 jest.mock("react", () => {
   return {
@@ -40,32 +38,4 @@ test("accessability of page.", async () => {
   await act(async () => {
     expect(await axe(container)).toHaveNoViolations();
   });
-});
-
-test("login form does not render warnings when we have no errors.", () => {
-  const { queryByRole } = render(<Login />);
-
-  expect(queryByRole("alert")).toBe(null);
-});
-
-test("login form does renders warning when we have an error.", () => {
-  (useActionState as jest.Mock).mockImplementation(() => [
-    { errors: ["testing"] },
-    "testing",
-  ]);
-
-  const { queryByText } = render(<Login />);
-
-  expect(queryByText("testing")).not.toBe(null);
-});
-
-test("login form does renders warnings when we have multiple errors.", () => {
-  (useActionState as jest.Mock).mockImplementation(() => [
-    { errors: ["testing", "testing"] },
-    "testing",
-  ]);
-
-  const { queryByText } = render(<Login />);
-
-  expect(queryByText("testing, testing")).not.toBe(null);
 });

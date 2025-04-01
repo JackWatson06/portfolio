@@ -1,5 +1,5 @@
-import { TransactionScript as TokenTransactionScript } from "@/auth/token/TransactionScript";
+import { TokenService } from "@/auth/token/TokenService";
 
 export interface EdgeServiceLocator {
-  readonly token: TokenTransactionScript;
+  readonly token: TokenService;
 }

@@ -5,12 +5,14 @@ export default async function Projects() {
   const projects = await fetchProjectListView();
 
   return (
-    <main className="container mx-auto">
-      <section>
-        <h1>Projects</h1>
+    <>
+      <header className="container mx-auto">
+        <h1 className="text-2xl">Projects</h1>
+      </header>
 
+      <main className="container mx-auto">
         {projects.length == 0 ? (
-          <p>No projects found! Add some of your work!</p>
+          <p>No projects found - add some of your work!</p>
         ) : (
           <ul className="space-y-10">
             {projects.map((project_entry_view) => {
@@ -23,7 +25,7 @@ export default async function Projects() {
             })}
           </ul>
         )}
-      </section>
-    </main>
+      </main>
+    </>
   );
 }

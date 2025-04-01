@@ -1,7 +1,7 @@
 import { SessionAlgorithm } from "../services/SessionAlgorithm";
-import { TransactionScript } from "./TransactionScript";
+import { TokenService } from "./TokenService";
 
-export class TokenTransactionScript implements TransactionScript {
+export class TokenTransactionScript implements TokenService {
   constructor(private session_algorithm: SessionAlgorithm) {}
 
   validate(token: string): Promise<boolean> {

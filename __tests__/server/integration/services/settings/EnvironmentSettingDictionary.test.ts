@@ -10,7 +10,7 @@ expand(
   }),
 );
 
-test("We can create a valid environment setting dictionary.", () => {
+test("creating a valid environment setting dictionary", () => {
   const environment_setting_dictionary = new EnvironmentSettingDictionary({
     ...process.env,
     MONGODB_DATABASE: "testing",
@@ -18,7 +18,7 @@ test("We can create a valid environment setting dictionary.", () => {
   expect(environment_setting_dictionary.database).toBe("testing");
 });
 
-test("We get an error when trying to create a environment setting dictionary with invalid settings..", () => {
+test("error when trying to create a environment setting dictionary with invalid settings", () => {
   expect(
     () => new EnvironmentSettingDictionary({ MONGODB_DATABASE: undefined }),
   ).toThrow(Error);

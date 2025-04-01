@@ -66,7 +66,10 @@ test("we make sure the thumbnail exists.", async () => {
 
   const validator_result = validator.validate({
     ...TEST_PROJECT_ONE,
-    thumbnail_media: "https://testing.com/does_not_exist",
+    thumbnail_media: {
+      url: "https://testing.com/does_not_exist",
+      description: "testing",
+    },
   });
 
   expect(validator_result.valid).toBe(false);
@@ -88,7 +91,10 @@ test("we only allow images for the thumbnail media.", async () => {
 
   const validator_result = validator.validate({
     ...TEST_PROJECT_ONE,
-    thumbnail_media: "https://testing.com/video_one",
+    thumbnail_media: {
+      url: "https://testing.com/video_one",
+      description: "testing",
+    },
   });
 
   expect(validator_result.valid).toBe(false);
