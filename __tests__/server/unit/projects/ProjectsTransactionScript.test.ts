@@ -7,6 +7,7 @@ import {
 } from "@/projects/ValidatorResult";
 import { ProjectsTransactionScript } from "@/projects/ProjectTransactionScript";
 import { Project } from "@/services/db/schemas/Project";
+import { MockBlobStorage } from "@/services/fs/__mocks__/BlobStorage";
 import { MatchKeysAndValues, WithId } from "mongodb";
 import {
   TEST_PROJECT_ONE_CREATE_INPUT,
@@ -17,10 +18,11 @@ import {
   TEST_PROJECT_ONE_PERSISTED,
   TEST_PROJECT_TWO_PERSISTED,
 } from "@/__tests__/seeding/projects/ProjectInDBData";
+import { BlobStorageResult } from "@/services/fs/BlobStorage";
 
-class TestCollectionGateway implements CollectionGateway {
-  public created_project: Project | null = null;
-  public updated_project: MatchKeysAndValues<Project> | null = null;
+class MockCollectionGateway implements CollectionGateway {
+  public last_created_project: Project | null = null;
+  public last_updated_project: MatchKeysAndValues<Project> | null = null;
 
   async findBySlug(slug: string): Promise<WithId<Project> | null> {
     if (slug == TEST_PROJECT_ONE_PERSISTED.slug) {
@@ -43,24 +45,24 @@ class TestCollectionGateway implements CollectionGateway {
     return [TEST_PROJECT_ONE_PERSISTED];
   }
   async insert(project: Project): Promise<void> {
-    this.created_project = project;
+    this.last_created_project = project;
   }
   async update(
     slug: string,
     project: MatchKeysAndValues<Project>,
   ): Promise<void> {
-    this.updated_project = project;
+    this.last_updated_project = project;
   }
   async delete(slug: string): Promise<void> {}
 }
 
-class TestValidator implements Validator {
+class StubValidator implements Validator {
   validate(project: Project): ValidatorResult {
     return new SuccessfulValidatorResult();
   }
 }
 
-class TestInvalidValidator implements Validator {
+class StubInvalidValidator implements Validator {
   validate(project: Project): ValidatorResult {
     return new InvalidValidatorResult("Invalid project input.");
   }
@@ -68,8 +70,9 @@ class TestInvalidValidator implements Validator {
 
 test("creating a project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const script_result = await projects_transaction_script.create({
@@ -82,8 +85,9 @@ test("creating a project", async () => {
 
 test("converting name for slug when creating a project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const script_result = await projects_transaction_script.create({
@@ -98,10 +102,11 @@ test("converting name for slug when creating a project", async () => {
 
 test("setting `created_at` when creating a project", async () => {
   const before_creating = new Date();
-  const projects_collection_gateway = new TestCollectionGateway();
+  const projects_collection_gateway = new MockCollectionGateway();
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
+    new StubValidator(),
     projects_collection_gateway,
+    new MockBlobStorage(),
   );
 
   await projects_transaction_script.create({
@@ -110,16 +115,17 @@ test("setting `created_at` when creating a project", async () => {
   });
 
   expect(
-    projects_collection_gateway.created_project?.created_at.valueOf(),
+    projects_collection_gateway.last_created_project?.created_at.valueOf(),
   ).toBeGreaterThanOrEqual(before_creating.valueOf());
 });
 
 test("setting `updated_at` when creating a project", async () => {
   const before_creating = new Date();
-  const projects_collection_gateway = new TestCollectionGateway();
+  const projects_collection_gateway = new MockCollectionGateway();
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
+    new StubValidator(),
     projects_collection_gateway,
+    new MockBlobStorage(),
   );
 
   await projects_transaction_script.create({
@@ -128,14 +134,15 @@ test("setting `updated_at` when creating a project", async () => {
   });
 
   expect(
-    projects_collection_gateway.created_project?.updated_at.valueOf(),
+    projects_collection_gateway.last_created_project?.updated_at.valueOf(),
   ).toBeGreaterThanOrEqual(before_creating.valueOf());
 });
 
 test("creating a project with a duplicate slug", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const script_result = await projects_transaction_script.create(
@@ -147,8 +154,9 @@ test("creating a project with a duplicate slug", async () => {
 
 test("creating project returns error when invalid", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestInvalidValidator(),
-    new TestCollectionGateway(),
+    new StubInvalidValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const script_result = await projects_transaction_script.create({
@@ -161,8 +169,9 @@ test("creating project returns error when invalid", async () => {
 
 test("fetching a project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const project = await projects_transaction_script.find("gandalf");
@@ -172,8 +181,9 @@ test("fetching a project", async () => {
 
 test("fetching project by the name with proper slug", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const project = await projects_transaction_script.findByName(
@@ -185,8 +195,9 @@ test("fetching project by the name with proper slug", async () => {
 
 test("fetching public project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const project = await projects_transaction_script.findPublic("gandalf");
@@ -196,8 +207,9 @@ test("fetching public project", async () => {
 
 test("fetching all projects", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const projects = await projects_transaction_script.findAll([]);
@@ -207,8 +219,9 @@ test("fetching all projects", async () => {
 
 test("fetching all public projects", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const projects = await projects_transaction_script.findAllPublic([]);
@@ -218,8 +231,9 @@ test("fetching all public projects", async () => {
 
 test("updating a project", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const script_result = await projects_transaction_script.update("gandalf", {
@@ -231,8 +245,9 @@ test("updating a project", async () => {
 
 test("updating a project properly converts the slug", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const script_result = await projects_transaction_script.update("gandalf", {
@@ -246,8 +261,9 @@ test("updating a project properly converts the slug", async () => {
 
 test("updating a project when the new slug is not unique", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const script_result = await projects_transaction_script.update("gandalf", {
@@ -257,26 +273,76 @@ test("updating a project when the new slug is not unique", async () => {
   expect(script_result.code).toBe(ServiceResult.DUPLICATE);
 });
 
-test("setting `updated_at` when updating a project", async () => {
-  const projects_collection_gateway = new TestCollectionGateway();
+test("updating project removes previous hashes", async () => {
+  const mock_blob_storage = new MockBlobStorage();
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    mock_blob_storage,
+  );
+
+  await projects_transaction_script.update("gandalf", {
+    removed_media_hashes: ["testing"],
+  });
+
+  expect(mock_blob_storage.last_remove_blob).toBe("testing");
+});
+
+test("updating project unsets removed media hashes", async () => {
+  const mock_collections_gateway = new MockCollectionGateway();
+  const projects_transaction_script = new ProjectsTransactionScript(
+    new StubValidator(),
+    mock_collections_gateway,
+    new MockBlobStorage(),
+  );
+
+  await projects_transaction_script.update("gandalf", {
+    removed_media_hashes: ["testing"],
+  });
+
+  expect(mock_collections_gateway.last_updated_project).not.toHaveProperty(
+    "removed_media_hashes",
+  );
+});
+
+test("updating project reports error in blob storage remove action", async () => {
+  const mock_blob_storage = new MockBlobStorage();
+  const projects_transaction_script = new ProjectsTransactionScript(
+    new StubValidator(),
+    new MockCollectionGateway(),
+    mock_blob_storage,
+  );
+  mock_blob_storage.remove_blob_return = BlobStorageResult.ERROR;
+
+  const script_result = await projects_transaction_script.update("gandalf", {
+    removed_media_hashes: ["testing"],
+  });
+
+  expect(script_result.code).toBe(ServiceResult.COULD_NOT_REMOVE);
+});
+
+test("setting `updated_at` when updating a project", async () => {
+  const projects_collection_gateway = new MockCollectionGateway();
+  const projects_transaction_script = new ProjectsTransactionScript(
+    new StubValidator(),
     projects_collection_gateway,
+    new MockBlobStorage(),
   );
 
   await projects_transaction_script.update("gandalf", {
     private: false,
   });
 
-  expect(projects_collection_gateway.updated_project).toHaveProperty(
+  expect(projects_collection_gateway.last_updated_project).toHaveProperty(
     "updated_at",
   );
 });
 
 test("updating project returns error when it is invalid", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestInvalidValidator(),
-    new TestCollectionGateway(),
+    new StubInvalidValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const script_result = await projects_transaction_script.update("gandalf", {
@@ -288,8 +354,9 @@ test("updating project returns error when it is invalid", async () => {
 
 test("deleting a project that does not exist", async () => {
   const projects_transaction_script = new ProjectsTransactionScript(
-    new TestValidator(),
-    new TestCollectionGateway(),
+    new StubValidator(),
+    new MockCollectionGateway(),
+    new MockBlobStorage(),
   );
 
   const script_result =
@@ -299,3 +366,4 @@ test("deleting a project that does not exist", async () => {
 });
 
 test.todo("tags can not have any duplicates.");
+test.todo("deleting files when editing the media files");

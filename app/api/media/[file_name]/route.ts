@@ -1,4 +1,3 @@
-import { ServiceResult } from "@/media/MediaServiceResult";
 import { init } from "@/services/setup";
 
 export async function GET(
@@ -23,37 +22,6 @@ export async function GET(
         "Content-Language": "en-US",
       },
     });
-  } catch (e) {
-    return new Response("", { status: 500 });
-  }
-}
-
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ file_name: string }> },
-) {
-  try {
-    const service_locator = await init();
-    const media_script = service_locator.media;
-
-    const response = await media_script.delete((await params).file_name);
-
-    switch (response.code) {
-      case ServiceResult.NOT_FOUND:
-        return new Response("", {
-          status: 404,
-        });
-      case ServiceResult.SUCCESS:
-        return new Response("", {
-          status: 200,
-        });
-
-      case ServiceResult.SERVICE_ERROR:
-      default:
-        return new Response("", {
-          status: 500,
-        });
-    }
   } catch (e) {
     return new Response("", { status: 500 });
   }

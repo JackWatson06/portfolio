@@ -18,6 +18,7 @@ test("we must have at least one picture.", async () => {
       {
         mime_type: "video/mp4",
         url: "https://testing.com/video_one",
+        hash: "123123123",
         description: "video_testing",
       },
     ],
@@ -36,6 +37,7 @@ test("media must have valid mime types.", async () => {
       {
         mime_type: "mp5",
         url: "https://testing.com/video_two",
+        hash: "123123123",
         description: "video_testing",
       },
     ],

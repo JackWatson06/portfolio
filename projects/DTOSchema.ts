@@ -6,6 +6,7 @@ export type LinkInput = {
 export type MediaInput = {
   mime_type: string;
   url: string;
+  hash: string;
   description: string;
 };
 
@@ -23,4 +24,6 @@ export type ProjectCreate = {
   private: boolean;
 };
 
-export type ProjectUpdate = Partial<ProjectCreate>;
+export type ProjectUpdate = Partial<ProjectCreate> & {
+  removed_media_hashes?: string[];
+};

@@ -7,7 +7,12 @@ export type UploadHTTPParams = {
   public_url: string;
 };
 
+export enum BlobStorageResult {
+  SUCCESS = 0,
+  ERROR,
+}
+
 export interface BlobStorage {
   generateHTTPParams(sha1: string): Promise<UploadHTTPParams>;
-  removeBlob(file_name: string): void;
+  removeBlob(file_name: string): Promise<BlobStorageResult>;
 }

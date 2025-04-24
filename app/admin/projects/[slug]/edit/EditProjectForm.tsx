@@ -1,30 +1,25 @@
 "use client";
 
-import ProjectMetadataInput from "../ProjectMetadataInput";
-import { useProjectCreateFormActionState } from "../hooks";
-import LinkInput from "../LinkInput";
-import MediaInput from "../MediaInput";
 import FormAlert from "@/components/FormAlert";
-import { ProjectFormState } from "../schemas";
+import { ProjectFormState } from "../../schemas";
+import { useProjectEditFormActionState } from "../../hooks";
+import ProjectMetadataInput from "../../ProjectMetadataInput";
+import MediaInput from "../../MediaInput";
+import LinkInput from "../../LinkInput";
 
-const DEFAULT_FORM_STATE: ProjectFormState = {
-  data: {
-    name: "",
-    description: "",
-    tags: "",
-    visibility: "private",
-    media: [],
-    existing_media: [],
-    thumbnail: "",
-    links: [],
-    live_project_link: "",
-  },
-  errors: [],
+type EditProjectFormProps = {
+  slug: string;
+  form_state: ProjectFormState;
 };
 
-export default function AdminProjectCreateForm() {
-  const [state, handleAction, is_pending] =
-    useProjectCreateFormActionState(DEFAULT_FORM_STATE);
+export default function EditProjectForm({
+  slug,
+  form_state,
+}: EditProjectFormProps) {
+  const [state, handleAction, is_pending] = useProjectEditFormActionState(
+    slug,
+    form_state,
+  );
 
   return (
     <form action={handleAction} className="flex max-w-xs flex-col gap-10">
@@ -37,6 +32,7 @@ export default function AdminProjectCreateForm() {
         value_visibility={state.data.visibility}
       />
       <MediaInput
+        value_existing_media={state.data.existing_media}
         value_media={state.data.media}
         value_thumbnail={state.data.thumbnail}
       />

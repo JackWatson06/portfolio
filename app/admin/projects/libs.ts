@@ -1,7 +1,7 @@
 /**
  * The below function is not tested with unit tests. JSDom does not support blob APIs and the crypto
- * API so I had to do a bunch of polyfilling which was not worth the effort for a small function.
- * Be warned!
+ * API so I would have to do a bunch of polyfilling which was not worth the effort for a small
+ * function. Be warned!
  */
 export async function sha1HashBlob(blob: Blob) {
   const array_buffer = await blob.arrayBuffer();

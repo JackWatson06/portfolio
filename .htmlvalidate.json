@@ -1,9 +1,15 @@
 {
   "$schema": "https://html-validate.org/schemas/config.json",
-  "extends": ["html-validate:recommended"],
+  "extends": [
+    "html-validate:recommended"
+  ],
   "rules": {
     "attribute-boolean-style": "off",
+    "form-dup-name": "off",
     "no-inline-style": "off"
   },
-  "elements": ["html5", "./elements.mjs"]
+  "elements": [
+    "html5",
+    "./elements.mjs"
+  ]
 }

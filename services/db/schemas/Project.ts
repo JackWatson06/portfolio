@@ -19,6 +19,7 @@ export interface Project {
 export type MediaElement = {
   mime_type: string;
   url: string;
+  hash: string;
   description: string;
 };
 

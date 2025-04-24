@@ -4,6 +4,7 @@ import { CollectionGateway } from "./CollectionGateway";
 import { ProjectCreate, ProjectUpdate } from "./DTOSchema";
 import { ProjectService } from "./ProjectService";
 import {
+  CouldNotRemoveResult,
   DuplicateResult,
   InvalidResult,
   NotFoundResult,
@@ -12,11 +13,13 @@ import {
   SuccessfulResult,
 } from "./ProjectServiceResult";
 import { Validator } from "./Validator";
+import { BlobStorage, BlobStorageResult } from "@/services/fs/BlobStorage";
 
 export class ProjectsTransactionScript implements ProjectService {
   constructor(
     private project_validator: Validator,
     private projects_collection_gateway: CollectionGateway,
+    private blob_storage: BlobStorage,
   ) {}
 
   async create(
@@ -83,7 +86,13 @@ export class ProjectsTransactionScript implements ProjectService {
   async update(
     slug: string,
     project_input: ProjectUpdate,
-  ): Promise<SlugResult | NotFoundResult | InvalidResult | DuplicateResult> {
+  ): Promise<
+    | SlugResult
+    | NotFoundResult
+    | DuplicateResult
+    | CouldNotRemoveResult
+    | InvalidResult
+  > {
     const project = await this.find(slug);
 
     if (project == null) {
@@ -92,11 +101,11 @@ export class ProjectsTransactionScript implements ProjectService {
       };
     }
 
+    // Update the project slug.
     const project_with_slug = this.buildProjectWithNewSlug(
       project,
       project_input,
     );
-
     if (
       project.slug != project_with_slug.slug &&
       (await this.projects_collection_gateway.findBySlug(
@@ -108,6 +117,22 @@ export class ProjectsTransactionScript implements ProjectService {
       };
     }
 
+    // Remove any old media files hashes.
+    if (project_input.removed_media_hashes != undefined) {
+      for (const removed_hash of project_input.removed_media_hashes) {
+        const remove_response =
+          await this.blob_storage.removeBlob(removed_hash);
+        if (remove_response == BlobStorageResult.ERROR) {
+          return {
+            code: ServiceResult.COULD_NOT_REMOVE,
+            message: `Could not remove file with hash: ${removed_hash}`,
+          };
+        }
+      }
+      delete project_input.removed_media_hashes;
+    }
+
+    // Validate the project post-update is still valid according to our business rules.
     const updated_project_info = {
       ...project_with_slug,
       ...project_input,
@@ -122,6 +147,7 @@ export class ProjectsTransactionScript implements ProjectService {
       };
     }
 
+    // Send an update request to the database.
     await this.projects_collection_gateway.update(project.slug, {
       ...project_input,
       slug: updated_project_info.slug,

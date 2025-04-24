@@ -1,23 +1,13 @@
 import { POST } from "@/app/api/media/route";
-import { TransactionScript as MediaTransactionScript } from "@/media/MediaService";
+import { MediaService } from "@/media/MediaService";
 import { ServiceResult } from "@/media/MediaServiceResult";
-import { Media } from "@/services/db/schemas/Media";
 import { init } from "@/services/setup";
-import { ObjectId, WithId } from "mongodb";
 
 jest.mock("@/services/setup");
 
 const TEST_ENDPOINT = "https://testing.com/api/media";
-const MEDIA_ONE_PERSISTED: WithId<Media> = {
-  _id: new ObjectId(),
-  hash: "testing_hash",
-  file_name: "testing.png",
-  content_type: "image/png",
-  size: 1_000,
-  uploaded_at: new Date("2024-02-021T01:00Z"),
-};
 
-let mocked_media_transaction_script: MediaTransactionScript;
+let mocked_media_transaction_script: MediaService;
 beforeEach(async () => {
   mocked_media_transaction_script = (await init()).media;
   (mocked_media_transaction_script.upload as jest.Mock).mockReturnValue({

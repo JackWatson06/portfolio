@@ -15,36 +15,40 @@ export const TEST_PROJECT_ONE_CREATE_INPUT: ProjectCreate = {
     {
       url: "/assets/images/gandalf.png",
       mime_type: "image/png",
+      hash: "testing_gandalf",
       description: "Picture of Gandalf holding a staff.",
     },
     {
       url: "/assets/images/frodo.webp",
       mime_type: "image/webp",
+      hash: "testing_frodo",
       description: "Frodo dancing on the table.",
     },
     {
       url: "/assets/videos/sam.mp4",
       mime_type: "video/mp4",
+      hash: "testing_sam",
       description: "Sam running across the shire.",
     },
     {
       url: "/assets/images/aragorn.jpg",
       mime_type: "image/jpeg",
+      hash: "testing_aragorn",
       description: "Aragorn kicking butt.",
     },
   ],
   links: [
     {
-      type: "website",
       url: "https://gandalf.com",
+      type: "website",
     },
     {
-      type: "download",
       url: "https://testing.com/gandalf",
+      type: "download",
     },
     {
-      type: "source",
       url: "https://github.com/project/gandalf",
+      type: "source",
     },
   ],
   private: false,
@@ -71,11 +75,13 @@ export const TEST_PROJECT_TWO: Project = {
     {
       url: "/assets/videos/sam.mp4",
       mime_type: "video/mp4",
+      hash: "12323123",
       description: "Sam running across the shire.",
     },
     {
       url: "/assets/images/bilbo.jpg",
       mime_type: "image/jpg",
+      hash: "12323123",
       description: "Bilbo baggins sneaking around.",
     },
   ],
@@ -107,16 +113,19 @@ export const TEST_PROJECT_THREE: Project = {
     {
       url: "/assets/images/frodo.webp",
       mime_type: "image/webp",
+      hash: "123123123",
       description: "Frodo dancing on the table.",
     },
     {
       url: "/assets/videos/sam.mp4",
       mime_type: "video/mp4",
+      hash: "123123123",
       description: "Sam running across the shire.",
     },
     {
       url: "/assets/images/aragorn.jpg",
       mime_type: "image/jpg",
+      hash: "123123123",
       description: "Aragorn kicking butt.",
     },
   ],

@@ -1,7 +1,11 @@
 import { MediaUploadTransactionScript } from "@/media/upload/MediaUploadTransactionScript";
-import { BlobStorage, UploadHTTPParams } from "@/services/fs/BlobStorage";
+import {
+  BlobStorage,
+  BlobStorageResult,
+  UploadHTTPParams,
+} from "@/services/fs/BlobStorage";
 
-class TestBlobStorageService implements BlobStorage {
+class StubBlobStorageService implements BlobStorage {
   async generateHTTPParams(sha1: string): Promise<UploadHTTPParams> {
     return {
       upload: {
@@ -13,20 +17,24 @@ class TestBlobStorageService implements BlobStorage {
     };
   }
 
-  removeBlob(file_name: string) {}
+  async removeBlob(file_name: string): Promise<BlobStorageResult> {
+    return BlobStorageResult.SUCCESS;
+  }
 }
 
-class TestInvalidBlobStorageService implements BlobStorage {
+class StubInvalidBlobStorageService implements BlobStorage {
   async generateHTTPParams(sha1: string): Promise<UploadHTTPParams> {
     throw new Error("Error with blob storage.");
   }
 
-  removeBlob(file_name: string) {}
+  async removeBlob(file_name: string): Promise<BlobStorageResult> {
+    return BlobStorageResult.ERROR;
+  }
 }
 
 test("fetching the request parameters to upload a file", async () => {
   const media_upload_transaction_service = new MediaUploadTransactionScript(
-    new TestBlobStorageService(),
+    new StubBlobStorageService(),
   );
 
   const media_upload_params =
@@ -44,7 +52,7 @@ test("fetching the request parameters to upload a file", async () => {
 
 test("fetching the request parameters returns null on error", async () => {
   const media_upload_transaction_service = new MediaUploadTransactionScript(
-    new TestInvalidBlobStorageService(),
+    new StubInvalidBlobStorageService(),
   );
 
   const media_upload_params =
