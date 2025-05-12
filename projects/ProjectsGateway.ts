@@ -76,6 +76,14 @@ export class ProjectsGateway implements CollectionGateway {
     ).toArray();
   }
 
+  async someHaveMediaHash(hash: string): Promise<boolean> {
+    return (
+      (await this.projects.findOne({
+        media: { $elemMatch: { hash: hash } },
+      })) != null
+    );
+  }
+
   async update(
     slug: string,
     project: MatchKeysAndValues<Project>,

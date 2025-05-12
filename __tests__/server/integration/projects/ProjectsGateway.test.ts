@@ -142,6 +142,35 @@ test("fetching public projects with specific tags", async () => {
   expect(projects.length).toBe(1);
 });
 
+test("searching for existing media", async () => {
+  const project_data_gateway = new ProjectsGateway(db.projects);
+  await db.projects.insertMany([
+    { ...TEST_PROJECT_ONE },
+    { ...TEST_PROJECT_TWO },
+    { ...TEST_PROJECT_THREE },
+  ]);
+
+  const has_hash = await project_data_gateway.someHaveMediaHash(
+    TEST_PROJECT_TWO.media[0].hash,
+  );
+
+  expect(has_hash).toBe(true);
+});
+
+test("searching for existing media could not find existing hash", async () => {
+  const project_data_gateway = new ProjectsGateway(db.projects);
+  await db.projects.insertMany([
+    { ...TEST_PROJECT_ONE },
+    { ...TEST_PROJECT_TWO },
+    { ...TEST_PROJECT_THREE },
+  ]);
+
+  const has_hash =
+    await project_data_gateway.someHaveMediaHash("test_not_found");
+
+  expect(has_hash).toBe(false);
+});
+
 test("updating project", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({ ...TEST_PROJECT_ONE });

@@ -120,6 +120,12 @@ export class ProjectsTransactionScript implements ProjectService {
     // Remove any old media files hashes.
     if (project_input.removed_media_hashes != undefined) {
       for (const removed_hash of project_input.removed_media_hashes) {
+        if (
+          await this.projects_collection_gateway.someHaveMediaHash(removed_hash)
+        ) {
+          continue;
+        }
+
         const remove_response =
           await this.blob_storage.removeBlob(removed_hash);
         if (remove_response == BlobStorageResult.ERROR) {

@@ -23,6 +23,7 @@ import { BlobStorageResult } from "@/services/fs/BlobStorage";
 class MockCollectionGateway implements CollectionGateway {
   public last_created_project: Project | null = null;
   public last_updated_project: MatchKeysAndValues<Project> | null = null;
+  public some_have_media_hash_return: boolean = false;
 
   async findBySlug(slug: string): Promise<WithId<Project> | null> {
     if (slug == TEST_PROJECT_ONE_PERSISTED.slug) {
@@ -43,6 +44,9 @@ class MockCollectionGateway implements CollectionGateway {
   }
   async findAllPublic(): Promise<Array<WithId<Project>>> {
     return [TEST_PROJECT_ONE_PERSISTED];
+  }
+  async someHaveMediaHash(hash: string): Promise<boolean> {
+    return this.some_have_media_hash_return;
   }
   async insert(project: Project): Promise<void> {
     this.last_created_project = project;
@@ -286,6 +290,23 @@ test("updating project removes previous hashes", async () => {
   });
 
   expect(mock_blob_storage.last_remove_blob).toBe("testing");
+});
+
+test("updating project does not remove duplicate media hashes", async () => {
+  const mock_blob_storage = new MockBlobStorage();
+  const mock_collections_gateway = new MockCollectionGateway();
+  const projects_transaction_script = new ProjectsTransactionScript(
+    new StubValidator(),
+    mock_collections_gateway,
+    mock_blob_storage,
+  );
+  mock_collections_gateway.some_have_media_hash_return = true;
+
+  await projects_transaction_script.update("gandalf", {
+    removed_media_hashes: ["testing"],
+  });
+
+  expect(mock_blob_storage.last_remove_blob).toBe("");
 });
 
 test("updating project unsets removed media hashes", async () => {

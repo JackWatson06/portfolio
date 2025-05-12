@@ -7,6 +7,7 @@ export interface CollectionGateway {
   findPublicBySlug(slug: string): Promise<WithId<Project> | null>;
   findAll(tags: Array<string>): Promise<Array<WithId<Project>>>;
   findAllPublic(tags: Array<string>): Promise<Array<WithId<Project>>>;
+  someHaveMediaHash(hash: string): Promise<boolean>;
   update(slug: string, project: MatchKeysAndValues<Project>): Promise<void>;
   delete(slug: string): Promise<void>;
 }
