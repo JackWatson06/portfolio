@@ -25,7 +25,7 @@ export default async function EditProject({
         <h1 className="text-2xl">Edit {project.data.name} Form</h1>
       </header>
       <main className="mx-auto w-xs">
-        <EditProjectForm slug={slug} form_state={project} />
+        <EditProjectForm form_state={project} />
       </main>
     </>
   );

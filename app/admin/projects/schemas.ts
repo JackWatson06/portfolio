@@ -29,6 +29,7 @@ export type ProjectFormSchema = {
 
 export type ProjectFormState = {
   errors: string[];
+  slug: string;
   data: ProjectFormSchema;
 };
 

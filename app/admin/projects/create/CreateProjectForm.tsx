@@ -6,6 +6,7 @@ import LinkInput from "../LinkInput";
 import MediaInput from "../MediaInput";
 import FormAlert from "@/components/FormAlert";
 import { ProjectFormState } from "../schemas";
+import { FormEvent, startTransition } from "react";
 
 const DEFAULT_FORM_STATE: ProjectFormState = {
   data: {
@@ -19,6 +20,7 @@ const DEFAULT_FORM_STATE: ProjectFormState = {
     links: [],
     live_project_link: "",
   },
+  slug: "",
   errors: [],
 };
 
@@ -26,8 +28,15 @@ export default function AdminProjectCreateForm() {
   const [state, handleAction, is_pending] =
     useProjectCreateFormActionState(DEFAULT_FORM_STATE);
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    startTransition(() => {
+      handleAction(new FormData(event.currentTarget));
+    });
+  };
+
   return (
-    <form action={handleAction} className="flex max-w-xs flex-col gap-10">
+    <form onSubmit={handleSubmit} className="flex max-w-xs flex-col gap-10">
       <FormAlert errors={state.errors} />
 
       <ProjectMetadataInput

@@ -6,23 +6,34 @@ import { useProjectEditFormActionState } from "../../hooks";
 import ProjectMetadataInput from "../../ProjectMetadataInput";
 import MediaInput from "../../MediaInput";
 import LinkInput from "../../LinkInput";
+import { useRouter } from "next/navigation";
+import { FormEvent, startTransition, useEffect } from "react";
 
 type EditProjectFormProps = {
-  slug: string;
   form_state: ProjectFormState;
 };
 
-export default function EditProjectForm({
-  slug,
-  form_state,
-}: EditProjectFormProps) {
-  const [state, handleAction, is_pending] = useProjectEditFormActionState(
-    slug,
-    form_state,
-  );
+export default function EditProjectForm({ form_state }: EditProjectFormProps) {
+  const [state, handleAction, is_pending] =
+    useProjectEditFormActionState(form_state);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (form_state.slug != state.slug) {
+      router.push(`/admin/projects/${state.slug}/edit`);
+    }
+  }, [form_state, state]);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    startTransition(() => {
+      handleAction(new FormData(event.currentTarget));
+    });
+  };
 
   return (
-    <form action={handleAction} className="flex max-w-xs flex-col gap-10">
+    // onSubmit here because actions resets form state... this is wild: https://github.com/facebook/react/issues/29034
+    <form onSubmit={handleSubmit} className="flex max-w-xs flex-col gap-10">
       <FormAlert errors={state.errors} />
 
       <ProjectMetadataInput

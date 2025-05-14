@@ -11,6 +11,11 @@ export type ProjectActionSuccess = {
   code: "SUCCESS";
 };
 
+export type ProjectActionUpdateSuccess = {
+  code: "SUCCESS";
+  slug: string;
+};
+
 export type ProjectActionError = {
   code: "ERROR";
   message: string;
@@ -104,7 +109,7 @@ export async function fetchProjectWithName(
 export async function projectUpdateAction(
   slug: string,
   project_update: ProjectUpdate,
-): Promise<ProjectActionSuccess | ProjectActionError> {
+): Promise<ProjectActionUpdateSuccess | ProjectActionError> {
   const service_locator = await init();
   const token_script = service_locator.token;
   const session_cookie = (await cookies()).get("session");
@@ -129,6 +134,7 @@ export async function projectUpdateAction(
       case ServiceResult.SUCCESS:
         return {
           code: "SUCCESS",
+          slug: project_update_result.slug,
         };
       case ServiceResult.NOT_FOUND:
         return {

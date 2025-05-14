@@ -16,6 +16,9 @@ jest.mock("@/app/admin/projects/[slug]/edit/queries", () => ({
 jest.mock("@/app/admin/projects/actions", () => ({
   projectUpdateAction: jest.fn(),
 }));
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(),
+}));
 
 test("admin project create page renders valid HTML.", async () => {
   const { container } = render(

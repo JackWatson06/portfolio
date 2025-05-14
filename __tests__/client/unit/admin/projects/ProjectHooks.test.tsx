@@ -22,6 +22,7 @@ import { useActionState } from "react";
 /* -------------------------------------------------------------------------- */
 
 global.fetch = jest.fn();
+const mock_push: jest.Mock = jest.fn();
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
   useActionState: jest.fn(),
@@ -70,6 +71,7 @@ const TEST_DEFAULT_CREATE_FORM_STATE: ProjectFormState = {
     ],
     live_project_link: "https://localhost.com/testing",
   },
+  slug: "testing",
   errors: [],
 };
 
@@ -171,8 +173,10 @@ beforeEach(() => {
     code: "SUCCESS",
   });
   (projectUpdateAction as jest.Mock).mockReset();
+  mock_push.mockReset();
   (projectUpdateAction as jest.Mock).mockReturnValue({
     code: "SUCCESS",
+    slug: "testing",
   });
 });
 
@@ -184,8 +188,8 @@ beforeEach(() => {
 test("reseting errors when uploading form", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState({
+    ...TEST_DEFAULT_CREATE_FORM_STATE,
     errors: ["testing"],
-    data: { ...TEST_DEFAULT_CREATE_FORM_STATE.data },
   });
   const form_data = setUpCreateFormData();
 
@@ -594,13 +598,10 @@ function setUpEditFormData(): FormData {
 
 test("resetting errors when calling edit", async () => {
   const returned_action_promise = mockUseActionState();
-  const [errors, handleAction] = useProjectEditFormActionState(
-    TEST_PROJECT_ONE.slug,
-    {
-      errors: ["testing"],
-      data: { ...TEST_PROJECT_EDIT_FORM_STATE.data },
-    },
-  );
+  const [errors, handleAction] = useProjectEditFormActionState({
+    ...TEST_PROJECT_EDIT_FORM_STATE,
+    errors: ["testing"],
+  });
   const form_data = setUpEditFormData();
 
   handleAction(form_data);
@@ -610,13 +611,9 @@ test("resetting errors when calling edit", async () => {
 
 test("updating form state with new value for existing media", async () => {
   const returned_action_promise = mockUseActionState();
-  const [errors, handleAction] = useProjectEditFormActionState(
-    TEST_PROJECT_ONE.slug,
-    {
-      errors: [],
-      data: { ...TEST_PROJECT_EDIT_FORM_STATE.data },
-    },
-  );
+  const [errors, handleAction] = useProjectEditFormActionState({
+    ...TEST_PROJECT_EDIT_FORM_STATE,
+  });
   const form_data = setUpEditFormData();
 
   const test_existing_media_file =
@@ -637,7 +634,6 @@ test("updating form state with new value for existing media", async () => {
 test("validating thumbnail is in media or existing media", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectEditFormActionState(
-    TEST_PROJECT_ONE.slug,
     TEST_PROJECT_EDIT_FORM_STATE,
   );
   const form_data = setUpEditFormData();
@@ -654,7 +650,6 @@ test("uploading file with the correct parameters when editing", async () => {
   (fetch as jest.Mock).mockReset();
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectEditFormActionState(
-    TEST_PROJECT_ONE.slug,
     TEST_PROJECT_EDIT_FORM_STATE,
   );
   const form_data = setUpEditFormData();
@@ -679,23 +674,20 @@ test("uploading file with the correct parameters when editing", async () => {
 
 test("validating new media not in existing media", async () => {
   const returned_action_promise = mockUseActionState();
-  const [errors, handleAction] = useProjectEditFormActionState(
-    TEST_PROJECT_ONE.slug,
-    {
-      ...TEST_PROJECT_EDIT_FORM_STATE,
-      data: {
-        ...TEST_PROJECT_EDIT_FORM_STATE.data,
-        existing_media: [
-          {
-            url: "https://testing.com/testing",
-            hash: "testing_sha1_hash",
-            mime_type: "application/text",
-            description: "Testing this out.",
-          },
-        ],
-      },
+  const [errors, handleAction] = useProjectEditFormActionState({
+    ...TEST_PROJECT_EDIT_FORM_STATE,
+    data: {
+      ...TEST_PROJECT_EDIT_FORM_STATE.data,
+      existing_media: [
+        {
+          url: "https://testing.com/testing",
+          hash: "testing_sha1_hash",
+          mime_type: "application/text",
+          description: "Testing this out.",
+        },
+      ],
     },
-  );
+  });
   const form_data = setUpEditFormData();
   form_data.append("media_file", TEST_DEFAULT_FILE_ONE);
   form_data.append("media_description", "testing_b");
@@ -728,7 +720,7 @@ test.each([
   [
     "visibility",
     (fd: FormData) => fd.set("visibility", "private"),
-    { visibility: "private" },
+    { private: true },
   ],
   [
     "thumbnail",
@@ -773,7 +765,6 @@ test.each([
     });
     const returned_action_promise = mockUseActionState();
     const [errors, handleAction] = useProjectEditFormActionState(
-      TEST_PROJECT_ONE.slug,
       TEST_PROJECT_EDIT_FORM_STATE,
     );
     const form_data = setUpEditFormData();
@@ -796,7 +787,6 @@ test("updating existing media elements adds to updated media list", async () => 
   });
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectEditFormActionState(
-    TEST_PROJECT_ONE.slug,
     TEST_PROJECT_EDIT_FORM_STATE,
   );
   const form_data = setUpEditFormData();
@@ -839,7 +829,6 @@ test("updating thumbnail with newly uploaded file", async () => {
   });
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectEditFormActionState(
-    TEST_PROJECT_ONE.slug,
     TEST_PROJECT_EDIT_FORM_STATE,
   );
   const form_data = setUpEditFormData();
@@ -876,7 +865,6 @@ test("updating the project errors on server error", async () => {
   });
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectEditFormActionState(
-    TEST_PROJECT_ONE.slug,
     TEST_PROJECT_EDIT_FORM_STATE,
   );
   const form_data = setUpEditFormData();

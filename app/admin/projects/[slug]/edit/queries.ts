@@ -13,6 +13,7 @@ export async function fetchProjectBySlug(
 
   return {
     errors: [],
+    slug: project.slug,
     data: {
       name: project.name,
       description: project.description,

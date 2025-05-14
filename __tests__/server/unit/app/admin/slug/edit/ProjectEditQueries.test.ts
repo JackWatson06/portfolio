@@ -18,6 +18,7 @@ test("fetching transforms project into form state", async () => {
 
   const expected_form_state: ProjectFormState = {
     errors: [],
+    slug: TEST_PROJECT_ONE.slug,
     data: {
       name: TEST_PROJECT_ONE.name,
       description: TEST_PROJECT_ONE.description,

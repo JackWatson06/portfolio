@@ -49,6 +49,7 @@ export const TEST_ADMIN_PROJECT_LIST_VIEW: ProjectListView = [
 
 export const TEST_PROJECT_CREATE_FORM_STATE: ProjectFormState = {
   errors: [],
+  slug: TEST_PROJECT_ONE.slug,
   data: {
     name: TEST_PROJECT_ONE.name,
     description: TEST_PROJECT_ONE.description,
@@ -64,6 +65,7 @@ export const TEST_PROJECT_CREATE_FORM_STATE: ProjectFormState = {
 
 export const TEST_PROJECT_EDIT_FORM_STATE: ProjectFormState = {
   errors: [],
+  slug: TEST_PROJECT_ONE.slug,
   data: {
     name: TEST_PROJECT_ONE.name,
     description: TEST_PROJECT_ONE.description,

@@ -288,6 +288,7 @@ async function createProject(
   if (uploaded_media_results.error != undefined) {
     return {
       errors: [uploaded_media_results.error],
+      slug: valid_form_state.slug,
       data: valid_form_state.data,
     };
   }
@@ -302,6 +303,7 @@ async function createProject(
     // before hand we should have the thumbnail.
     return {
       errors: ["After uploading media the thumbnail could not be found."],
+      slug: valid_form_state.slug,
       data: valid_form_state.data,
     };
   }
@@ -312,7 +314,7 @@ async function createProject(
     tags: valid_form_state.data.tags
       .split(",")
       .map((tag: string) => tag.trim()),
-    private: valid_form_state.data.visibility == "private" ? true : false,
+    private: valid_form_state.data.visibility == "private",
     media: uploaded_media_results.uploaded_media
       .sort(sortUploadedMedia)
       .map((uploaded_media) => {
@@ -335,6 +337,7 @@ async function createProject(
       errors: [
         "Server returned with an error while trying to upload the project.",
       ],
+      slug: valid_form_state.slug,
       data: valid_form_state.data,
     };
   }
@@ -377,6 +380,7 @@ export function useProjectCreateFormActionState(
   ) {
     const state_without_errors = {
       errors: [],
+      slug: prev_state.slug,
       data: { ...prev_state.data },
     };
     const form_state_with_new_attrs = updateFormState(
@@ -528,7 +532,6 @@ function mediaCompare(
 }
 
 async function editProject(
-  slug: string,
   valid_form_state: ProjectFormState,
   prev_form_state: ProjectFormState,
 ): Promise<ProjectFormState> {
@@ -545,6 +548,7 @@ async function editProject(
       errors: [
         "Media file was already uploaded previously. Please choose a new file or remove the file from the existing files.",
       ],
+      slug: valid_form_state.slug,
       data: valid_form_state.data,
     };
   }
@@ -553,6 +557,7 @@ async function editProject(
   if (uploaded_media_results.error != undefined) {
     return {
       errors: [uploaded_media_results.error],
+      slug: valid_form_state.slug,
       data: valid_form_state.data,
     };
   }
@@ -578,6 +583,7 @@ async function editProject(
     // before hand we should have the thumbnail.
     return {
       errors: ["After uploading media the thumbnail could not be found."],
+      slug: valid_form_state.slug,
       data: valid_form_state.data,
     };
   }
@@ -591,7 +597,7 @@ async function editProject(
     })),
   ];
 
-  const uploaded_response = await projectUpdateAction(slug, {
+  const uploaded_response = await projectUpdateAction(valid_form_state.slug, {
     ...(valid_form_state.data.name != prev_form_state.data.name
       ? { name: valid_form_state.data.name }
       : {}),
@@ -609,7 +615,7 @@ async function editProject(
       : {}),
 
     ...(valid_form_state.data.visibility != prev_form_state.data.visibility
-      ? { visibility: valid_form_state.data.visibility }
+      ? { private: valid_form_state.data.visibility == "private" }
       : {}),
 
     ...(mediaCompare(prev_form_state.data.existing_media, media_files) == false
@@ -634,19 +640,25 @@ async function editProject(
       ? { removed_media_hashes: removed_media_hashes }
       : {}),
   });
+
   if (uploaded_response.code == "ERROR") {
     return {
       errors: [
         "Server returned with an error while trying to upload the project.",
       ],
+      slug: valid_form_state.slug,
       data: valid_form_state.data,
     };
   }
-  return valid_form_state;
+
+  return {
+    errors: [],
+    slug: uploaded_response.slug,
+    data: valid_form_state.data,
+  };
 }
 
 export function useProjectEditFormActionState(
-  slug: string,
   initial_state: ProjectFormState,
 ): [
   state: ProjectFormState,
@@ -659,6 +671,7 @@ export function useProjectEditFormActionState(
   ) {
     const state_without_errors = {
       errors: [],
+      slug: prev_state.slug,
       data: { ...prev_state.data },
     };
 
@@ -678,7 +691,7 @@ export function useProjectEditFormActionState(
       return validated_form_state;
     }
 
-    return editProject(slug, form_state_with_new_attrs, prev_state);
+    return editProject(form_state_with_new_attrs, prev_state);
   }
 
   return useActionState(handleFormUploadAction, initial_state);
