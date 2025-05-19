@@ -47,6 +47,21 @@ export const TEST_ADMIN_PROJECT_LIST_VIEW: ProjectListView = [
   },
 ];
 
+const TEST_CREATE_FILES = [
+  new File(["aragorn"], "aragorn.jpg", {
+    type: "image/jpeg",
+  }),
+  new File(["frodo"], "frodo.webp", {
+    type: "image/webp",
+  }),
+  new File(["gandalf"], "gandalf.png", {
+    type: "image/png",
+  }),
+  new File(["sam"], "sam.mp4", {
+    type: "video/mp4",
+  }),
+];
+
 export const TEST_PROJECT_CREATE_FORM_STATE: ProjectFormState = {
   errors: [],
   slug: TEST_PROJECT_ONE.slug,
@@ -55,9 +70,14 @@ export const TEST_PROJECT_CREATE_FORM_STATE: ProjectFormState = {
     description: TEST_PROJECT_ONE.description,
     tags: TEST_PROJECT_ONE.tags.join(", "),
     visibility: "public",
-    media: [],
-    existing_media: TEST_PROJECT_ONE.media,
-    thumbnail: TEST_PROJECT_ONE.thumbnail_media.url,
+    media: TEST_PROJECT_ONE.media.map((media, i) => {
+      return {
+        file: TEST_CREATE_FILES[i],
+        description: media.description,
+      };
+    }),
+    existing_media: [],
+    thumbnail: TEST_CREATE_FILES[2].name,
     links: TEST_PROJECT_ONE.links,
     live_project_link: TEST_PROJECT_ONE.live_project_link,
   },
@@ -70,7 +90,7 @@ export const TEST_PROJECT_EDIT_FORM_STATE: ProjectFormState = {
     name: TEST_PROJECT_ONE.name,
     description: TEST_PROJECT_ONE.description,
     tags: TEST_PROJECT_ONE.tags.join(", "),
-    visibility: "public",
+    visibility: "private",
     media: [],
     existing_media: TEST_PROJECT_ONE.media,
     thumbnail: TEST_PROJECT_ONE.thumbnail_media.url,

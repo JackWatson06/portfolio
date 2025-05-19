@@ -7,34 +7,34 @@ export const TEST_PROJECT_ONE_CREATE_INPUT: ProjectCreate = {
     "Project demonstrating the god like ability of Gandalf the Grey.",
   tags: ["MongoDB", "Web", "Tailwind"],
   thumbnail_media: {
-    url: "/assets/images/gandalf.png",
+    url: "/assets/testing_gandalf",
     description: "Picture of Gandalf holding a staff.",
   },
   live_project_link: "https://gandalf.com",
   media: [
     {
-      url: "/assets/images/gandalf.png",
-      mime_type: "image/png",
-      hash: "testing_gandalf",
-      description: "Picture of Gandalf holding a staff.",
+      url: "/assets/testing_aragorn",
+      mime_type: "image/jpeg",
+      hash: "testing_aragorn",
+      description: "Aragorn kicking butt.",
     },
     {
-      url: "/assets/images/frodo.webp",
+      url: "/assets/testing_frodo",
       mime_type: "image/webp",
       hash: "testing_frodo",
       description: "Frodo dancing on the table.",
     },
     {
-      url: "/assets/videos/sam.mp4",
+      url: "/assets/testing_gandalf",
+      mime_type: "image/png",
+      hash: "testing_gandalf",
+      description: "Picture of Gandalf holding a staff.",
+    },
+    {
+      url: "/assets/testing_sam",
       mime_type: "video/mp4",
       hash: "testing_sam",
       description: "Sam running across the shire.",
-    },
-    {
-      url: "/assets/images/aragorn.jpg",
-      mime_type: "image/jpeg",
-      hash: "testing_aragorn",
-      description: "Aragorn kicking butt.",
     },
   ],
   links: [

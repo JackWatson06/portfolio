@@ -1,5 +1,11 @@
-import { TEST_PROJECT_ONE } from "@/__tests__/seeding/projects/ProjectData";
-import { TEST_PROJECT_EDIT_FORM_STATE } from "@/__tests__/seeding/projects/ProjectViewData";
+import {
+  TEST_PROJECT_ONE,
+  TEST_PROJECT_ONE_CREATE_INPUT,
+} from "@/__tests__/seeding/projects/ProjectData";
+import {
+  TEST_PROJECT_CREATE_FORM_STATE,
+  TEST_PROJECT_EDIT_FORM_STATE,
+} from "@/__tests__/seeding/projects/ProjectViewData";
 import {
   projectCreateAction,
   fetchBlobUploadParameters,
@@ -14,7 +20,6 @@ import {
   ProjectFormSchema,
   ProjectFormState,
 } from "@/app/admin/projects/schemas";
-import { ProjectCreate } from "@/projects/DTOSchema";
 import { useActionState } from "react";
 
 /* -------------------------------------------------------------------------- */
@@ -28,11 +33,35 @@ jest.mock("react", () => ({
   useActionState: jest.fn(),
 }));
 jest.mock("@/app/admin/projects/libs", () => ({
-  sha1HashBlob: jest.fn().mockReturnValue("testing_sha1_hash"),
+  sha1HashBlob: jest.fn((blob) => {
+    const blob_mapping = new Map<Blob, string>();
+    blob_mapping.set(
+      TEST_PROJECT_CREATE_FORM_STATE.data.media[0].file,
+      "testing_aragorn",
+    );
+    blob_mapping.set(
+      TEST_PROJECT_CREATE_FORM_STATE.data.media[1].file,
+      "testing_frodo",
+    );
+    blob_mapping.set(
+      TEST_PROJECT_CREATE_FORM_STATE.data.media[2].file,
+      "testing_gandalf",
+    );
+    blob_mapping.set(
+      TEST_PROJECT_CREATE_FORM_STATE.data.media[3].file,
+      "testing_sam",
+    );
+
+    const hash = blob_mapping.get(blob);
+    if (hash == undefined) {
+      return "testing_sha1_hash";
+    }
+    return hash;
+  }),
 }));
 jest.mock("@/app/admin/projects/actions", () => ({
   projectCreateAction: jest.fn(),
-  fetchBlobUploadParameters: jest.fn().mockReturnValue({
+  fetchBlobUploadParameters: jest.fn((hash) => ({
     upload: {
       url: "https://testing.com",
       method: "POST",
@@ -40,95 +69,15 @@ jest.mock("@/app/admin/projects/actions", () => ({
         Testing: "testing",
       },
     },
-    public_url: "https://testing.com",
-  }),
+    public_url: `/assets/${hash}`,
+  })),
   fetchProjectWithName: jest.fn().mockReturnValue(null),
   projectUpdateAction: jest.fn(),
 }));
 
-const TEST_DEFAULT_FILE_ONE = new File(["testing_b"], "testing_b.png", {
+const TEST_FILE = new File(["testing"], "testing.png", {
   type: "image/png",
 });
-const TEST_DEFAULT_FILE_TWO = new File(["testing_a"], "testing_a.jpg", {
-  type: "image/jpeg",
-});
-
-const TEST_DEFAULT_CREATE_FORM_STATE: ProjectFormState = {
-  data: {
-    name: "testing",
-    description: "testing",
-    tags: "testing_one, testing_two, testing_three",
-    visibility: "private",
-    media: [
-      { file: TEST_DEFAULT_FILE_ONE, description: "testing_b" },
-      { file: TEST_DEFAULT_FILE_TWO, description: "testing_a" },
-    ],
-    existing_media: [],
-    thumbnail: "testing_a.jpg",
-    links: [
-      { url: "https://localhost.com", type: "source" },
-      { url: "https://localhost.com/testing", type: "website" },
-    ],
-    live_project_link: "https://localhost.com/testing",
-  },
-  slug: "testing",
-  errors: [],
-};
-
-const TEST_PROJECT_CREATE_INPUT: ProjectCreate = {
-  name: "testing",
-  description: "testing",
-  tags: ["C++", "TypeScript", "Jest"],
-  private: true,
-  media: [
-    {
-      mime_type: "image/jpeg",
-      url: "https://testing.com",
-      hash: "testing_sha1_hash",
-      description: "testing_a",
-    },
-    {
-      mime_type: "image/png",
-      url: "https://testing.com",
-      hash: "testing_sha1_hash",
-      description: "testing_b",
-    },
-  ],
-  thumbnail_media: {
-    url: "https://testing.com",
-    description: "testing_b",
-  },
-  links: [
-    { url: "https://localhost.com", type: "source" },
-    { url: "https://localhost.com/testing", type: "website" },
-  ],
-  live_project_link: "https://localhost.com/testing",
-};
-
-function setUpCreateFormData(): FormData {
-  const form_data = new FormData();
-
-  form_data.set("name", "testing");
-  form_data.set("description", "testing");
-  form_data.set("tags", "C++, TypeScript, Jest");
-  form_data.set("visibility", "private");
-
-  // Media
-  form_data.append("media_file", TEST_DEFAULT_FILE_ONE);
-  form_data.append("media_file", TEST_DEFAULT_FILE_TWO);
-  form_data.append("media_description", "testing_b");
-  form_data.append("media_description", "testing_a");
-  form_data.set("thumbnail", "testing_b.png");
-
-  // Links
-  form_data.append("link_url", "https://localhost.com");
-  form_data.append("link_type", "source");
-  form_data.append("link_url", "https://localhost.com/testing");
-  form_data.append("link_type", "website");
-  form_data.set("live_project_link", "https://localhost.com/testing");
-
-  return form_data;
-}
 
 function mockUseActionState(): Promise<ProjectFormState> {
   // Create a promise which get's resolved when we call the internal anonymous function that get's
@@ -184,11 +133,41 @@ beforeEach(() => {
 /*                                    Tests                                   */
 /* -------------------------------------------------------------------------- */
 
+function setUpCreateFormData(): FormData {
+  const form_data = new FormData();
+
+  form_data.set("name", TEST_PROJECT_CREATE_FORM_STATE.data.name);
+  form_data.set("description", TEST_PROJECT_CREATE_FORM_STATE.data.description);
+  form_data.set("tags", TEST_PROJECT_CREATE_FORM_STATE.data.tags);
+  form_data.set("visibility", TEST_PROJECT_CREATE_FORM_STATE.data.visibility);
+
+  // Media
+  for (const media_element of TEST_PROJECT_CREATE_FORM_STATE.data.media) {
+    form_data.append("media_file", media_element.file);
+    form_data.append("media_description", media_element.description);
+  }
+  form_data.set("thumbnail", TEST_PROJECT_CREATE_FORM_STATE.data.thumbnail);
+
+  // Link
+  for (const link of TEST_PROJECT_CREATE_FORM_STATE.data.links) {
+    form_data.append("link_url", link.url);
+    form_data.append("link_type", link.type);
+  }
+  form_data.set(
+    "live_project_link",
+    TEST_PROJECT_CREATE_FORM_STATE.data.live_project_link
+      ? TEST_PROJECT_CREATE_FORM_STATE.data.live_project_link
+      : "",
+  );
+
+  return form_data;
+}
+
 /* --------------------- useProjectCreateFormActionState -------------------- */
 test("reseting errors when uploading form", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState({
-    ...TEST_DEFAULT_CREATE_FORM_STATE,
+    ...TEST_PROJECT_CREATE_FORM_STATE,
     errors: ["testing"],
   });
   const form_data = setUpCreateFormData();
@@ -201,7 +180,7 @@ test("reseting errors when uploading form", async () => {
 test("error while uploading a form with descriptions length not matching files", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
   form_data.append("media_description", "testing");
@@ -216,7 +195,7 @@ test("error while uploading a form with descriptions length not matching files",
 test("error while uploading a form with links length not matching types", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
   form_data.append("link_url", "testing");
@@ -229,25 +208,29 @@ test("error while uploading a form with links length not matching types", async 
 });
 
 test.each([
-  ["name", "testing", (response: ProjectFormSchema) => response.name],
+  [
+    "name",
+    TEST_PROJECT_CREATE_FORM_STATE.data.name,
+    (response: ProjectFormSchema) => response.name,
+  ],
   [
     "description",
-    "testing",
+    TEST_PROJECT_CREATE_FORM_STATE.data.description,
     (response: ProjectFormSchema) => response.description,
   ],
   [
     "tags",
-    "testing_one, testing_two, testing_three",
+    TEST_PROJECT_CREATE_FORM_STATE.data.tags,
     (response: ProjectFormSchema) => response.tags,
   ],
   [
     "visibility",
-    "private",
+    TEST_PROJECT_CREATE_FORM_STATE.data.visibility,
     (response: ProjectFormSchema) => response.visibility,
   ],
   [
     "thumbnail",
-    "testing_a.jpg",
+    TEST_PROJECT_CREATE_FORM_STATE.data.thumbnail,
     (response: ProjectFormSchema) => response.thumbnail,
   ],
 ])(
@@ -255,7 +238,7 @@ test.each([
   async (attribute, prev_value, get_callback) => {
     const returned_errors_promise = mockUseActionState();
     const [errors, handleAction] = useProjectCreateFormActionState(
-      TEST_DEFAULT_CREATE_FORM_STATE,
+      TEST_PROJECT_CREATE_FORM_STATE,
     );
     const form_data = setUpCreateFormData();
     form_data.delete(attribute);
@@ -345,7 +328,7 @@ test.each([
     // attribute used for the test string.
     const returned_errors_promise = mockUseActionState();
     const [errors, handleAction] = useProjectCreateFormActionState(
-      TEST_DEFAULT_CREATE_FORM_STATE,
+      TEST_PROJECT_CREATE_FORM_STATE,
     );
     const form_data = setUpCreateFormData();
     set_callback(form_data);
@@ -360,7 +343,7 @@ test.each([
 test("filtering empty media files", async () => {
   const returned_errors_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
 
@@ -397,7 +380,7 @@ test("filtering empty media files", async () => {
 test("validating thumbnail is media element", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
   form_data.set("thumbnail", "testing.png");
@@ -412,7 +395,7 @@ test("validating thumbnail is media element", async () => {
 test("validating primary link exists in links", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
   form_data.set("live_project_link", "https://does_not_exist.com");
@@ -428,7 +411,7 @@ test("validating slug does not exist", async () => {
   (fetchProjectWithName as jest.Mock).mockReturnValueOnce(TEST_PROJECT_ONE);
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
 
@@ -443,9 +426,19 @@ test("uploading file with the correct parameters", async () => {
   (fetch as jest.Mock).mockReset();
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
+  const test_file = new File(["testing_one"], "testing_one.png", {
+    type: "image/png",
+  });
+
   const form_data = setUpCreateFormData();
+  form_data.delete("media_file");
+  form_data.delete("media_description");
+
+  form_data.append("media_file", test_file);
+  form_data.append("media_description", "testing");
+  form_data.set("thumbnail", "testing_one.png");
 
   handleAction(form_data);
   await returned_action_promise;
@@ -457,7 +450,7 @@ test("uploading file with the correct parameters", async () => {
     }),
     headers: {
       Testing: "testing",
-      "Content-Length": "9",
+      "Content-Length": "11",
       "Content-Type": "image/png",
     },
   });
@@ -467,7 +460,7 @@ test("uploading file returns error when we can't find the upload parameters", as
   (fetchBlobUploadParameters as jest.Mock).mockReturnValueOnce(null);
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
 
@@ -484,7 +477,7 @@ test("uploading file returns error when the fetch fails", async () => {
   });
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
 
@@ -501,7 +494,7 @@ test("uploading file returns error when fetch has error code higher than 300", a
   });
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
 
@@ -515,7 +508,7 @@ test("uploading file returns error when fetch has error code higher than 300", a
 test("transforming form input before creating", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
 
@@ -523,14 +516,14 @@ test("transforming form input before creating", async () => {
   await returned_action_promise;
 
   expect(projectCreateAction as jest.Mock).toHaveBeenCalledWith(
-    TEST_PROJECT_CREATE_INPUT,
+    TEST_PROJECT_ONE_CREATE_INPUT,
   );
 });
 
 test("transforming form input sets live_project_link to undefined if empty", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
 
@@ -540,7 +533,7 @@ test("transforming form input sets live_project_link to undefined if empty", asy
   await returned_action_promise;
 
   const expected_project_create_input = {
-    ...TEST_PROJECT_CREATE_INPUT,
+    ...TEST_PROJECT_ONE_CREATE_INPUT,
   };
   delete expected_project_create_input.live_project_link;
   expect(projectCreateAction as jest.Mock).toHaveBeenCalledWith(
@@ -554,7 +547,7 @@ test("creating the project errors on server error", async () => {
   });
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
-    TEST_DEFAULT_CREATE_FORM_STATE,
+    TEST_PROJECT_CREATE_FORM_STATE,
   );
   const form_data = setUpCreateFormData();
 
@@ -653,20 +646,20 @@ test("uploading file with the correct parameters when editing", async () => {
     TEST_PROJECT_EDIT_FORM_STATE,
   );
   const form_data = setUpEditFormData();
-  form_data.append("media_file", TEST_DEFAULT_FILE_ONE);
-  form_data.append("media_description", "testing_b");
+  form_data.append("media_file", TEST_FILE);
+  form_data.append("media_description", "testing");
 
   handleAction(form_data);
   await returned_action_promise;
 
   expect(fetch as jest.Mock).toHaveBeenCalledWith("https://testing.com", {
     method: "POST",
-    body: new File(["testing_one"], "testing_one.png", {
+    body: new File(["testing"], "testing_one.png", {
       type: "image/png",
     }),
     headers: {
       Testing: "testing",
-      "Content-Length": "9",
+      "Content-Length": "7",
       "Content-Type": "image/png",
     },
   });
@@ -689,8 +682,8 @@ test("validating new media not in existing media", async () => {
     },
   });
   const form_data = setUpEditFormData();
-  form_data.append("media_file", TEST_DEFAULT_FILE_ONE);
-  form_data.append("media_description", "testing_b");
+  form_data.append("media_file", TEST_FILE);
+  form_data.append("media_description", "testing");
   form_data.append("media_existing_hash", "testing_sha1_hash");
   form_data.set("thumbnail", "https://testing.com/testing");
 
@@ -719,8 +712,8 @@ test.each([
   ],
   [
     "visibility",
-    (fd: FormData) => fd.set("visibility", "private"),
-    { private: true },
+    (fd: FormData) => fd.set("visibility", "public"),
+    { private: false },
   ],
   [
     "thumbnail",
@@ -791,31 +784,31 @@ test("updating existing media elements adds to updated media list", async () => 
   );
   const form_data = setUpEditFormData();
   form_data.delete("media_existing_hash");
-  form_data.append("media_file", TEST_DEFAULT_FILE_ONE);
-  form_data.append("media_description", "testing_b");
+  form_data.append("media_file", TEST_FILE);
+  form_data.append("media_description", "testing");
   form_data.append(
     "media_existing_hash",
-    TEST_PROJECT_EDIT_FORM_STATE.data.existing_media[0].hash,
+    TEST_PROJECT_EDIT_FORM_STATE.data.existing_media[2].hash,
   );
 
   handleAction(form_data);
 
-  await returned_action_promise;
+  const response = await returned_action_promise;
   expect(mock_project_update_action).toHaveBeenCalledWith(
     TEST_PROJECT_ONE.slug,
     {
       media: [
-        TEST_PROJECT_EDIT_FORM_STATE.data.existing_media[0],
+        TEST_PROJECT_EDIT_FORM_STATE.data.existing_media[2],
         {
           mime_type: "image/png",
-          url: "https://testing.com",
+          url: "/assets/testing_sha1_hash",
           hash: "testing_sha1_hash",
-          description: "testing_b",
+          description: "testing",
         },
       ],
       removed_media_hashes: [
+        TEST_PROJECT_EDIT_FORM_STATE.data.existing_media[0].hash,
         TEST_PROJECT_EDIT_FORM_STATE.data.existing_media[1].hash,
-        TEST_PROJECT_EDIT_FORM_STATE.data.existing_media[2].hash,
         TEST_PROJECT_EDIT_FORM_STATE.data.existing_media[3].hash,
       ],
     },
@@ -832,9 +825,9 @@ test("updating thumbnail with newly uploaded file", async () => {
     TEST_PROJECT_EDIT_FORM_STATE,
   );
   const form_data = setUpEditFormData();
-  form_data.append("media_file", TEST_DEFAULT_FILE_ONE);
-  form_data.append("media_description", "testing_b");
-  form_data.set("thumbnail", "testing_b.png");
+  form_data.append("media_file", TEST_FILE);
+  form_data.append("media_description", "testing");
+  form_data.set("thumbnail", "testing.png");
 
   handleAction(form_data);
 
@@ -846,14 +839,14 @@ test("updating thumbnail with newly uploaded file", async () => {
         ...TEST_PROJECT_EDIT_FORM_STATE.data.existing_media,
         {
           mime_type: "image/png",
-          url: "https://testing.com",
+          url: "/assets/testing_sha1_hash",
           hash: "testing_sha1_hash",
-          description: "testing_b",
+          description: "testing",
         },
       ],
       thumbnail_media: {
-        url: "https://testing.com",
-        description: "testing_b",
+        url: "/assets/testing_sha1_hash",
+        description: "testing",
       },
     },
   );
