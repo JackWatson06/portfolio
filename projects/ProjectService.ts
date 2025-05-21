@@ -2,6 +2,7 @@ import { Project } from "@/services/db/schemas/Project";
 import { WithId } from "mongodb";
 import { ProjectCreate, ProjectUpdate } from "./DTOSchema";
 import {
+  CouldNotRemoveResult,
   DuplicateResult,
   InvalidResult,
   NotFoundResult,
@@ -21,6 +22,12 @@ export interface ProjectService {
   update(
     slug: string,
     project_input: ProjectUpdate,
-  ): Promise<SlugResult | NotFoundResult | InvalidResult | DuplicateResult>;
+  ): Promise<
+    | SlugResult
+    | NotFoundResult
+    | CouldNotRemoveResult
+    | InvalidResult
+    | DuplicateResult
+  >;
   delete(slug: string): Promise<SuccessfulResult | NotFoundResult>;
 }

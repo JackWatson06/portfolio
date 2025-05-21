@@ -1,6 +1,6 @@
 import { TEST_ADMIN_PROJECT_LIST_VIEW } from "@/__tests__/seeding/projects/ProjectViewData";
 import ProjectListElement from "@/app/admin/projects/ProjectEntryElement";
-import { ProjectListElementView } from "@/app/admin/projects/queries";
+import { ProjectListElementView } from "@/app/admin/projects/schemas";
 import "@testing-library/jest-dom";
 import {
   ByRoleMatcher,
@@ -32,7 +32,7 @@ function getSectionByHeader(
   return closest_section;
 }
 
-test("project list element has valid HTML.", () => {
+test("project list element has valid HTML", () => {
   const { container } = render(
     <ProjectListElement project={project_entry_view} />,
   );
@@ -40,7 +40,7 @@ test("project list element has valid HTML.", () => {
   expect(container.innerHTML).toHTMLValidate();
 });
 
-test("rendering the name of the project.", () => {
+test("rendering the name of the project", () => {
   const { queryByRole } = render(
     <ProjectListElement project={project_entry_view} />,
   );
@@ -61,7 +61,7 @@ test("marking a project as public.", () => {
   expect(queryByRole("status")).toHaveTextContent(/public/i);
 });
 
-test("marking a project as private.", () => {
+test("marking a project as private", () => {
   const { queryByRole } = render(
     <ProjectListElement
       project={{
@@ -86,7 +86,7 @@ test.each([[/^MongoDB$/i], [/^Web$/i], [/^Tailwind$/i]])(
   },
 );
 
-test("displaying the thumbnail image for the project.", () => {
+test("displaying the thumbnail image for the project", () => {
   const { queryByRole } = render(
     <ProjectListElement project={project_entry_view} />,
   );
@@ -98,7 +98,7 @@ test("displaying the thumbnail image for the project.", () => {
   ).toBeInTheDocument();
 });
 
-test("displaying the correct link for editing a project.", () => {
+test("displaying the correct link for editing a project", () => {
   const { queryByRole } = render(
     <ProjectListElement project={project_entry_view} />,
   );
@@ -123,7 +123,7 @@ test.each(
   expect(within(media_section_element).queryByText(url)).toBeInTheDocument();
 });
 
-test("displaying the mime type for a media element.", () => {
+test("displaying the mime type for a media element", () => {
   const { getByRole } = render(
     <ProjectListElement project={project_entry_view} />,
   );
@@ -134,7 +134,7 @@ test("displaying the mime type for a media element.", () => {
   ).toBeInTheDocument();
 });
 
-test("displaying the description for a media element.", () => {
+test("displaying the description for a media element", () => {
   const { getByRole } = render(
     <ProjectListElement project={project_entry_view} />,
   );
@@ -160,7 +160,7 @@ test.each(
   expect(within(link_section_element).queryByText(url)).toBeInTheDocument();
 });
 
-test("displaying the type for a link.", () => {
+test("displaying the type for a link", () => {
   const { getByRole } = render(
     <ProjectListElement project={project_entry_view} />,
   );
@@ -171,7 +171,7 @@ test("displaying the type for a link.", () => {
   ).toBeInTheDocument();
 });
 
-test("displaying the created at date.", () => {
+test("displaying the created at date", () => {
   const { getByRole } = render(
     <ProjectListElement
       project={{
@@ -187,7 +187,7 @@ test("displaying the created at date.", () => {
   ).toBeInTheDocument();
 });
 
-test("displaying the last edited date.", () => {
+test("displaying the last edited date", () => {
   const { getByRole } = render(
     <ProjectListElement
       project={{
@@ -203,7 +203,7 @@ test("displaying the last edited date.", () => {
   ).toBeInTheDocument();
 });
 
-test("displaying the delete button.", () => {
+test("displaying the delete button", () => {
   const { queryByRole } = render(
     <ProjectListElement project={project_entry_view} />,
   );
@@ -215,7 +215,7 @@ test("displaying the delete button.", () => {
   ).toBeInTheDocument();
 });
 
-test("displaying the edit link.", () => {
+test("displaying the edit link", () => {
   const { queryByRole } = render(
     <ProjectListElement project={project_entry_view} />,
   );
@@ -227,7 +227,7 @@ test("displaying the edit link.", () => {
   ).toBeInTheDocument();
 });
 
-test("displaying the view link.", () => {
+test("displaying the view link", () => {
   const { queryByRole } = render(
     <ProjectListElement project={project_entry_view} />,
   );

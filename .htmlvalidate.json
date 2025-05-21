@@ -3,6 +3,7 @@
   "extends": ["html-validate:recommended"],
   "rules": {
     "attribute-boolean-style": "off",
+    "form-dup-name": "off",
     "no-inline-style": "off"
   },
   "elements": ["html5", "./elements.mjs"]

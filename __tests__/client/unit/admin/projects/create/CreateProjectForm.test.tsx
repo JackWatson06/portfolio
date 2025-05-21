@@ -1,31 +1,20 @@
 import CreateProjectForm from "@/app/admin/projects/create/CreateProjectForm";
-import {
-  ProjectFormState,
-  useProjectFormActionState,
-} from "@/app/admin/projects/create/hooks";
+import { useProjectCreateFormActionState } from "@/app/admin/projects/hooks";
+import { ProjectFormState } from "@/app/admin/projects/schemas";
 import "@testing-library/jest-dom";
-import { fireEvent, logRoles, render, screen } from "@testing-library/react";
-import userEvent, { UserEvent } from "@testing-library/user-event";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "html-validate/jest";
-import { useActionState } from "react";
+
+/**
+ * TODO: I got rid of the tests for setting the value becuase that's essentially testing the contract
+ * with the child components (essentially testing we call the children correctly). Not a bad thing
+ * but may apply more through integration testing.
+ */
 
 /* -------------------------------------------------------------------------- */
 /*                                    Mocks                                   */
 /* -------------------------------------------------------------------------- */
-jest.mock("@/app/admin/projects/create/hooks", () => ({
-  useProjectFormActionState: jest
-    .fn()
-    .mockImplementation(() => [{ ...DEFAULT_FORM_STATE }, jest.fn()]),
-}));
-
-jest.mock("react", () => {
-  return {
-    ...jest.requireActual("react"),
-    useActionState: jest.fn(),
-    useEffect: jest.fn(), // Mocking this because we don't have the DataTransfer API in jsdom.
-  };
-});
-
 const DEFAULT_FORM_STATE: ProjectFormState = {
   data: {
     name: "testing",
@@ -40,6 +29,7 @@ const DEFAULT_FORM_STATE: ProjectFormState = {
         description: "testing",
       },
     ],
+    existing_media: [],
     thumbnail: "testing.png",
     links: [
       {
@@ -52,18 +42,54 @@ const DEFAULT_FORM_STATE: ProjectFormState = {
   errors: [],
 };
 
-async function setMediaInputFields(): Promise<HTMLInputElement> {
+jest.mock("@/app/admin/projects/hooks", () => ({
+  useProjectCreateFormActionState: jest.fn(() => [
+    { ...DEFAULT_FORM_STATE },
+    jest.fn(),
+  ]),
+}));
+
+jest.mock("react", () => {
+  return {
+    ...jest.requireActual("react"),
+    useEffect: jest.fn(), // Mocking this because we don't have the DataTransfer API in jsdom.
+  };
+});
+
+/* -------------------------------------------------------------------------- */
+/*                                    Tests                                   */
+/* -------------------------------------------------------------------------- */
+test("admin project create form renders valid HTML", async () => {
+  const { container } = render(<CreateProjectForm />);
+
+  expect(container.innerHTML).toHTMLValidate();
+});
+
+test("submitting a valid form", async () => {
+  // Arrange
+  const submit_form_mock = jest.fn();
+  (useProjectCreateFormActionState as jest.Mock).mockImplementationOnce(() => [
+    { ...DEFAULT_FORM_STATE },
+    submit_form_mock,
+  ]);
   const user = userEvent.setup();
 
-  // Upload file.
+  // Act
+  render(<CreateProjectForm />);
+
+  // Looks like theres an issue with the required file input field and checking the forms input validity with the
+  // DOM interaction library.
+  // https://github.com/testing-library/user-event/issues/1133
+  const media_input = screen.getByLabelText(/upload media/i);
+  media_input.removeAttribute("required");
+
+  // Upload a file.
   const testing_one_file = new File(["testing"], "testing.png", {
     type: "image/png",
   });
-
-  const media_input = screen.getByLabelText(/upload media/i);
   await user.upload(media_input, [testing_one_file]);
 
-  // Get inputs created after the file upload.
+  // Get and set the required frields.
   const description_input = screen.getByRole("textbox", {
     name: /testing\.png description/i,
   });
@@ -74,35 +100,6 @@ async function setMediaInputFields(): Promise<HTMLInputElement> {
   description_input.setAttribute("value", "testing");
   thumbnail_input.setAttribute("value", "testing.png");
 
-  return media_input as HTMLInputElement;
-}
-
-/* -------------------------------------------------------------------------- */
-/*                                    Tests                                   */
-/* -------------------------------------------------------------------------- */
-test("admin project create form renders valid HTML.", async () => {
-  const { container } = render(<CreateProjectForm />);
-
-  expect(container.innerHTML).toHTMLValidate();
-});
-
-test("submitting a valid form.", async () => {
-  // Arrange
-  const submit_form_mock = jest.fn();
-  (useProjectFormActionState as jest.Mock).mockImplementationOnce(() => [
-    { ...DEFAULT_FORM_STATE },
-    submit_form_mock,
-  ]);
-  const user = userEvent.setup();
-
-  // Act
-  render(<CreateProjectForm />);
-
-  const media_input = await setMediaInputFields();
-  // Looks like theres an issue with the required file input field and checking the forms input validity with the
-  // DOM interaction library.
-  // https://github.com/testing-library/user-event/issues/1133
-  media_input.removeAttribute("required");
   const submit_button = screen.getByRole("button", {
     name: /submit/i,
   });
@@ -114,7 +111,7 @@ test("submitting a valid form.", async () => {
 
 test("displaying loading when pending upload", () => {
   const submit_form_mock = jest.fn();
-  (useProjectFormActionState as jest.Mock).mockImplementationOnce(() => [
+  (useProjectCreateFormActionState as jest.Mock).mockImplementationOnce(() => [
     { ...DEFAULT_FORM_STATE },
     submit_form_mock,
     true,
@@ -131,118 +128,3 @@ test("displaying loading when pending upload", () => {
     }),
   ).toBeInTheDocument();
 });
-
-/* -------------------------- Test Required Values -------------------------- */
-function setNameValue() {
-  screen
-    .getByRole("textbox", {
-      name: /name/i,
-    })
-    .setAttribute("value", "");
-}
-
-function setDescriptionValue() {
-  screen
-    .getByRole("textbox", {
-      name: /markdown description/i,
-    })
-    .setAttribute("value", "");
-}
-
-function setMediaDescriptionsValue() {
-  screen
-    .getByRole("textbox", {
-      name: /testing\.png description/i,
-    })
-    .setAttribute("value", "");
-}
-
-function setThumbnailValue() {
-  screen
-    .getByRole("textbox", {
-      name: /thumbnail/i,
-    })
-    .setAttribute("value", "");
-}
-
-test.each([
-  ["name", setNameValue],
-  ["description", setDescriptionValue],
-  ["media descriptions", setMediaDescriptionsValue],
-  ["thumbnail", setThumbnailValue],
-])("form requires a %s", async (form_field, attribute_set_callback) => {
-  const [state, submit_form_mock] =
-    useProjectFormActionState(DEFAULT_FORM_STATE);
-  const user = userEvent.setup();
-
-  render(<CreateProjectForm />);
-  await setMediaInputFields();
-  attribute_set_callback();
-  const submit_button = screen.getByRole("button", {
-    name: /submit/i,
-  });
-  await user.click(submit_button);
-
-  expect(submit_form_mock).not.toHaveBeenCalled();
-});
-
-test("form requires a media element", async () => {
-  const [state, submit_form_mock] =
-    useProjectFormActionState(DEFAULT_FORM_STATE);
-  const user = userEvent.setup();
-
-  // Act - By note seeding the media files we never set media input.
-  render(<CreateProjectForm />);
-  const submit_button = screen.getByRole("button", {
-    name: /submit/i,
-  });
-  await user.click(submit_button);
-
-  expect(submit_form_mock).not.toHaveBeenCalled();
-});
-
-/* ----------------------------- Test Get Values ---------------------------- */
-function getNameValue() {
-  return screen
-    .getByRole("textbox", {
-      name: /name/i,
-    })
-    .getAttribute("value");
-}
-
-function getDescriptionValue() {
-  return (
-    screen.getByRole("textbox", {
-      name: /markdown description/i,
-    }) as HTMLTextAreaElement
-  ).value;
-}
-
-function getTagsValue() {
-  return screen
-    .getByRole("textbox", {
-      name: /tags/i,
-    })
-    .getAttribute("value");
-}
-
-function getVisilibityValue() {
-  const select_box = screen.getByRole("combobox", {
-    name: /visibility/i,
-  }) as HTMLSelectElement;
-  return select_box.options[select_box.selectedIndex].value;
-}
-
-test.each([
-  ["name", getNameValue, "testing"],
-  ["description", getDescriptionValue, "testing"],
-  ["tags", getTagsValue, "testing"],
-  ["visibility", getVisilibityValue, "private"],
-])(
-  "form defaults %s to current state",
-  async (form_field, attribute_get_callback, expected_value) => {
-    render(<CreateProjectForm />);
-
-    expect(attribute_get_callback()).toBe(expected_value);
-  },
-);

@@ -1,34 +1,10 @@
+/**
+ * TODO: Not all the functions here run are called by the client. fetchProjectListView is not but
+ * fetchBlobUploadParameters and fetchProjectWithName are. Should we validate the cookie for
+ * fetchProjectListView? This should only be called on the server.
+ */
 import { init } from "@/services/setup";
-
-export type MediaFileView = {
-  url: string;
-  mime_type: string;
-  description: string;
-};
-
-export type LinkView = {
-  type: string;
-  url: string;
-};
-
-export type ThumbnailView = {
-  url: string;
-  description: string;
-};
-
-export type ProjectListElementView = {
-  title: string;
-  created_at: string;
-  updated_at: string;
-  thumbnail_media: ThumbnailView;
-  private: boolean;
-  tags: string[];
-  view_link: string;
-  edit_link: string;
-  media_files: MediaFileView[];
-  links: LinkView[];
-};
-export type ProjectListView = ProjectListElementView[];
+import { ProjectListView } from "./schemas";
 
 export async function fetchProjectListView(): Promise<ProjectListView> {
   const portfolio_service_locator = await init();

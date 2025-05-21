@@ -1,3 +1,7 @@
+// TODO reset all mocks before running tests in here. There's a dependency between tests that
+// check for construction params and tests that run init();
+// jest.resetAllMocks();
+
 import { load_from_file } from "@/services/settings/load-env-file";
 import {
   MongoDBConnection,
@@ -14,7 +18,6 @@ import { JWTSessionAlgorithm } from "@/auth/services/JWTSessionAlgorithm";
 import { ExpiresDateTimeCalculator } from "@/auth/login/ExpiresDateTimeCalculator";
 import { LoginTransactionScript } from "@/auth/login/LoginTransactionScript";
 import { LocalBlobStorage } from "@/services/fs/LocalBlobStorage";
-import { BackBlazeBlobStorage } from "@/services/fs/BackBlazeBlobStorage";
 
 jest.mock("@/services/settings/load-env-file");
 jest.mock("@/services/db/PortfolioDatabaseFactory");
@@ -90,7 +93,11 @@ test("init login script with environment variables", () => {
 });
 
 test("init local blob storage with environment variables", async () => {
-  expect(LocalBlobStorage).toHaveBeenCalledWith(8080, "http://127.0.0.1:3000");
+  expect(LocalBlobStorage).toHaveBeenCalledWith(
+    8080,
+    "http://127.0.0.1:3000",
+    expect.anything(),
+  );
 });
 
 test("init back blaze blob with environment variables", async () => {
@@ -105,8 +112,13 @@ test("init back blaze blob with environment variables", async () => {
     },
   }));
   const backblaze_module = await import("@/services/fs/BackBlazeBlobStorage");
-
-  await import("@/services/setup");
+  const mongo_connection_module = await import(
+    "@/services/db/MongoDBConnection"
+  );
+  const setup_module = await import("@/services/setup");
+  // @ts-ignore : I am importing a jest mock function from __mocks__
+  mongo_connection_module.mockConnected.mockReturnValue(true);
+  await setup_module.init();
 
   expect(backblaze_module.BackBlazeBlobStorage).toHaveBeenCalledWith(
     "test_app_key_id",

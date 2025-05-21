@@ -7,8 +7,8 @@ import { axe, toHaveNoViolations } from "jest-axe";
 expect.extend(toHaveNoViolations);
 
 jest.mock("@/services/setup");
-jest.mock("@/app/admin/projects/create/actions", () => ({
-  handleProjectFormAction: jest.fn(),
+jest.mock("@/app/admin/projects/actions", () => ({
+  projectCreateAction: jest.fn(),
 }));
 
 test("admin project create page renders valid HTML.", async () => {

@@ -47,7 +47,7 @@ export class ProjectValidator implements Validator {
         error_message:
           "The primary link you selected does not exist in your links section.",
         is_valid: () =>
-          project.live_project_link != undefined &&
+          project.live_project_link == undefined ||
           this.linksHaveUrl(project.live_project_link, project.links),
       },
       {

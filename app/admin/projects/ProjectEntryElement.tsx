@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ProjectListElementView } from "./queries";
+import { ProjectListElementView } from "./schemas";
 import Link from "next/link";
 import DeleteProjectButton from "./DeleteProjectButton";
 import { PropsWithChildren } from "react";

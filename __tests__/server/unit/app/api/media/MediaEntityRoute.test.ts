@@ -1,6 +1,6 @@
-import { GET, DELETE } from "@/app/api/media/[file_name]/route";
+import { GET } from "@/app/api/media/[file_name]/route";
 import { MediaRead } from "@/media/DTOSchema";
-import { TransactionScript as MediaTransactionScript } from "@/media/MediaService";
+import { MediaService } from "@/media/MediaService";
 import { ServiceResult } from "@/media/MediaServiceResult";
 import { init } from "@/services/setup";
 
@@ -21,7 +21,7 @@ const MEDIA_READ: MediaRead = {
   data: Buffer.from([1, 2, 3]),
 };
 
-let mocked_media_transaction_script: MediaTransactionScript;
+let mocked_media_transaction_script: MediaService;
 beforeEach(async () => {
   mocked_media_transaction_script = (await init()).media;
   (mocked_media_transaction_script.delete as jest.Mock).mockReturnValue({
@@ -111,61 +111,6 @@ test("reading a file with init error returns 500", async () => {
   });
 
   const response = await GET(request, TEST_ROUTE_PARAM);
-
-  expect(response.status).toBe(500);
-});
-
-/* -------------------------------------------------------------------------- */
-/*                                Delete Route                                */
-/* -------------------------------------------------------------------------- */
-test("deleting a file returns 200", async () => {
-  (mocked_media_transaction_script.delete as jest.Mock).mockReturnValue({
-    code: ServiceResult.SUCCESS,
-  });
-  const request = new Request(TEST_ENDPOINT, {
-    method: "DELETE",
-  });
-
-  const response = await DELETE(request, TEST_ROUTE_PARAM);
-
-  expect(response.status).toBe(200);
-});
-
-test("deleting a file returns 404", async () => {
-  (mocked_media_transaction_script.delete as jest.Mock).mockReturnValue({
-    code: ServiceResult.NOT_FOUND,
-  });
-  const request = new Request(TEST_ENDPOINT, {
-    method: "DELETE",
-  });
-
-  const response = await DELETE(request, TEST_ROUTE_PARAM);
-
-  expect(response.status).toBe(404);
-});
-
-test("deleting a file returns 500 on init error", async () => {
-  (init as jest.Mock).mockImplementationOnce(() => {
-    throw new Error("Testing");
-  });
-  const request = new Request(TEST_ENDPOINT, {
-    method: "DELETE",
-  });
-
-  const response = await DELETE(request, TEST_ROUTE_PARAM);
-
-  expect(response.status).toBe(500);
-});
-
-test("deleting a file returns 500 on service error", async () => {
-  (mocked_media_transaction_script.delete as jest.Mock).mockReturnValue({
-    code: ServiceResult.SERVICE_ERROR,
-  });
-  const request = new Request(TEST_ENDPOINT, {
-    method: "DELETE",
-  });
-
-  const response = await DELETE(request, TEST_ROUTE_PARAM);
 
   expect(response.status).toBe(500);
 });

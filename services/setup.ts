@@ -28,12 +28,14 @@ import { SessionAlgorithm } from "@/auth/services/SessionAlgorithm";
 import { TokenTransactionScript } from "@/auth/token/TokenTransactionScript";
 import { MediaScriptLoggerInstrumentation } from "@/media/MediaScriptLoggerInstrumentation";
 import { Logger } from "./logging/Logger";
+import { MediaService } from "@/media/MediaService";
 
 /* -------------------------------------------------------------------------- */
 /*                              Service Factories                             */
 /* -------------------------------------------------------------------------- */
 function buildBlobStorageService(
   environment_settings_dictionary: EnvironmentSettingDictionary,
+  media_service: MediaService,
 ): BlobStorage {
   if (environment_settings_dictionary.env == "production") {
     return new BackBlazeBlobStorage(
@@ -47,6 +49,7 @@ function buildBlobStorageService(
   return new LocalBlobStorage(
     environment_settings_dictionary.port,
     environment_settings_dictionary.local_blob_public_origin,
+    media_service,
   );
 }
 
@@ -92,11 +95,18 @@ function buildMediaUploadTransactionScript(blob_storage: BlobStorage) {
   return new MediaUploadTransactionScript(blob_storage);
 }
 
-function buildProjectsTransactionScript(projects: Collection<Project>) {
+function buildProjectsTransactionScript(
+  projects: Collection<Project>,
+  blob_storage: BlobStorage,
+) {
   const project_gateway = new ProjectsGateway(projects);
   const project_validator = new ProjectValidator();
 
-  return new ProjectsTransactionScript(project_validator, project_gateway);
+  return new ProjectsTransactionScript(
+    project_validator,
+    project_gateway,
+    blob_storage,
+  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -120,9 +130,6 @@ const local_file_system = new LocalFileSystem(
   file_hashing_algorithm,
   portfolio_logger,
 );
-const blob_storage_service = buildBlobStorageService(
-  environment_settings_dictionary,
-);
 const session_algorithm = new JWTSessionAlgorithm(
   environment_settings_dictionary.jwt_secret,
 );
@@ -139,6 +146,15 @@ export async function init(): Promise<PortfolioServiceLocator> {
     throw new Error("Error trying to connect to MongoDB.");
   }
 
+  const media_transaction_script = buildMediaTransactionScript(
+    mongo_connection.db.media,
+    portfolio_logger,
+  );
+  const blob_storage_service = buildBlobStorageService(
+    environment_settings_dictionary,
+    media_transaction_script,
+  );
+
   portfolio_service_locator = new PortfolioServiceLocator(
     buildLoginTransactionScript(
       environment_settings_dictionary,
@@ -147,7 +163,10 @@ export async function init(): Promise<PortfolioServiceLocator> {
     buildTokenTransactionScript(session_algorithm),
     buildMediaTransactionScript(mongo_connection.db.media, portfolio_logger),
     buildMediaUploadTransactionScript(blob_storage_service),
-    buildProjectsTransactionScript(mongo_connection.db.projects),
+    buildProjectsTransactionScript(
+      mongo_connection.db.projects,
+      blob_storage_service,
+    ),
   );
   return portfolio_service_locator;
 }
