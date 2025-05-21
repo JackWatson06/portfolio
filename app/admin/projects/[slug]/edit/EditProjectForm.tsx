@@ -1,32 +1,28 @@
 "use client";
 
-import ProjectMetadataInput from "../ProjectMetadataInput";
-import { useProjectCreateFormActionState } from "../hooks";
-import LinkInput from "../LinkInput";
-import MediaInput from "../MediaInput";
 import FormAlert from "@/components/FormAlert";
-import { ProjectFormState } from "../schemas";
-import { FormEvent, startTransition } from "react";
+import { ProjectFormState } from "../../schemas";
+import { useProjectEditFormActionState } from "../../hooks";
+import ProjectMetadataInput from "../../ProjectMetadataInput";
+import MediaInput from "../../MediaInput";
+import LinkInput from "../../LinkInput";
+import { useRouter } from "next/navigation";
+import { FormEvent, startTransition, useEffect } from "react";
 
-const DEFAULT_FORM_STATE: ProjectFormState = {
-  data: {
-    name: "",
-    description: "",
-    tags: "",
-    visibility: "private",
-    media: [],
-    existing_media: [],
-    thumbnail: "",
-    links: [],
-    live_project_link: "",
-  },
-  slug: "",
-  errors: [],
+type EditProjectFormProps = {
+  form_state: ProjectFormState;
 };
 
-export default function AdminProjectCreateForm() {
+export default function EditProjectForm({ form_state }: EditProjectFormProps) {
   const [state, handleAction, is_pending] =
-    useProjectCreateFormActionState(DEFAULT_FORM_STATE);
+    useProjectEditFormActionState(form_state);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (form_state.slug != state.slug) {
+      router.push(`/admin/projects/${state.slug}/edit`);
+    }
+  }, [form_state, state]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,6 +32,7 @@ export default function AdminProjectCreateForm() {
   };
 
   return (
+    // onSubmit here because actions resets form state... this is wild: https://github.com/facebook/react/issues/29034
     <form onSubmit={handleSubmit} className="flex max-w-xs flex-col gap-10">
       <FormAlert errors={state.errors} />
 
@@ -46,6 +43,7 @@ export default function AdminProjectCreateForm() {
         value_visibility={state.data.visibility}
       />
       <MediaInput
+        value_existing_media={state.data.existing_media}
         value_media={state.data.media}
         value_thumbnail={state.data.thumbnail}
       />

@@ -1,9 +1,16 @@
-import { BlobStorage, UploadHTTPParams } from "./BlobStorage";
+import { MediaService } from "@/media/MediaService";
+import {
+  BlobStorage,
+  BlobStorageResult,
+  UploadHTTPParams,
+} from "./BlobStorage";
+import { ServiceResult } from "@/media/MediaServiceResult";
 
 export class LocalBlobStorage implements BlobStorage {
   constructor(
     private port: number,
     private public_origin: string,
+    private media_service: MediaService,
   ) {}
 
   async generateHTTPParams(sha1: string): Promise<UploadHTTPParams> {
@@ -18,5 +25,13 @@ export class LocalBlobStorage implements BlobStorage {
       public_url: `${this.public_origin}/api/media/${sha1}`,
     };
   }
-  removeBlob(file_name: string): void {}
+  async removeBlob(file_name: string): Promise<BlobStorageResult> {
+    const delete_result = await this.media_service.delete(file_name);
+
+    if (delete_result.code != ServiceResult.SUCCESS) {
+      return BlobStorageResult.ERROR;
+    }
+
+    return BlobStorageResult.SUCCESS;
+  }
 }

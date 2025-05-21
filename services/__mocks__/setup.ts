@@ -1,3 +1,8 @@
+/**
+ * TODO: Find a way to move these over to the class mocks that extend the interface. It will be
+ * more consistent across the system.
+ */
+
 import {
   TEST_PROJECT_ONE,
   TEST_PROJECT_THREE,
@@ -38,16 +43,16 @@ function mockTokenTransactionScript() {
 function mockPortfolioTransactionScript() {
   return {
     create: jest.fn(),
-    find: jest.fn(),
+    find: jest.fn().mockReturnValue(TEST_PROJECT_ONE),
     findByName: jest.fn(),
     findPublic: jest.fn(),
-    findAll: jest.fn().mockImplementation(() => {
-      return [
+    findAll: jest
+      .fn()
+      .mockReturnValue([
         { ...TEST_PROJECT_ONE },
         { ...TEST_PROJECT_TWO },
         { ...TEST_PROJECT_THREE },
-      ];
-    }),
+      ]),
     findAllPublic: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),

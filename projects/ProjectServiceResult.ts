@@ -3,6 +3,7 @@ export enum ServiceResult {
   NOT_FOUND,
   DUPLICATE,
   INVALID,
+  COULD_NOT_REMOVE,
 }
 
 export type SuccessfulResult = {
@@ -24,5 +25,10 @@ export type DuplicateResult = {
 
 export type InvalidResult = {
   code: ServiceResult.INVALID;
+  message: string;
+};
+
+export type CouldNotRemoveResult = {
+  code: ServiceResult.COULD_NOT_REMOVE;
   message: string;
 };

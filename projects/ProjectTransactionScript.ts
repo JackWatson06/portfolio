@@ -1,9 +1,10 @@
 import { Project } from "@/services/db/schemas/Project";
 import { WithId } from "mongodb";
-import { CollectionGateway } from "./CollectionGateway";
+import { CollectionGateway, ProjectUnset } from "./CollectionGateway";
 import { ProjectCreate, ProjectUpdate } from "./DTOSchema";
 import { ProjectService } from "./ProjectService";
 import {
+  CouldNotRemoveResult,
   DuplicateResult,
   InvalidResult,
   NotFoundResult,
@@ -12,11 +13,13 @@ import {
   SuccessfulResult,
 } from "./ProjectServiceResult";
 import { Validator } from "./Validator";
+import { BlobStorage, BlobStorageResult } from "@/services/fs/BlobStorage";
 
 export class ProjectsTransactionScript implements ProjectService {
   constructor(
     private project_validator: Validator,
     private projects_collection_gateway: CollectionGateway,
+    private blob_storage: BlobStorage,
   ) {}
 
   async create(
@@ -83,20 +86,27 @@ export class ProjectsTransactionScript implements ProjectService {
   async update(
     slug: string,
     project_input: ProjectUpdate,
-  ): Promise<SlugResult | NotFoundResult | InvalidResult | DuplicateResult> {
+  ): Promise<
+    | SlugResult
+    | NotFoundResult
+    | DuplicateResult
+    | CouldNotRemoveResult
+    | InvalidResult
+  > {
     const project = await this.find(slug);
 
+    // Validate the project exists.
     if (project == null) {
       return {
         code: ServiceResult.NOT_FOUND,
       };
     }
 
+    // Update the project slug.
     const project_with_slug = this.buildProjectWithNewSlug(
       project,
       project_input,
     );
-
     if (
       project.slug != project_with_slug.slug &&
       (await this.projects_collection_gateway.findBySlug(
@@ -108,6 +118,37 @@ export class ProjectsTransactionScript implements ProjectService {
       };
     }
 
+    // Remove any old media files hashes.
+    if (project_input.removed_media_hashes != undefined) {
+      for (const removed_hash of project_input.removed_media_hashes) {
+        if (
+          await this.projects_collection_gateway.someHaveMediaHash(removed_hash)
+        ) {
+          continue;
+        }
+
+        const remove_response =
+          await this.blob_storage.removeBlob(removed_hash);
+        if (remove_response == BlobStorageResult.ERROR) {
+          return {
+            code: ServiceResult.COULD_NOT_REMOVE,
+            message: `Could not remove file with hash: ${removed_hash}`,
+          };
+        }
+      }
+      delete project_input.removed_media_hashes;
+    }
+
+    // Remove 'live_project_link' if empty.
+    const unset: ProjectUnset = {};
+
+    if (project_input.live_project_link == "") {
+      delete project_with_slug.live_project_link;
+      delete project_input.live_project_link;
+      unset.live_project_link = true;
+    }
+
+    // Validate the project post-update is still valid according to our business rules.
     const updated_project_info = {
       ...project_with_slug,
       ...project_input,
@@ -122,11 +163,16 @@ export class ProjectsTransactionScript implements ProjectService {
       };
     }
 
-    await this.projects_collection_gateway.update(project.slug, {
-      ...project_input,
-      slug: updated_project_info.slug,
-      updated_at: new Date(),
-    });
+    // Send an update request to the database.
+    await this.projects_collection_gateway.update(
+      project.slug,
+      {
+        ...project_input,
+        slug: updated_project_info.slug,
+        updated_at: new Date(),
+      },
+      unset,
+    );
 
     return {
       code: ServiceResult.SUCCESS,

@@ -1,6 +1,6 @@
 import { logRoles, render, screen } from "@testing-library/react";
 
-import LinkInput from "@/app/admin/projects/create/LinkInput";
+import LinkInput from "@/app/admin/projects/LinkInput";
 import userEvent from "@testing-library/user-event";
 import "html-validate/jest";
 
