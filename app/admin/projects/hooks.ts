@@ -108,9 +108,7 @@ function updateFormState(
         url: url.toString(),
         type: link_types[index].toString(),
       })),
-      live_project_link: live_project_link
-        ? live_project_link.toString()
-        : undefined,
+      live_project_link: live_project_link ? live_project_link.toString() : "",
     },
   };
 }
@@ -309,28 +307,32 @@ async function createProject(
   }
 
   const uploaded_response = await projectCreateAction({
-    name: valid_form_state.data.name,
-    description: valid_form_state.data.description,
-    tags: valid_form_state.data.tags
-      .split(",")
-      .map((tag: string) => tag.trim()),
-    private: valid_form_state.data.visibility == "private",
-    media: uploaded_media_results.uploaded_media
-      .sort(sortUploadedMedia)
-      .map((uploaded_media) => {
-        return {
-          url: uploaded_media.url,
-          mime_type: uploaded_media.mime_type,
-          hash: uploaded_media.hash,
-          description: uploaded_media.description,
-        };
-      }),
-    thumbnail_media: {
-      url: uploaded_thumbnail.url,
-      description: uploaded_thumbnail.description,
+    ...{
+      name: valid_form_state.data.name,
+      description: valid_form_state.data.description,
+      tags: valid_form_state.data.tags
+        .split(",")
+        .map((tag: string) => tag.trim()),
+      private: valid_form_state.data.visibility == "private",
+      media: uploaded_media_results.uploaded_media
+        .sort(sortUploadedMedia)
+        .map((uploaded_media) => {
+          return {
+            url: uploaded_media.url,
+            mime_type: uploaded_media.mime_type,
+            hash: uploaded_media.hash,
+            description: uploaded_media.description,
+          };
+        }),
+      thumbnail_media: {
+        url: uploaded_thumbnail.url,
+        description: uploaded_thumbnail.description,
+      },
+      links: valid_form_state.data.links,
     },
-    links: valid_form_state.data.links,
-    live_project_link: valid_form_state.data.live_project_link,
+    ...(valid_form_state.data.live_project_link != ""
+      ? { live_project_link: valid_form_state.data.live_project_link }
+      : {}),
   });
   if (uploaded_response.code == "ERROR") {
     return {

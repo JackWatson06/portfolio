@@ -1,6 +1,6 @@
 import { Project } from "@/services/db/schemas/Project";
 import { Collection, MatchKeysAndValues, WithId } from "mongodb";
-import { CollectionGateway } from "./CollectionGateway";
+import { CollectionGateway, ProjectUnset } from "./CollectionGateway";
 
 export class ProjectsGateway implements CollectionGateway {
   public constructor(private projects: Collection<Project>) {}
@@ -87,13 +87,16 @@ export class ProjectsGateway implements CollectionGateway {
   async update(
     slug: string,
     project: MatchKeysAndValues<Project>,
+    unset: ProjectUnset = {},
   ): Promise<void> {
+    console.log("Unset: ", unset);
     await this.projects.updateOne(
       {
         slug: slug,
       },
       {
         $set: project,
+        $unset: unset,
       },
     );
   }

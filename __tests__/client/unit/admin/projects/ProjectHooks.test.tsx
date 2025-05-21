@@ -27,7 +27,9 @@ import { useActionState } from "react";
 /* -------------------------------------------------------------------------- */
 
 global.fetch = jest.fn();
-const mock_push: jest.Mock = jest.fn();
+const mock_project_create_action = projectCreateAction as jest.Mock;
+const mock_project_update_action = projectUpdateAction as jest.Mock;
+
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
   useActionState: jest.fn(),
@@ -117,13 +119,12 @@ beforeEach(() => {
   (global.fetch as jest.Mock).mockReturnValue({
     status: 200,
   });
-  (projectCreateAction as jest.Mock).mockReset();
-  (projectCreateAction as jest.Mock).mockReturnValue({
+  mock_project_create_action.mockReset();
+  mock_project_create_action.mockReturnValue({
     code: "SUCCESS",
   });
-  (projectUpdateAction as jest.Mock).mockReset();
-  mock_push.mockReset();
-  (projectUpdateAction as jest.Mock).mockReturnValue({
+  mock_project_update_action.mockReset();
+  mock_project_update_action.mockReturnValue({
     code: "SUCCESS",
     slug: "testing",
   });
@@ -520,7 +521,7 @@ test("transforming form input before creating", async () => {
   );
 });
 
-test("transforming form input sets live_project_link to undefined if empty", async () => {
+test("transforming form input excludes `live_project_link` if empty", async () => {
   const returned_action_promise = mockUseActionState();
   const [errors, handleAction] = useProjectCreateFormActionState(
     TEST_PROJECT_CREATE_FORM_STATE,
@@ -532,17 +533,13 @@ test("transforming form input sets live_project_link to undefined if empty", asy
   handleAction(form_data);
   await returned_action_promise;
 
-  const expected_project_create_input = {
-    ...TEST_PROJECT_ONE_CREATE_INPUT,
-  };
-  delete expected_project_create_input.live_project_link;
-  expect(projectCreateAction as jest.Mock).toHaveBeenCalledWith(
-    expected_project_create_input,
+  expect(mock_project_create_action.mock.calls[0][0]).not.toHaveProperty(
+    "live_project_link",
   );
 });
 
 test("creating the project errors on server error", async () => {
-  (projectCreateAction as jest.Mock).mockReturnValue({
+  mock_project_create_action.mockReturnValue({
     code: "ERROR",
   });
   const returned_action_promise = mockUseActionState();
@@ -752,7 +749,6 @@ test.each([
 ])(
   "only updating %s when changed",
   async (attribute, set_callback, update_value) => {
-    const mock_project_update_action = projectUpdateAction as jest.Mock;
     mock_project_update_action.mockReturnValue({
       code: "SUCCESS",
     });
@@ -774,7 +770,6 @@ test.each([
 );
 
 test("updating existing media elements adds to updated media list", async () => {
-  const mock_project_update_action = projectUpdateAction as jest.Mock;
   mock_project_update_action.mockReturnValue({
     code: "SUCCESS",
   });
@@ -793,7 +788,7 @@ test("updating existing media elements adds to updated media list", async () => 
 
   handleAction(form_data);
 
-  const response = await returned_action_promise;
+  await returned_action_promise;
   expect(mock_project_update_action).toHaveBeenCalledWith(
     TEST_PROJECT_ONE.slug,
     {
@@ -816,7 +811,6 @@ test("updating existing media elements adds to updated media list", async () => 
 });
 
 test("updating thumbnail with newly uploaded file", async () => {
-  const mock_project_update_action = projectUpdateAction as jest.Mock;
   mock_project_update_action.mockReturnValue({
     code: "SUCCESS",
   });
@@ -853,7 +847,7 @@ test("updating thumbnail with newly uploaded file", async () => {
 });
 
 test("updating the project errors on server error", async () => {
-  (projectUpdateAction as jest.Mock).mockReturnValue({
+  mock_project_update_action.mockReturnValue({
     code: "ERROR",
   });
   const returned_action_promise = mockUseActionState();
@@ -868,8 +862,6 @@ test("updating the project errors on server error", async () => {
   const action_response = (await returned_action_promise).errors[0];
   expect(action_response.match(regex)).not.toBeNull();
 });
-
-test.todo("setting live_project_link to undefined");
 
 // What happen when we keep a file in existing media files and upload the same file.
 // test("files sorted by name before uploading");

@@ -1,6 +1,6 @@
 import { Project } from "@/services/db/schemas/Project";
 import { WithId } from "mongodb";
-import { CollectionGateway } from "./CollectionGateway";
+import { CollectionGateway, ProjectUnset } from "./CollectionGateway";
 import { ProjectCreate, ProjectUpdate } from "./DTOSchema";
 import { ProjectService } from "./ProjectService";
 import {
@@ -95,6 +95,7 @@ export class ProjectsTransactionScript implements ProjectService {
   > {
     const project = await this.find(slug);
 
+    // Validate the project exists.
     if (project == null) {
       return {
         code: ServiceResult.NOT_FOUND,
@@ -138,6 +139,15 @@ export class ProjectsTransactionScript implements ProjectService {
       delete project_input.removed_media_hashes;
     }
 
+    // Remove 'live_project_link' if empty.
+    const unset: ProjectUnset = {};
+
+    if (project_input.live_project_link == "") {
+      delete project_with_slug.live_project_link;
+      delete project_input.live_project_link;
+      unset.live_project_link = true;
+    }
+
     // Validate the project post-update is still valid according to our business rules.
     const updated_project_info = {
       ...project_with_slug,
@@ -154,11 +164,15 @@ export class ProjectsTransactionScript implements ProjectService {
     }
 
     // Send an update request to the database.
-    await this.projects_collection_gateway.update(project.slug, {
-      ...project_input,
-      slug: updated_project_info.slug,
-      updated_at: new Date(),
-    });
+    await this.projects_collection_gateway.update(
+      project.slug,
+      {
+        ...project_input,
+        slug: updated_project_info.slug,
+        updated_at: new Date(),
+      },
+      unset,
+    );
 
     return {
       code: ServiceResult.SUCCESS,

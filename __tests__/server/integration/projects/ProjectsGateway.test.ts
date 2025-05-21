@@ -185,6 +185,24 @@ test("updating project", async () => {
   expect(project_on_disk).not.toBe(null);
 });
 
+test("updating project unsets 'live_project_link'", async () => {
+  const project_data_gateway = new ProjectsGateway(db.projects);
+  await db.projects.insertOne({ ...TEST_PROJECT_ONE });
+
+  await project_data_gateway.update(
+    "gandalf",
+    {},
+    {
+      live_project_link: true,
+    },
+  );
+
+  const project_on_disk = await db.projects.findOne({
+    slug: "gandalf",
+  });
+  expect(project_on_disk).not.toHaveProperty("live_project_link");
+});
+
 test("deleted project does not return on fetch by slug", async () => {
   const project_data_gateway = new ProjectsGateway(db.projects);
   await db.projects.insertOne({

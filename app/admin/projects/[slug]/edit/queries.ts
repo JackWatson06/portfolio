@@ -23,7 +23,9 @@ export async function fetchProjectBySlug(
       existing_media: project.media,
       thumbnail: project.thumbnail_media.url,
       links: project.links,
-      live_project_link: project.live_project_link,
+      live_project_link: project.live_project_link
+        ? project.live_project_link
+        : "",
     },
   };
 }

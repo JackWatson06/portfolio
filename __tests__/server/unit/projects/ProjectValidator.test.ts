@@ -9,7 +9,7 @@ test("successfully validating a project.", async () => {
   expect(validator_result.valid).toBe(true);
 });
 
-test("we must have at least one picture.", async () => {
+test("ensuring project has at least one picture.", async () => {
   const validator = new ProjectValidator();
 
   const validator_result = validator.validate({
@@ -63,7 +63,7 @@ test("links must have valid service type.", async () => {
   expect(validator_result.valid).toBe(false);
 });
 
-test("we make sure the thumbnail exists.", async () => {
+test("ensuring the thumbnail exists", async () => {
   const validator = new ProjectValidator();
 
   const validator_result = validator.validate({
@@ -77,7 +77,7 @@ test("we make sure the thumbnail exists.", async () => {
   expect(validator_result.valid).toBe(false);
 });
 
-test("we make sure the primary link exists.", async () => {
+test("ensuring the primary link exists", async () => {
   const validator = new ProjectValidator();
 
   const validator_result = validator.validate({
@@ -88,7 +88,17 @@ test("we make sure the primary link exists.", async () => {
   expect(validator_result.valid).toBe(false);
 });
 
-test("we only allow images for the thumbnail media.", async () => {
+test("only checking primary link if it exists", async () => {
+  const validator = new ProjectValidator();
+
+  const test_project_input = { ...TEST_PROJECT_ONE };
+  delete test_project_input.live_project_link;
+  const validator_result = validator.validate(test_project_input);
+
+  expect(validator_result.valid).toBe(true);
+});
+
+test("only allowing images for the thumbnail media", async () => {
   const validator = new ProjectValidator();
 
   const validator_result = validator.validate({

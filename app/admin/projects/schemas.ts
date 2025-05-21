@@ -24,7 +24,7 @@ export type ProjectFormSchema = {
   existing_media: ExistingMediaFormSchema[];
   thumbnail: string;
   links: LinkFormSchema[];
-  live_project_link?: string;
+  live_project_link: string;
 };
 
 export type ProjectFormState = {

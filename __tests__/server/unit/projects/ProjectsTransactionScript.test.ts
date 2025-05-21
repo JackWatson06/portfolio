@@ -1,4 +1,4 @@
-import { CollectionGateway } from "@/projects/CollectionGateway";
+import { CollectionGateway, ProjectUnset } from "@/projects/CollectionGateway";
 import { Validator } from "@/projects/Validator";
 import {
   InvalidValidatorResult,
@@ -22,7 +22,8 @@ import { BlobStorageResult } from "@/services/fs/BlobStorage";
 
 class MockCollectionGateway implements CollectionGateway {
   public last_created_project: Project | null = null;
-  public last_updated_project: MatchKeysAndValues<Project> | null = null;
+  public last_update_project: MatchKeysAndValues<Project> | null = null;
+  public last_update_unset: ProjectUnset | null = null;
   public some_have_media_hash_return: boolean = false;
 
   async findBySlug(slug: string): Promise<WithId<Project> | null> {
@@ -54,8 +55,10 @@ class MockCollectionGateway implements CollectionGateway {
   async update(
     slug: string,
     project: MatchKeysAndValues<Project>,
+    unset: ProjectUnset,
   ): Promise<void> {
-    this.last_updated_project = project;
+    this.last_update_project = project;
+    this.last_update_unset = unset;
   }
   async delete(slug: string): Promise<void> {}
 }
@@ -321,7 +324,7 @@ test("updating project unsets removed media hashes", async () => {
     removed_media_hashes: ["testing"],
   });
 
-  expect(mock_collections_gateway.last_updated_project).not.toHaveProperty(
+  expect(mock_collections_gateway.last_update_project).not.toHaveProperty(
     "removed_media_hashes",
   );
 });
@@ -354,9 +357,43 @@ test("setting `updated_at` when updating a project", async () => {
     private: false,
   });
 
-  expect(projects_collection_gateway.last_updated_project).toHaveProperty(
+  expect(projects_collection_gateway.last_update_project).toHaveProperty(
     "updated_at",
   );
+});
+
+test("updating `live_project_link` in the document", async () => {
+  const projects_collection_gateway = new MockCollectionGateway();
+  const projects_transaction_script = new ProjectsTransactionScript(
+    new StubValidator(),
+    projects_collection_gateway,
+    new MockBlobStorage(),
+  );
+
+  await projects_transaction_script.update("gandalf", {
+    live_project_link: "https://testing.com",
+  });
+
+  expect(projects_collection_gateway.last_update_project).toHaveProperty(
+    "live_project_link",
+  );
+});
+
+test("setting `live_project_link` to empty removes it from the document", async () => {
+  const projects_collection_gateway = new MockCollectionGateway();
+  const projects_transaction_script = new ProjectsTransactionScript(
+    new StubValidator(),
+    projects_collection_gateway,
+    new MockBlobStorage(),
+  );
+
+  await projects_transaction_script.update("gandalf", {
+    live_project_link: "",
+  });
+
+  expect(projects_collection_gateway.last_update_unset).toEqual({
+    live_project_link: true,
+  });
 });
 
 test("updating project returns error when it is invalid", async () => {
